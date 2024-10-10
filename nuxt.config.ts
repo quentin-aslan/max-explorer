@@ -6,7 +6,8 @@ export default defineNuxtConfig({
   css: ['~/assets/main.css'],
   modules: [
     '@primevue/nuxt-module',
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    //'@prisma/nuxt',
   ],
   primevue: {
     options: {

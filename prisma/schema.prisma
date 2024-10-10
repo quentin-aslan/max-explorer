@@ -1,0 +1,26 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Trains {
+  id              Int      @id @default(autoincrement())
+  date            DateTime
+  trainNo         String   @map("train_no")
+  entity          String
+  axe             String
+  origineIata     String   @map("origine_iata")
+  destinationIata String   @map("destination_iata")
+  origin          String   @map("origine")
+  destination     String
+  departureHour   String   @map("heure_depart")
+  arrivalHour     String   @map("heure_arrivee")
+  odHappyCard     String   @map("od_happy_card")
+}
