@@ -5,5 +5,5 @@
 </template>
 
 <script lang="ts" setup>
-// Ce composant est pour l'instant un placeholder pour la carte
+const citySelected = defineModel('citySelected')
 </script>

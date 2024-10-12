@@ -6,11 +6,7 @@ const returnTrains = ref<Train[]>([]);
 const citiesList = ref<string[]>([]);
 
 export const useTrains = () => {
-    const {startLoading, stopLoading} = useLoader();
-
-    const fetchTrains = async (departureStation: string, departureDate: string, returnDate: string) => {
-        startLoading();
-
+    const fetchTrains = async (departureDate: string, returnDate: string, departureStation: string, destinationStation?: string) => {
         const formattedDepartureDate = departureDate
             ? departureDate.toISOString().slice(0, 10)
             : '';
@@ -18,7 +14,8 @@ export const useTrains = () => {
             ? returnDate.toISOString().slice(0, 10)
             : '';
 
-        const fetchTrainsURL = `/api/trains?origin=${departureStation}&departureDate=${formattedDepartureDate}&returnDate=${formattedReturnDate}`;
+        let fetchTrainsURL = `/api/trains?origin=${departureStation}&departureDate=${formattedDepartureDate}&returnDate=${formattedReturnDate}`;
+        if (destinationStation) fetchTrainsURL+= `&destination=${destinationStation}`
 
         const { data } = await useFetch(fetchTrainsURL);
 
@@ -32,8 +29,6 @@ export const useTrains = () => {
                 ])
             );
         }
-
-        stopLoading();
     };
 
     const getDepartureTrainsFromCity = (city: string) => {

@@ -2,9 +2,9 @@
   <div class="flex flex-col md:flex-row flex-wrap gap-6">
     <Card v-for="city in cities" @click="() => onCityClick(city)" class="w-full cursor-pointer hover:-translate-x-0.5">
       <template #title>
-        <div class="flex flex-row justify-between items-center">
+        <div class="flex flex-col gap-1 md:flex-row justify-between md:items-center">
           <span>{{ city }}</span>
-          <span class="text-sm">Trains Disponible (A/R) : <strong>{{ getDepartureTrainsFromCity(city).length + getReturnTrainsFromCity(city).length}}</strong></span>
+          <span class="text-sm"> <strong>{{ getDepartureTrainsFromCity(city).length + getReturnTrainsFromCity(city).length}}</strong> Trains disponibles (A/R)</span>
         </div>
       </template>
       <template #content>
@@ -28,7 +28,6 @@ const props = defineProps<{
 }>();
 
 const { getDepartureTrainsFromCity, getReturnTrainsFromCity } = useTrains();
-
 
 const emit = defineEmits(['cityClick']);
 

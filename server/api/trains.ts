@@ -28,7 +28,7 @@ interface ResponseFromSNCF {
 
 const BASE_SNCF_API = 'https://ressources.data.sncf.com/api/explore/v2.1/catalog/datasets/tgvmax/records'
 
-const fetchTrainBuildWhere = (date: string, origin?: string, destination?: string) => {
+const fetchTrainBuildWhereWithoutDestination = (date: string, origin?: string, destination?: string) => {
     let where = ''
     if (origin) {
         where = `origine like "${origin}" and \`date\`=date'${date}' and od_happy_card="OUI"`
@@ -36,6 +36,10 @@ const fetchTrainBuildWhere = (date: string, origin?: string, destination?: strin
         where = `destination like "${destination}" and \`date\`=date'${date}' and od_happy_card="OUI"`
     }
     return where
+}
+
+const fetchTrainBuildWhere = (date: string, origin: string, destination: string) => {
+    return `origine like "${origin}" and destination like "${destination}" and \`date\`=date'${date}' and od_happy_card="OUI"`
 }
 
 const fetchTrain = async (where:string, offset: number, limit: number) : Promise<ResponseFromSNCF> => {
@@ -58,6 +62,7 @@ const fetchTrain = async (where:string, offset: number, limit: number) : Promise
 }
 
 const getTrains = async (where: string) => {
+    console.log('getTrains, where : ', where)
     let allTrains: Train[] = []
 
     let totalCount: number = 0
@@ -112,12 +117,20 @@ const isValidTrips = (departureTrains: Train[], returnTrains: Train[]) => {
     };
 };
 
-const searchRoundTrips = async (origin, date, returnDate) => {
+const searchRoundTrips = async (date: string, returnDate: string, origin, destination?: string) => {
     // RETURN
     if (!origin || !date) throw new Error('searchTrainFromAPI : props are missing')
 
-    const whereDeparture = fetchTrainBuildWhere(date, origin)
-    const whereReturn = fetchTrainBuildWhere(returnDate, undefined, origin)
+    let whereDeparture;
+    let whereReturn;
+
+    if (destination) {
+        whereDeparture = fetchTrainBuildWhere(date, origin, destination)
+        whereReturn = fetchTrainBuildWhere(returnDate, destination, origin)
+    } else {
+        whereDeparture = fetchTrainBuildWhereWithoutDestination(date, origin)
+        whereReturn = fetchTrainBuildWhereWithoutDestination(returnDate, undefined, origin)
+    }
 
     const allDepartureTrains = await getTrains(whereDeparture)
     const allReturnTrains = await getTrains(whereReturn)
@@ -132,7 +145,7 @@ const searchRoundTrips = async (origin, date, returnDate) => {
 }
 
 export default defineEventHandler(async (event) => {
-    const { origin, departureDate, returnDate }: Props = getQuery(event);
+    const { origin, destination,  departureDate, returnDate }: Props = getQuery(event);
 
     if (!origin || !departureDate || !returnDate) {
         throw createError({
@@ -142,7 +155,7 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
-        return await searchRoundTrips(origin, departureDate, returnDate)
+        return await searchRoundTrips(departureDate, returnDate, origin, destination)
     } catch (e) {
         console.error(e)
         return []

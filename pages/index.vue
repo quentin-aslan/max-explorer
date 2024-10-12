@@ -1,71 +1,29 @@
 <template>
   <TheLoader />
-  <div class="z-10 flex flex-col gap-4 mx-10">
-    <header class="mb-6">
-      <h1 class="text-3xl font-bold text-gray-700">
-        TGV MAAAX, EXPLORE TON PAYS !
-      </h1>
-    </header>
+  <div class="h-screen md:p-15 flex flex-col justify-center lg:items-center lg:flex-row gap-8 p-6">
+    <!-- Barre de recherche sur la gauche en mode desktop -->
+    <div class="order-2 lg:order-1 lg:w-1/3 flex justify-center lg:justify-start">
+      <SearchFromV2 />
+    </div>
 
-    <!-- Formulaire de recherche -->
-    <SearchForm
-        v-model:departureStation="departureStation"
-        v-model:departureDate="departureDate"
-        v-model:returnDate="returnDate"
-        @submit="refreshResults"
-    />
-
-    <!-- Section pour les résultats -->
-    <section class="flex flex-col lg:flex-row gap-2 mt-8">
-      <!-- Liste des villes accessibles -->
-      <CityList
-          v-if="citiesList.length"
-          :cities="citiesList"
-          :city-selected="citySelected"
-          @cityClick="onCityClick"
-          class="w-full md:w-2/3"
-      />
-
-      <!-- Placeholder de la carte -->
-      <Map class="w-full md:w-1/3" />
-    </section>
+    <!-- Section texte -->
+    <div class="order-1 lg:order-2 lg:w-2/3 flex lg:justify-start">
+      <div class="text-center flex flex-col justify-between lg:text-left p-6 lg:p-12">
+        <h1 class="text-3xl lg:text-5xl font-bold text-surface-900 dark:text-surface-0 mb-4">
+          Découvre la France 🇫🇷
+          <br />
+          <span class="text-blue-800 dark:text-blue-400">Voyage avec MAX JEUNE</span>
+        </h1>
+        <p class="text-lg text-surface-700 dark:text-surface-200 leading-relaxed">
+          Profite de trajets gratuits et illimités avec MAX JEUNE ! Pars à l'aventure depuis ta ville en quelques clics.
+          <br />
+          Pas besoin d'une destination précise ? Renseigne simplement ta ville de départ et tes dates, et on s'occupe du reste !
+        </p>
+      </div>
+    </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ref } from 'vue';
-import type {Train} from "~/types";
-import {useTrains} from "~/composables/use-trains";
-
-const { departureTrains, returnTrains, fetchTrains, citiesList  } = useTrains()
-
-const trainsDisplayed = ref<Train[]>([]);
-
-const departureStation = ref('Toulouse');
-const departureDate = ref<Date | null>(null);
-const returnDate = ref<Date | null>(null);
-const isFullDisplayed = ref(false);
-
-const citySelected = ref<string | null>(null);
-
-const onTrainClick = (train: Train) => {
-  selectedDepartureTrain.value = train;
-  trainsDisplayed.value = returnTrains.value.filter(
-      (t) => t.origine === train.destination
-  );
-};
-
-const onCityClick = (city: string) => {
-  console.log('city click', city)
-  if (citySelected.value === city) {
-    citySelected.value = null;
-    return;
-  }
-  citySelected.value = city;
-};
-
-const refreshResults = async () => {
-  citySelected.value = null;
-  await fetchTrains(departureStation.value, departureDate.value, returnDate.value)
-};
+<script setup>
+import SearchFromV2 from "~/components/SearchFormVertical.vue";
 </script>
