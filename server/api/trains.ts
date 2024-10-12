@@ -1,4 +1,3 @@
-import small_tgvmax from '../mocks/small_tgvmax.json'
 import axios from "axios";
 
 interface Props {
@@ -29,25 +28,36 @@ interface ResponseFromSNCF {
 
 const BASE_SNCF_API = 'https://ressources.data.sncf.com/api/explore/v2.1/catalog/datasets/tgvmax/records'
 
-
-const fetchTrain = async (origin: string, date: string, offset: number, limit: number) : Promise<ResponseFromSNCF> => {
-    console.log(`fetchTrain : ${origin} - date: ${date} - offset: ${offset}`)
-    const where = `origine like "${origin}" and  \`date\`=date'${date}' and od_happy_card="OUI"`
-    const order_by = `date ASC, heure_arrivee ASC`
-    const { data, status } = await axios.get(BASE_SNCF_API, {
-        params: {
-            where,
-            order_by,
-            limit,
-            offset
-        },
-    })
-
-    return data
+const fetchTrainBuildWhere = (date: string, origin?: string, destination?: string) => {
+    let where = ''
+    if (origin) {
+        where = `origine like "${origin}" and \`date\`=date'${date}' and od_happy_card="OUI"`
+    } else if (destination) {
+        where = `destination like "${destination}" and \`date\`=date'${date}' and od_happy_card="OUI"`
+    }
+    return where
 }
 
-const searchTrainFromAPI = async (origin, date) => {
-    if (!origin || !date) throw new Error('searchTrainFromAPI : props are missing')
+const fetchTrain = async (where:string, offset: number, limit: number) : Promise<ResponseFromSNCF> => {
+    try {
+        const order_by = `date ASC, heure_arrivee ASC`
+        const { data, status } = await axios.get(BASE_SNCF_API, {
+            params: {
+                where,
+                order_by,
+                limit,
+                offset
+            },
+        })
+
+        return data
+    } catch (e) {
+        console.log(e)
+        throw new Error(e)
+    }
+}
+
+const getTrains = async (where: string) => {
     let allTrains: Train[] = []
 
     let totalCount: number = 0
@@ -55,7 +65,7 @@ const searchTrainFromAPI = async (origin, date) => {
     const limit = 100
 
     // First iteration, init totalCount and get the 100 first trains
-    const data = await fetchTrain(origin, date, offset, limit)
+    const data = await fetchTrain(where, offset, limit)
     totalCount = data.total_count
     allTrains.push(...data.results)
     offset += limit
@@ -64,7 +74,7 @@ const searchTrainFromAPI = async (origin, date) => {
     while (offset < totalCount) {
         i++
         console.log('while', i)
-        const _data = await fetchTrain(origin, date, offset, limit)
+        const _data = await fetchTrain(where, offset, limit)
         offset += limit // 200
         allTrains.push(..._data.results)
     }
@@ -72,29 +82,69 @@ const searchTrainFromAPI = async (origin, date) => {
     return allTrains
 }
 
-export default defineEventHandler(async (event) => {
-    const { origin, departureDate, arrivalDate }: Props = getQuery(event);
+const isValidTrips = (departureTrains: Train[], returnTrains: Train[]) => {
+    const validDepartureTrains: Train[] = [];
+    const validReturnTrains: Train[] = [];
 
-    if (!origin || !departureDate || !arrivalDate) {
+    // Créer un Set avec les destinations des trains de départ
+    const departureDestinationsSet = new Set(departureTrains.map(train => train.destination));
+
+    // Créer un Set avec les origines des trains de retour
+    const returnOriginsSet = new Set(returnTrains.map(train => train.origine));
+
+    // Filtrer les trains de départ qui ont un retour possible
+    departureTrains.forEach(departureTrain => {
+        if (returnOriginsSet.has(departureTrain.destination)) {
+            validDepartureTrains.push(departureTrain);
+        }
+    });
+
+    // Filtrer les trains de retour qui ont un départ possible
+    returnTrains.forEach(returnTrain => {
+        if (departureDestinationsSet.has(returnTrain.origine)) {
+            validReturnTrains.push(returnTrain);
+        }
+    });
+
+    return {
+        departureTrains: validDepartureTrains,
+        returnTrains: validReturnTrains
+    };
+};
+
+const searchRoundTrips = async (origin, date, returnDate) => {
+    // RETURN
+    if (!origin || !date) throw new Error('searchTrainFromAPI : props are missing')
+
+    const whereDeparture = fetchTrainBuildWhere(date, origin)
+    const whereReturn = fetchTrainBuildWhere(returnDate, undefined, origin)
+
+    const allDepartureTrains = await getTrains(whereDeparture)
+    const allReturnTrains = await getTrains(whereReturn)
+
+    const { departureTrains, returnTrains } = isValidTrips(allDepartureTrains, allReturnTrains)
+
+    return {
+        departureTrains,
+        returnTrains
+    }
+
+}
+
+export default defineEventHandler(async (event) => {
+    const { origin, departureDate, returnDate }: Props = getQuery(event);
+
+    if (!origin || !departureDate || !returnDate) {
         throw createError({
             statusCode: 400,
-            statusMessage: 'Origin, departure date and arrival date are required',
+            statusMessage: 'Origin, departure date and return date are required',
         })
     }
 
     try {
-        const trains = await searchTrainFromAPI(origin, '2024-10-12')
-        return trains
+        return await searchRoundTrips(origin, departureDate, returnDate)
     } catch (e) {
         console.error(e)
         return []
     }
-
-    // const trains: Train[] = small_tgvmax.results
-    //
-    // const trainsFiltered = trains.filter((train) => {
-    //     const originFormated = train.origine.toLowerCase()
-    //     return originFormated.includes(origin.toLowerCase())
-    // })
-    // return trainsFiltered;
 });
