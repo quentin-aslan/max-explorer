@@ -24,7 +24,6 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type {Train} from "~/types";
 import {useTrains} from "~/composables/use-trains";
 
 const { departureTrains, citiesList  } = useTrains()

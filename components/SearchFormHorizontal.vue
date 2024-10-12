@@ -1,10 +1,10 @@
 <template>
   <form
       @submit.prevent="research"
-      class="flex flex-col md:flex-row items-center justify-between gap-4 w-full  mx-auto bg-white rounded-md p-6"
+      class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 w-full bg-white rounded-lg p-6"
   >
     <!-- Ville de départ -->
-    <div class="w-full md:w-auto relative">
+    <div class="w-full lg:w-auto relative">
       <label class="block text-gray-700 mb-2" for="departureStation">Ville de départ</label>
         <InputText
             v-model="departureStation"
@@ -17,14 +17,14 @@
 
     <!-- Hide by default on mobile -->
     <transition v-if="expandForm || !isMobile" name="fade" mode="out-in">
-      <div class="w-full md:w-auto relative">
+      <div class="w-full lg:w-auto relative">
         <label class="block text-gray-700 mb-2" for="destinationStation">Ville d'arrivée (optionnel)</label>
           <InputText v-model="destinationStation" placeholder="Brest" class="w-full p-4" />
       </div>
     </transition>
 
     <transition v-if="expandForm || !isMobile" name="fade" mode="out-in">
-      <div class="w-full md:w-[15%] relative">
+      <div class="w-full lg:w-[15%] relative">
         <label class="block text-gray-700 mb-2" for="departureDate">Date de départ</label>
         <Calendar
             v-model="departureDate"
@@ -36,7 +36,7 @@
     </transition>
 
     <transition v-if="expandForm || !isMobile" name="fade" mode="out-in">
-      <div class="w-full md:w-[15%] relative">
+      <div class="w-full lg:w-[15%] relative">
         <label class="block text-gray-700 mb-2" for="returnDate">Date de retour</label>
         <Calendar
             v-model="returnDate"
@@ -48,7 +48,7 @@
     </transition>
 
     <transition v-if="expandForm || !isMobile" name="fade" mode="out-in">
-      <div class="w-full h-full md:w-auto relative mt-8">
+      <div class="w-full h-full lg:w-auto relative mt-8">
         <Button type="submit" label="Rechercher les meilleurs prix" class="w-full"/>
       </div>
     </transition>
@@ -70,7 +70,7 @@ const expandForm = ref(false)
 const isMobile = ref(false)
 onMounted(() => {
   const checkMobile = () => {
-    isMobile.value = window.innerWidth <= 768
+    isMobile.value = window.innerWidth <= 1024
   }
   checkMobile()
   window.addEventListener('resize', checkMobile)
