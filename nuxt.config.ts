@@ -5,7 +5,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   runtimeConfig: {
     openWeatherMapApiKey: process.env.OPEN_WEATHER_MAP_API_KEY,
-    public: {},
+    public: {
+      GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
+    },
   },
   css: ['~/assets/main.css'],
   modules: [

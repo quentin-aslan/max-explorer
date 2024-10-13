@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col md:flex-row flex-wrap gap-6">
+  <div class="flex flex-col gap-4 h-screen overflow-scroll">
     <Card v-for="city in cities" @click="() => onCityClick(city)" class="w-full cursor-pointer hover:-translate-x-0.5">
       <template #title>
-        <div class="flex flex-col gap-1 md:flex-row justify-between md:items-center">
+        <div class="flex flex-col gap-1">
           <span>{{ city }}</span>
           <span class="text-sm"> <strong>{{ getDepartureTrainsFromCity(city).length + getReturnTrainsFromCity(city).length}}</strong> Trains disponibles (A/R)</span>
         </div>

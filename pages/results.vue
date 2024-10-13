@@ -1,26 +1,39 @@
 <template>
   <TheLoader />
-  <div class="z-10 flex flex-col gap-4 p-6">
+  <div class="z-10 flex flex-col max-h-screen overflow-hidden">
     <!-- Formulaire de recherche -->
     <SearchFormHorizontal />
 
     <!-- Section pour les résultats -->
     <h2 v-if="citiesList.length === 0" class="text-3xl text-blue-900">Aucun Résultat :/</h2>
-    <section v-else class="flex flex-col lg:flex-row gap-2 mt-8">
+    <section v-else class="flex flex-col lg:flex-row gap-2">
       <!-- Liste des villes accessibles -->
-      <CityList
-          v-if="citiesList.length"
-          :cities="citiesList"
-          :city-selected="citySelected"
-          @cityClick="onCityClick"
-          class="w-full md:w-2/3"
-      />
+      <div class="lg:w-[40%] h-screen overflow-y-scroll p-4">
+        <CityList
+            v-if="citiesList.length"
+            :cities="citiesList"
+            :city-selected="citySelected"
+            @cityClick="onCityClick"
+            class="hidden lg:flex"
+        />
+      </div>
 
-      <!-- Placeholder de la carte -->
-      <Map v-model="citySelected" class="w-full md:w-1/3" />
+      <!--  Desktop Map View (fixée à droite) -->
+      <div
+          v-if="citiesList.length > 0"
+          class="h-screen w-full lg:w-[60%] fixed right-0"
+      >
+        <Map
+            ref="mapDesktop"
+            class="w-full h-full"
+            v-model="citySelected"
+            :cities="[]"
+        />
+      </div>
     </section>
   </div>
 </template>
+
 
 <script lang="ts" setup>
 import { ref } from 'vue';
