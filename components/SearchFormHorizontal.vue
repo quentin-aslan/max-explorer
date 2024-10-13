@@ -12,7 +12,7 @@
             placeholder="Toulouse Matabiau"
             class="w-full p-4"
         />
-      <span v-if="!expandForm || isMobile" class="lg:hidden text-sm">Cliquez pour afficher les autres parametres</span>
+      <span v-if="!expandForm || isMobile" class="lg:hidden text-sm"> ⬇ Cliquez pour afficher les autres parametres ⬇ </span>
     </div>
 
     <!-- Hide by default on mobile -->

@@ -5,7 +5,7 @@
     <SearchFormHorizontal />
 
     <!-- Section pour les résultats -->
-    <h2 v-if="citiesList.length === 0">Aucun Résultat :/</h2>
+    <h2 v-if="citiesList.length === 0" class="text-3xl text-blue-900">Aucun Résultat :/</h2>
     <section v-else class="flex flex-col lg:flex-row gap-2 mt-8">
       <!-- Liste des villes accessibles -->
       <CityList
