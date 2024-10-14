@@ -27,6 +27,9 @@ jobs:
           script: |
             cd ~/app/tgv-max-explorer
             git pull origin main
+            rm .env
+            touch .env
+            echo GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }} >> .env
             npm ci
             npm run build
             sudo systemctl restart tgv-max-explorer
