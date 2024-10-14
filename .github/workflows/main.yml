@@ -30,6 +30,7 @@ jobs:
             rm .env
             touch .env
             echo GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }} >> .env
+            echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
             npm ci
             npm run build
             sudo systemctl restart tgv-max-explorer
