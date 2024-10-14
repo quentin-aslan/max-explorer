@@ -9,6 +9,9 @@ export default defineNuxtConfig({
       GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
     },
   },
+  alias: {
+    ".prisma/client/index-browser": "./node_modules/.prisma/client/index-browser.js"
+  },
   css: ['~/assets/main.css'],
   modules: [
     '@primevue/nuxt-module',
@@ -24,5 +27,6 @@ export default defineNuxtConfig({
   },
   prisma: {
     installStudio: false,
-  }
+  },
+
 })
