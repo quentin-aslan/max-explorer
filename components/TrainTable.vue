@@ -26,7 +26,6 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits } from 'vue';
 import type {Train} from "~/types";
 const props = defineProps<{
   trains: Train[];

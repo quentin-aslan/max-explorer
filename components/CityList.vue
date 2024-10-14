@@ -3,7 +3,7 @@
     <Card v-for="city in cities" @click="() => onCityClick(city)" class="w-full cursor-pointer hover:-translate-x-0.5">
       <template #title>
         <div class="flex flex-col gap-1">
-          <span>{{ city }}</span>
+          <span>{{ city.name }}</span>
           <span class="text-sm"> <strong>{{ getDepartureTrainsFromCity(city).length + getReturnTrainsFromCity(city).length}}</strong> Trains disponibles (A/R)</span>
         </div>
       </template>
@@ -20,18 +20,21 @@
 
 
 <script lang="ts" setup>
-import { defineProps, defineEmits } from 'vue';
+import type {City} from "~/types";
 
 const props = defineProps<{
-  cities: string[];
-  citySelected: Ref<string | null>;
+  cities: City[];
 }>();
+
+const citySelected = defineModel();
 
 const { getDepartureTrainsFromCity, getReturnTrainsFromCity } = useTrains();
 
-const emit = defineEmits(['cityClick']);
-
-const onCityClick = (cityName: string) => {
-  emit('cityClick', cityName);
+const onCityClick = (city: City) => {
+  if (citySelected.value === city) {
+    citySelected.value = null;
+    return;
+  }
+  citySelected.value = city
 };
 </script>

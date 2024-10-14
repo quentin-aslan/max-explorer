@@ -8,14 +8,14 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useGoogleMaps } from '~/composables/use-google-maps'
-import type {City, MapsFrame} from "~/types";
+import type {City} from "~/types";
 
 type Props = {
   cities: City[]
 }
 
 const props = defineProps<Props>()
-const citySelected = defineModel('citySelected')
+const citySelected = defineModel()
 
 const {
   mapElement,
@@ -34,14 +34,6 @@ onMounted(async () => {
       lng: 1.888334
     }, 6.2)
     addCitiesOnMap()
-    // Create the DIV to hold the control.
-    const centerControlDiv = document.createElement('div')
-    // Create the control.
-    const centerControl = createResearchControl(map.value)
-    // Append the control to the DIV.
-    centerControlDiv.appendChild(centerControl)
-
-    map.value?.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(centerControlDiv)
   }
 })
 
@@ -54,51 +46,28 @@ const addCitiesOnMap = () => {
       marker?.addListener('click', () => {
         citySelected.value = city
       })
+
+      marker?.addListener('mouseover', () => {
+        const oldCitySelected = citySelected.value
+        citySelected.value = city
+        onCitySelectedChanges(city, oldCitySelected)
+      })
     }
   }
 }
 
-const createResearchControl = (map) => {
-  const controlButton = document.createElement('button')
+const onCitySelectedChanges = (newCitySelected: City, oldCitySelected: City) => {
+  if(oldCitySelected) {
+    clearHighlightedCityMarker(oldCitySelected)
+  }
 
-  // Set CSS for the control.
-  controlButton.style.backgroundColor = '#fff'
-  controlButton.style.border = '2px solid #fff'
-  controlButton.style.borderRadius = '3px'
-  controlButton.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)'
-  controlButton.style.color = 'rgb(25,25,25)'
-  controlButton.style.cursor = 'pointer'
-  controlButton.style.fontFamily = 'Roboto,Arial,sans-serif'
-  controlButton.style.fontSize = '16px'
-  controlButton.style.lineHeight = '38px'
-  controlButton.style.margin = '8px 0 22px'
-  controlButton.style.padding = '0 5px'
-  controlButton.style.textAlign = 'center'
-
-  controlButton.textContent = 'Search Map'
-  controlButton.title = 'Click to recenter the map'
-  controlButton.type = 'button'
-
-  // Setup the click event listeners: simply set the map to Chicago.
-  controlButton.addEventListener('click', () => {
-    const bounds = map.getBounds()
-    if (bounds) {
-      const ne = bounds.getNorthEast() // LatLng of the northeast corner
-      const sw = bounds.getSouthWest() // LatLng of the southwest corner
-      const mapFrame: MapsFrame = {
-        minLatitude: sw.lat(),
-        minLongitude: sw.lng(),
-        maxLatitude: ne.lat(),
-        maxLongitude: ne.lng(),
-      }
-      emits('search-city', mapFrame)
-    }
-  })
-
-  return controlButton
+  if(newCitySelected) {
+    highlightCityMarker(newCitySelected)
+  }
 }
 
-watch(() => props.cities, addCitiesOnMap)
+watch(props.cities, addCitiesOnMap)
+watch(citySelected, onCitySelectedChanges)
 
 defineExpose({
   highlightCityMarker,
