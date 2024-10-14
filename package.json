@@ -12,6 +12,7 @@
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
     "@nuxtjs/tailwindcss": "^6.12.1",
+    "@primevue/nuxt-module": "^4.1.0",
     "@primevue/themes": "^4.1.0",
     "@prisma/nuxt": "^0.0.35",
     "axios": "^1.7.7",
@@ -21,8 +22,6 @@
     "vue-router": "latest"
   },
   "devDependencies": {
-    "@primevue/nuxt-module": "^4.1.0",
-    "@prisma/client": "^5.20.0",
-    "daisyui": "^4.12.13"
+    "@prisma/client": "^5.20.0"
   }
 }
