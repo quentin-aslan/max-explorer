@@ -51,15 +51,16 @@ export const useGoogleMaps = () => {
 
   const _getCityMarkerContent = (city: City) => {
     return `
-    <div class="z-10 p-1 text-black font-bold bg-white border border-black rounded-lg shadow-md cursor-pointer hover:bg-gray-900 hover:text-white">
-        <span class="text-[1rem]">${city.name}</span>
+    <div class="z-10 bg-blue-900 rounded-full">
+      <div class="w-4 h-4 border-2 border-white rounded-full shadow-[0_3px_6px_rgba(25,32,36,0.16),0_-1px_4px_rgba(25,32,36,0.04)]"></div>
     </div>
     `
   }
 
   const _getHighlightedCityMarkerContent = (city: City) => {
     return `
-    <div class="bg-gray-900 text-white z-10 p-1 font-bold border border-black rounded-lg shadow-md cursor-pointer">
+
+    <div class="bg-blue-500 text-white p-1 font-bold border-2 border-white rounded-lg shadow-md cursor-pointer">
         <span class="text-[1rem]">${city.name}</span>
     </div>
     `
@@ -77,24 +78,22 @@ export const useGoogleMaps = () => {
       map: map.value,
       html: _getCityMarkerContent(city),
     })
-
     markers.value.push({ marker, city })
-
     return marker
   }
 
-  const highlightCityMarker = (cityId: number) => {
-    const marker = markers.value.find(({ city: cityItem }) => cityItem.id === cityId)
+  const highlightCityMarker = (city: City) => {
+    const marker = markers.value.find(({ city: cityItem }) => cityItem.id === city.id)
     if (!marker) return
 
-    marker.marker.updateDivHtml(_getHighlightedCityMarkerContent(marker.city))
+    marker.marker.updateDivHtml(_getHighlightedCityMarkerContent(marker.city), { zIndex: 10 })
   }
 
-  const clearHighlightedCityMarker = (cityId: number) => {
-    const marker = markers.value.find(({ city: cityItem }) => cityItem.id === cityId)
+  const clearHighlightedCityMarker = (city: City) => {
+    const marker = markers.value.find(({ city: cityItem }) => cityItem.id === city.id)
     if (!marker) return
 
-    marker.marker.updateDivHtml(_getCityMarkerContent(marker.city))
+    marker.marker.updateDivHtml(_getCityMarkerContent(marker.city), { zIndex: 0 })
   }
 
   const clearMarkers = () => {

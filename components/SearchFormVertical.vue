@@ -22,7 +22,7 @@
       <Calendar v-model="returnDate" :showIcon="true" dateFormat="dd/mm/yy" class="w-full"/>
     </div>
 
-    <Button type="submit" label="Rechercher les meilleurs prix" class="w-full"/>
+    <Button type="submit" label="Rechercher !" class="w-full"/>
   </form>
 </template>
 

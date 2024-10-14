@@ -17,7 +17,6 @@ export interface City {
     id: string,
     name: string,
     distanceWithOrigin: number,
-    google_place_id: string,
     latitude: number,
     longitude: number
 }

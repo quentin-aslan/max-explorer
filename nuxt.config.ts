@@ -13,7 +13,7 @@ export default defineNuxtConfig({
   modules: [
     '@primevue/nuxt-module',
     '@nuxtjs/tailwindcss',
-    //'@prisma/nuxt',
+    '@prisma/nuxt',
   ],
   primevue: {
     options: {

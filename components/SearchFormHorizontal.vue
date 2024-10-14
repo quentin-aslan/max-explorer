@@ -1,6 +1,6 @@
 <template>
   <form
-      @submit.prevent="research"
+      @submit.prevent="() => { research(); expandForm = false; }"
       class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 w-full bg-white rounded-lg p-6"
   >
     <!-- Ville de départ -->
@@ -9,6 +9,7 @@
         <InputText
             v-model="departureStation"
             @focus="expandForm = true"
+            @click="expandForm = !expandForm"
             placeholder="Toulouse Matabiau"
             class="w-full p-4"
         />
@@ -49,7 +50,7 @@
 
     <transition v-if="expandForm || !isMobile" name="fade" mode="out-in">
       <div class="w-full h-full lg:w-auto relative mt-8">
-        <Button type="submit" label="Rechercher les meilleurs prix" class="w-full"/>
+        <Button type="submit" label="Rechercher !" class="w-full"/>
       </div>
     </transition>
 
