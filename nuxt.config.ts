@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   runtimeConfig: {
+    DATABASE_URL: process.env.DATABASE_URL,
     openWeatherMapApiKey: process.env.OPEN_WEATHER_MAP_API_KEY,
     public: {
       GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
