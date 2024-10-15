@@ -6,10 +6,7 @@ const departureDate = ref<Date | null>(null);
 const returnDate = ref<Date | null>(null);
 
 export const useSearchForm = () => {
-    const { fetchTrains } = useTrains()
     const toast = useToast()
-
-    const { startLoading, stopLoading} = useLoader()
 
     const research = async () => {
 
@@ -42,7 +39,6 @@ export const useSearchForm = () => {
 
             return
         }
-
         navigateTo({
             path: '/results',
             query: {

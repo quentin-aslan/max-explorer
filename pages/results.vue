@@ -33,7 +33,7 @@
 
         <div
             @click="isCityListVisibleOnMobile = !isCityListVisibleOnMobile"
-             class="lg:hidden fixed bottom-0 w-full bg-blue-200 p-4 text-center font-bold"
+             class="lg:hidden fixed bottom-0 flex flex-col justify-center w-full bg-blue-900 text-white h-[8%] text-lg text-center font-bold"
         >
           <span v-if="isCityListVisible">Afficher la carte <i class="pi pi-map"></i> </span>
           <span v-else>Afficher la liste des destination <i class="pi pi-map-marker"></i> </span>
@@ -50,22 +50,23 @@ import { ref } from 'vue';
 import {useTrains} from "~/composables/use-trains";
 import type {City} from "~/types";
 
+const route = useRoute()
 const { startLoading, stopLoading } = useLoader()
 const { departureTrains, cities, isFetchTrainsLoading, fetchTrains  } = useTrains()
 const toast = useToast()
 
 const { initFormValue } = useSearchForm()
-let { departureStation, departureDate, returnDate } = useRoute().query // Get the data from the URL
-if(!departureStation || !departureDate || !returnDate) {
-  navigateTo('/')
-}
-
-departureDate = new Date(departureDate)
-returnDate = new Date(returnDate)
-
 
 const getResults = async () => {
   startLoading()
+  let { departureStation, departureDate, returnDate } = route.query
+  if(!departureStation || !departureDate || !returnDate) {
+    navigateTo('/')
+  }
+
+  departureDate = new Date(departureDate)
+  returnDate = new Date(returnDate)
+
   await fetchTrains(departureDate, returnDate, departureStation)
   // TODO: Utiliser un store ?
   initFormValue(departureDate.value, undefined, departureDate, returnDate)
@@ -73,6 +74,7 @@ const getResults = async () => {
 }
 
 await getResults()
+watch(route, getResults)
 
 const { isMobile } = useIsMobile()
 const isCityListVisibleOnMobile = ref(true)
