@@ -1,6 +1,6 @@
 <template>
   <TheLoader />
-  <div class="md:p-15 flex flex-col justify-center lg:items-center lg:flex-row gap-8 p-6">
+  <div class="md:p-15 flex flex-col justify-center lg:items-center lg:flex-row lg:gap-8 p-6">
     <!-- Barre de recherche sur la gauche en mode desktop -->
     <div class="order-2 lg:order-1 lg:w-1/3 flex justify-center lg:justify-start">
       <SearchFromV2 />
@@ -8,16 +8,13 @@
 
     <!-- Section texte -->
     <div class="order-1 lg:order-2 lg:w-2/3 flex lg:justify-start">
-      <div class="text-center flex flex-col justify-between lg:text-left p-6 lg:p-12">
-        <h1 class="text-3xl lg:text-5xl font-bold text-surface-900 mb-4">
-          Découvre la France 🇫🇷
+      <div class="flex flex-col justify-between lg:text-left p-6 lg:p-12">
+        <h1 class="text-2xl lg:text-5xl font-bold text-surface-900 mb-4">
+          Découvre la France 🇫🇷 <br> <span class="text-blue-800">avec MAX JEUNE</span>
           <br />
-          <span class="text-blue-800">Voyage avec MAX JEUNE</span>
         </h1>
         <p class="text-lg text-surface-700 leading-relaxed">
-          Profite de trajets gratuits et illimités avec MAX JEUNE ! Pars à l'aventure depuis ta ville en quelques clics.
-          <br />
-          Pas besoin d'une destination précise ? Renseigne simplement ta ville de départ et tes dates, et on s'occupe du reste !
+          <span>Renseigne simplement ta ville de départ et tes dates et on te propose la liste des destinations eligible <span class="text-blue-900 font-bold">MAX JEUNE à <span class="text-2xl">0€</span></span> !</span>
         </p>
       </div>
     </div>

@@ -17,6 +17,7 @@
     "@prisma/nuxt": "^0.0.35",
     "axios": "^1.7.7",
     "nuxt": "^3.13.0",
+    "primeicons": "^7.0.0",
     "primevue": "^4.1.0",
     "vue": "latest",
     "vue-router": "latest"

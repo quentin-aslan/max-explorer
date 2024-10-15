@@ -1,4 +1,5 @@
 import axios from "axios";
+import mock_toulouse from "../mocks/mock_toulouse.json"
 
 interface Props {
     origin: string,
@@ -146,6 +147,9 @@ const searchRoundTrips = async (date: string, returnDate: string, origin, destin
 
 export default defineEventHandler(async (event) => {
     const { origin, destination,  departureDate, returnDate }: Props = getQuery(event);
+
+    const useMock =  false
+    if(useMock) return mock_toulouse
 
     if (!origin || !departureDate || !returnDate) {
         throw createError({

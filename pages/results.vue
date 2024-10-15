@@ -2,24 +2,25 @@
   <TheLoader />
   <div class="z-10 flex flex-col max-h-screen overflow-hidden">
     <!-- Formulaire de recherche -->
-    <SearchFormHorizontal />
+    <header>
+      <SearchFormHorizontal class="hidden lg:flex" />
+      <SearchDetailsMobile class="lg:hidden" />
+    </header>
     <section v-if="!isFetchTrainsLoading">
       <!-- Section pour les résultats -->
       <h2 v-if="cities.length === 0" class="text-3xl text-blue-900">Aucun Résultat :/</h2>
       <section v-else class="flex flex-col lg:flex-row gap-2">
         <!-- Liste des villes accessibles -->
-        <div class="lg:w-[40%] h-screen p-4">
+        <div v-if="isCityListVisible" class="lg:w-[40%] h-screen p-4">
           <CityList
-              v-if="cities.length"
               v-model="citySelected"
               :cities="cities"
-              class="hidden lg:flex"
           />
         </div>
 
         <!--  Desktop Map View (fixée à droite) -->
         <div
-            v-if="cities.length > 0"
+            v-if="isMapVisible"
             class="h-screen w-full lg:w-[60%] fixed right-0"
         >
           <Map
@@ -29,6 +30,15 @@
               :cities="cities"
           />
         </div>
+
+        <div
+            @click="isCityListVisibleOnMobile = !isCityListVisibleOnMobile"
+             class="lg:hidden fixed bottom-0 w-full bg-blue-200 p-4 text-center font-bold"
+        >
+          <span v-if="isCityListVisible">Afficher la carte <i class="pi pi-map"></i> </span>
+          <span v-else>Afficher la liste des destination <i class="pi pi-map-marker"></i> </span>
+        </div>
+
       </section>
     </section>
   </div>
@@ -38,15 +48,40 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import {useTrains} from "~/composables/use-trains";
+import type {City} from "~/types";
 
-const { departureTrains, cities, isFetchTrainsLoading  } = useTrains()
+const { startLoading, stopLoading } = useLoader()
+const { departureTrains, cities, isFetchTrainsLoading, fetchTrains  } = useTrains()
+const toast = useToast()
+
+const { initFormValue } = useSearchForm()
+let { departureStation, departureDate, returnDate } = useRoute().query // Get the data from the URL
+if(!departureStation || !departureDate || !returnDate) {
+  navigateTo('/')
+}
+
+departureDate = new Date(departureDate)
+returnDate = new Date(returnDate)
+
+
+const getResults = async () => {
+  startLoading()
+  await fetchTrains(departureDate, returnDate, departureStation)
+  // TODO: Utiliser un store ?
+  initFormValue(departureDate.value, undefined, departureDate, returnDate)
+  stopLoading()
+}
+
+await getResults()
+
+const { isMobile } = useIsMobile()
+const isCityListVisibleOnMobile = ref(true)
+
+const isCityListVisible = computed(() => !isMobile.value || (isMobile.value && isCityListVisibleOnMobile.value))
+
+const isMapVisible = computed(() => !isMobile.value || (isMobile.value && !isCityListVisibleOnMobile.value))
 
 watch(departureTrains, () => citySelected.value = null )
 
 const citySelected = ref<City>(null);
-
-watch(citySelected, () => {
-  // TODO: Center to the city on the map + hightlight the city card
-  console.log('TODO: Center to the city on the map + hightlight the city card')
-})
 </script>

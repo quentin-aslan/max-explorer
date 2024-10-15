@@ -1,13 +1,13 @@
 <template>
   <form @submit.prevent="research" class="flex flex-col gap-4 w-full bg-white shadow-md rounded-md p-6">
-    <h2 class="text-xl text-blue-800 font-bold text-center mb-4">Recherchez vos billets</h2>
+    <h2 class="text-2xl text-blue-800 font-bold mb-4">Recherche ta prochaine destination !</h2>
 
     <div>
       <label class="block text-gray-700 mb-2" for="departureStation">Ville de départ</label>
       <InputText v-model="departureStation" placeholder="Gare ou ville" class="w-full"/>
     </div>
 
-    <div>
+    <div class="hidden">
       <label class="block text-gray-700 mb-2" for="destinationStation">Ville d'arrivée (optionnel)</label>
       <InputText v-model="destinationStation" placeholder="Gare ou ville" class="w-full"/>
     </div>

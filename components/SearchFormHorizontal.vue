@@ -59,7 +59,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import {useIsMobile} from "~/composables/use-is-mobile";
 
 // Variables venant du composable
 const { departureStation, destinationStation, departureDate, returnDate, research } = useSearchForm()
@@ -67,15 +68,7 @@ const { departureStation, destinationStation, departureDate, returnDate, researc
 // Variable pour suivre si le formulaire est "expand"
 const expandForm = ref(false)
 
-// Détection si on est sur mobile
-const isMobile = ref(false)
-onMounted(() => {
-  const checkMobile = () => {
-    isMobile.value = window.innerWidth <= 1024
-  }
-  checkMobile()
-  window.addEventListener('resize', checkMobile)
-})
+const { isMobile } = useIsMobile()
 </script>
 
 <style>

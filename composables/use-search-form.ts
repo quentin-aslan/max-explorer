@@ -43,11 +43,22 @@ export const useSearchForm = () => {
             return
         }
 
-        startLoading()
-        await fetchTrains(departureDate.value, returnDate.value, departureStation.value, destinationStation.value)
+        navigateTo({
+            path: '/results',
+            query: {
+                departureStation: departureStation.value,
+                destinationStation: destinationStation.value,
+                departureDate: departureDate.value,
+                returnDate: returnDate.value,
+            }
+        })
+    }
 
-        navigateTo('/results')
-        stopLoading()
+    const initFormValue = (newDepartureStation, newDestinationStation, newDepartureDate, newReturnDate) => {
+        if(newDepartureStation) departureStation.value = newDepartureStation
+        if(newDestinationStation) destinationStation.value = newDestinationStation
+        if(newDepartureDate) departureDate.value = newDepartureDate
+        if(newReturnDate) returnDate.value = newReturnDate
     }
 
     return {
@@ -55,6 +66,7 @@ export const useSearchForm = () => {
         destinationStation,
         departureDate,
         returnDate,
-        research
+        research,
+        initFormValue
     }
 }
