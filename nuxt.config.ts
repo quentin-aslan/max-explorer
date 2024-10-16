@@ -50,6 +50,9 @@ export default defineNuxtConfig({
       GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
     },
   },
+  routeRules: {
+    '/results': { ssr: false },
+  },
   alias: {
     ".prisma/client/index-browser": "./node_modules/.prisma/client/index-browser.js"
   },
