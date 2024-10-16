@@ -40,6 +40,9 @@ const MyPreset = definePreset(Aura, {
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: false },
+  build: {
+    transpile: ['@googlemaps/js-api-loader'],
+  },
   runtimeConfig: {
     DATABASE_URL: process.env.DATABASE_URL,
     openWeatherMapApiKey: process.env.OPEN_WEATHER_MAP_API_KEY,

@@ -8,7 +8,7 @@
     </header>
     <section v-if="!isFetchTrainsLoading">
       <!-- Section pour les résultats -->
-      <h2 v-if="cities.length === 0" class="text-3xl text-blue-900">Aucun Résultat :/</h2>
+      <h2 v-if="noResults" class="text-3xl text-blue-900">Aucun Résultat :/</h2>
       <section v-else class="flex flex-col lg:flex-row gap-2">
         <!-- Liste des villes accessibles -->
         <div v-if="isCityListVisible" class="lg:w-[40%] h-screen p-4">
@@ -62,6 +62,7 @@ const getResults = async () => {
   let { departureStation, departureDate, returnDate } = route.query
   if(!departureStation || !departureDate || !returnDate) {
     navigateTo('/')
+    return
   }
 
   departureDate = new Date(departureDate)
@@ -78,10 +79,9 @@ watch(route, getResults)
 
 const { isMobile } = useIsMobile()
 const isCityListVisibleOnMobile = ref(true)
-
 const isCityListVisible = computed(() => !isMobile.value || (isMobile.value && isCityListVisibleOnMobile.value))
-
 const isMapVisible = computed(() => !isMobile.value || (isMobile.value && !isCityListVisibleOnMobile.value))
+const noResults = computed(() => !cities.value || cities.value.length === 0)
 
 watch(departureTrains, () => citySelected.value = null )
 
