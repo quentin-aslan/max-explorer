@@ -1,5 +1,5 @@
 <template>
-  <div class="z-10 flex flex-col max-h-screen overflow-hidden overscroll-none">
+  <div class="z-10 flex flex-col max-h-screen overflow-hidden">
     <!-- Formulaire de recherche -->
     <header>
       <SearchFormHorizontal @research="onResearch" class="hidden lg:flex" />
@@ -10,7 +10,7 @@
       <h2 v-if="noResults" class="text-3xl text-blue-900">Aucun Résultat :/</h2>
       <section v-else class="flex flex-col lg:flex-row gap-2">
         <!-- Liste des villes accessibles -->
-        <div v-if="isCityListVisible" class="lg:w-[40%] h-screen p-4">
+        <div v-if="isCityListVisible" class="lg:w-[40%] p-4">
           <CityList
               v-model="citySelected"
               :cities="cities"
@@ -20,7 +20,7 @@
         <!--  Desktop Map View (fixée à droite) -->
         <div
             v-if="isMapVisible"
-            class="h-screen w-full lg:w-[60%] fixed right-0"
+            class="w-full lg:w-[60%] fixed right-0"
         >
           <Map
               ref="mapDesktop"
