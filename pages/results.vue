@@ -1,5 +1,5 @@
 <template>
-  <div class="z-10 flex flex-col max-h-screen overflow-hidden">
+  <div class="z-10 flex flex-col max-h-screen overflow-hidden overscroll-none">
     <!-- Formulaire de recherche -->
     <header>
       <SearchFormHorizontal @research="onResearch" class="hidden lg:flex" />
@@ -73,7 +73,6 @@ const getResults = async () => {
   stopLoading()
 }
 
-await getResults()
 
 const { isMobile } = useIsMobile()
 const isCityListVisibleOnMobile = ref(true)
@@ -90,4 +89,9 @@ const onResearch = () => {
     getResults()
   }, 200)
 }
+
+onBeforeMount(() => {
+  getResults()
+})
+
 </script>
