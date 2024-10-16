@@ -1,9 +1,8 @@
 <template>
-  <TheLoader />
   <div class="z-10 flex flex-col max-h-screen overflow-hidden">
     <!-- Formulaire de recherche -->
     <header>
-      <SearchFormHorizontal class="hidden lg:flex" />
+      <SearchFormHorizontal @research="onResearch" class="hidden lg:flex" />
       <SearchDetailsMobile class="lg:hidden" />
     </header>
     <section v-if="!isFetchTrainsLoading">
@@ -75,7 +74,6 @@ const getResults = async () => {
 }
 
 await getResults()
-watch(route, getResults)
 
 const { isMobile } = useIsMobile()
 const isCityListVisibleOnMobile = ref(true)
@@ -86,4 +84,10 @@ const noResults = computed(() => !cities.value || cities.value.length === 0)
 watch(departureTrains, () => citySelected.value = null )
 
 const citySelected = ref<City>(null);
+
+const onResearch = () => {
+  setTimeout(() => {
+    getResults()
+  }, 200)
+}
 </script>

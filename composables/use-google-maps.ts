@@ -51,7 +51,7 @@ export const useGoogleMaps = () => {
 
   const _getCityMarkerContent = (city: City) => {
     return `
-    <div class="z-10 bg-blue-900 rounded-full">
+    <div class="z-10 bg-rose-600 rounded-full">
       <div class="w-4 h-4 border-2 border-white rounded-full shadow-[0_3px_6px_rgba(25,32,36,0.16),0_-1px_4px_rgba(25,32,36,0.04)]"></div>
     </div>
     `
@@ -60,7 +60,7 @@ export const useGoogleMaps = () => {
   const _getHighlightedCityMarkerContent = (city: City) => {
     return `
 
-    <div class="bg-blue-500 text-white p-1 font-bold border-2 border-white rounded-lg shadow-md cursor-pointer">
+    <div class="bg-blue-900 text-white p-1 font-bold border-2 border-white rounded-lg shadow-md cursor-pointer">
         <span class="text-[1rem]">${city.name}</span>
     </div>
     `

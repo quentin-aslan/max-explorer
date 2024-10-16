@@ -12,6 +12,7 @@ import type {City} from "~/types";
 
 type Props = {
   cities: City[]
+  departureCity: City
 }
 
 const props = defineProps<Props>()

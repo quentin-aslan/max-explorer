@@ -3,5 +3,8 @@
     <NuxtRouteAnnouncer />
     <NuxtPage />
     <Toast class="z-50" />
+    <TheLoader />
   </div>
 </template>
+<script setup lang="ts">
+</script>

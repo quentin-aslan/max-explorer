@@ -61,8 +61,9 @@ const fetchGeoAPI = async (cityName: string): Promise<City> => {
 }
 
 const fetchTrainStationListFromSNCF = async (cityName: string): Promise<City> => {
+    const citySplited = cityName.split(' ')[0] // Use only the first word of the city name (ex: "Paris (Intramuros)" => "Paris")
     const BASE_SNCF_API_TRAIN_STATION_LIST = 'https://ressources.data.sncf.com/api/explore/v2.1/catalog/datasets/liste-des-gares/records';
-    const where = `libelle like "${cityName}"`
+    const where = `libelle like "${citySplited}"`
     console.log('fetchTrainStationListFromSNCF where : ', where)
     const limit = 1
     const { data, status }: {data: TrainStationListResponse} = await axios.get(BASE_SNCF_API_TRAIN_STATION_LIST, {
@@ -79,8 +80,8 @@ const fetchTrainStationListFromSNCF = async (cityName: string): Promise<City> =>
 
     const trainStation = data.results[0]
     console.log('c_geo : ', trainStation.c_geo)
-    const latitude = trainStation.c_geo.lat
-    const longitude = trainStation.c_geo.lon
+    const latitude = trainStation.c_geo.lat ?? 0
+    const longitude = trainStation.c_geo.lon ?? 0
 
     return {
         name: cityName,

@@ -1,7 +1,7 @@
 <template>
   <form
-      @submit.prevent="() => { research(); expandForm = false; }"
-      class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 w-full bg-white rounded-lg p-6"
+      @submit.prevent="() => { research(); expandForm = false; emit('research') }"
+      class="flex flex-col lg:flex-row lg:items-center gap-4 w-full bg-white rounded-lg p-6"
   >
     <!-- Ville de départ -->
     <div class="w-full lg:w-auto relative">
@@ -11,16 +11,16 @@
             @focus="expandForm = true"
             @click="expandForm = !expandForm"
             placeholder="Toulouse Matabiau"
-            class="w-full p-4"
+            class="w-full"
         />
       <span v-if="!expandForm || isMobile" class="lg:hidden text-sm"> ⬇ Cliquez pour afficher les autres parametres ⬇ </span>
     </div>
 
-    <!-- Hide by default on mobile -->
+    <!-- Hide for the explore research (DONC POUR LE MOMENT HIDE TOUT LE TEMPS) -->
     <transition v-if="expandForm || !isMobile" name="fade" mode="out-in">
-      <div class="w-full lg:w-auto relative">
+      <div class="hidden w-full lg:w-auto relative">
         <label class="block text-gray-700 mb-2" for="destinationStation">Ville d'arrivée (optionnel)</label>
-          <InputText v-model="destinationStation" placeholder="Brest" class="w-full p-4" />
+          <InputText v-model="destinationStation" placeholder="Brest" />
       </div>
     </transition>
 
@@ -69,6 +69,9 @@ const { departureStation, destinationStation, departureDate, returnDate, researc
 const expandForm = ref(false)
 
 const { isMobile } = useIsMobile()
+
+const emit = defineEmits(['research']);
+
 </script>
 
 <style>
