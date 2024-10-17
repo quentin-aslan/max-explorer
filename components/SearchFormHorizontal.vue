@@ -1,55 +1,54 @@
 <template>
   <form
-      @submit.prevent="() => { research(); expandForm = false; emit('research') }"
       class="flex flex-col lg:flex-row lg:items-center gap-4 w-full bg-white rounded-lg p-6"
+      @submit.prevent="() => { research(); expandForm = false; emit('research') }"
   >
     <!-- Ville de départ -->
     <div class="w-full lg:w-auto relative">
       <label class="block text-gray-700 mb-2" for="departureStation">Ville de départ</label>
         <InputText
             v-model="departureStation"
-            @focus="expandForm = true"
-            @click="expandForm = !expandForm"
             placeholder="Toulouse Matabiau"
             class="w-full"
+            @focus="expandForm = true"
+            @click="expandForm = !expandForm"
         />
       <span v-if="!expandForm || isMobile" class="lg:hidden text-sm"> ⬇ Cliquez pour afficher les autres parametres ⬇ </span>
     </div>
 
     <!-- Hide for the explore research (DONC POUR LE MOMENT HIDE TOUT LE TEMPS) -->
-    <transition v-if="expandForm || !isMobile" name="fade" mode="out-in">
-      <div class="hidden w-full lg:w-auto relative">
+    <transition name="fade" mode="out-in">
+      <div v-if="expandForm || !isMobile" class="hidden w-full lg:w-auto relative">
         <label class="block text-gray-700 mb-2" for="destinationStation">Ville d'arrivée (optionnel)</label>
           <InputText v-model="destinationStation" placeholder="Brest" />
       </div>
     </transition>
 
-    <transition v-if="expandForm || !isMobile" name="fade" mode="out-in">
-      <div class="w-full lg:w-[15%] relative">
+    <transition name="fade" mode="out-in">
+      <div v-if="expandForm || !isMobile" class="w-full lg:w-[15%] relative">
         <label class="block text-gray-700 mb-2" for="departureDate">Date de départ</label>
         <Calendar
             v-model="departureDate"
-            :showIcon="true"
-            dateFormat="dd/mm/yy"
+            :show-icon="true"
+            date-format="dd/mm/yy"
             class="w-full"
         />
       </div>
     </transition>
 
-    <transition v-if="expandForm || !isMobile" name="fade" mode="out-in">
-      <div class="w-full lg:w-[15%] relative">
+    <transition name="fade" mode="out-in">
+      <div v-if="expandForm || !isMobile" class="w-full lg:w-[15%] relative">
         <label class="block text-gray-700 mb-2" for="returnDate">Date de retour</label>
         <Calendar
             v-model="returnDate"
-            :showIcon="true"
-            dateFormat="dd/mm/yy"
+            :show-icon="true"
+            date-format="dd/mm/yy"
             class="w-full"
         />
       </div>
     </transition>
-
-    <transition v-if="expandForm || !isMobile" name="fade" mode="out-in">
-      <div class="w-full h-full lg:w-auto relative mt-8">
+    <transition name="fade" mode="out-in">
+      <div v-if="expandForm || !isMobile" class="w-full h-full lg:w-auto relative mt-8">
         <Button type="submit" label="Rechercher !" class="w-full"/>
       </div>
     </transition>

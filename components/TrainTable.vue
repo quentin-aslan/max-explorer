@@ -4,7 +4,8 @@
       Total Count : <span class="font-semibold">{{ trains.length }}</span>
     </div>
 
-    <div class="md:hidden" v-for="train in trains"
+    <div
+    v-for="train in trains" :key="train.id" class="md:hidden"
          :class="[
             'flex flex-col lg:flex-row gap-2 p-4 md:p-1 border',
             {'bg-gray-100 opacity-40 border-gray-300': train.od_happy_card === 'NON'},
@@ -15,12 +16,12 @@
       <span><span class="font-bold">{{ train.heure_arrivee }}</span> - {{ train.destination }}</span>
     </div>
 
-    <DataTable class="hidden md:block" :value="trains" stripedRows>
-      <Column field="train_no" header="#"></Column>
-      <Column field="origine" header="Départ"></Column>
-      <Column field="heure_depart" header="Heure de Départ"></Column>
-      <Column field="destination" header="Arrivée  "></Column>
-      <Column field="heure_arrivee" header="Heure d'Arrivée"></Column>
+    <DataTable class="hidden md:block" :value="trains" striped-rows>
+      <Column field="train_no" header="#"/>
+      <Column field="origine" header="Départ"/>
+      <Column field="heure_depart" header="Heure de Départ"/>
+      <Column field="destination" header="Arrivée  "/>
+      <Column field="heure_arrivee" header="Heure d'Arrivée"/>
     </DataTable>
   </section>
 </template>

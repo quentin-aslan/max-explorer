@@ -21,15 +21,15 @@
         <!-- Présentation des étapes avec balises de liste pour une meilleure sémantique -->
         <ol class="flex flex-col lg:gap-4 list-decimal list-inside">
           <li class="flex items-center mb-4 lg:mb-0 lg:mr-8">
-            <i class="pi pi-map-marker text-blue-900 text-3xl mr-2"></i>
+            <i class="pi pi-map-marker text-blue-900 text-3xl mr-2"/>
             <span class="text-lg">1. Indique ta ville de départ</span>
           </li>
           <li class="flex items-center mb-4 lg:mb-0 lg:mr-8">
-            <i class="pi pi-calendar text-blue-900 text-3xl mr-2"></i>
+            <i class="pi pi-calendar text-blue-900 text-3xl mr-2"/>
             <span class="text-lg">2. Choisis tes dates</span>
           </li>
           <li class="flex items-center">
-            <i class="pi pi-compass text-blue-900 text-3xl mr-2"></i>
+            <i class="pi pi-compass text-blue-900 text-3xl mr-2"/>
             <span class="text-lg">3. Découvre où tu peux aller à 0€</span>
           </li>
         </ol>
@@ -50,4 +50,7 @@
 </template>
 <script setup lang="ts">
 const { isMobile } = useIsMobile()
+
+const a: string[] = ['']
+console.log(a)
 </script>

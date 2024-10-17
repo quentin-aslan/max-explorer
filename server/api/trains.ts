@@ -64,7 +64,7 @@ const fetchTrain = async (where:string, offset: number, limit: number) : Promise
 
 const getTrains = async (where: string) => {
     console.log('getTrains, where : ', where)
-    let allTrains: Train[] = []
+    const allTrains: Train[] = []
 
     let totalCount: number = 0
     let offset = 0

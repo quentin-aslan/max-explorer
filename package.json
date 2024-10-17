@@ -1,5 +1,6 @@
 {
-  "name": "nuxt-app",
+  "name": "max-explorer",
+  "author": "Quentin Aslan <quentin.aslan@outlook.com>",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,10 +8,13 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
+    "@nuxt/eslint": "^0.6.0",
     "@nuxt/image": "^1.8.1",
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@primevue/nuxt-module": "^4.1.0",

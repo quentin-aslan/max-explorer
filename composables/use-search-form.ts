@@ -2,7 +2,7 @@ import {ref} from "vue";
 
 const departureStation = ref('Toulouse');
 const destinationStation = ref('')
-const departureDate = ref<Date | null>(null);
+const departureDate = ref<Date | null>(new Date());
 const returnDate = ref<Date | null>(null);
 
 export const useSearchForm = () => {

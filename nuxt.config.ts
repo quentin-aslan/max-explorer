@@ -61,6 +61,8 @@ export default defineNuxtConfig({
     '@primevue/nuxt-module',
     '@nuxtjs/tailwindcss',
     '@prisma/nuxt',
+    '@nuxt/image',
+    '@nuxt/eslint'
   ],
   primevue: {
     options: {
@@ -73,5 +75,9 @@ export default defineNuxtConfig({
   prisma: {
     installStudio: false,
   },
-
+  eslint: {
+    config: {
+      stylistic: true
+    },
+  },
 })

@@ -6,13 +6,13 @@
     <div
         v-for="train in trains"
         :key="train.id"
-        @click="onTrainClick(train)"
         :class="[
         'flex flex-col gap-2 p-4 border rounded duration-150 hover:-translate-x-1 hover:shadow cursor-pointer',
         { 'bg-gray-100 opacity-40 border-gray-300': train.od_happy_card === 'NON' },
         { hidden: !isFullDisplayed && train.od_happy_card === 'NON' },
         { 'bg-gray-white border-2': train.od_happy_card === 'OUI' },
       ]"
+        @click="onTrainClick(train)"
     >
       <div class="flex flex-row justify-between">
         <h2 class="text-gray-500">

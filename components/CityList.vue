@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-4 h-screen overflow-scroll">
-    <Card v-for="city in cities" @click="() => onCityClick(city)" class="w-full cursor-pointer hover:-translate-x-0.5">
+    <Card v-for="city in cities" :key="city.id" class="w-full cursor-pointer hover:-translate-x-0.5" @click="() => onCityClick(city)">
       <template #title>
         <div class="flex flex-col gap-1">
           <span>{{ city.name }}</span>

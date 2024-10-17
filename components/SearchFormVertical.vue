@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="research" class="flex flex-col gap-4 w-full bg-white shadow-md rounded-md p-6">
+  <form class="flex flex-col gap-4 w-full bg-white shadow-md rounded-md p-6" @submit.prevent="research">
     <h2 class="text-2xl text-blue-900 font-bold mb-4">Recherche ta prochaine destination !</h2>
 
     <div>
@@ -14,12 +14,16 @@
 
     <div>
       <label class="block text-gray-700 mb-2" for="departureDate">Date de départ</label>
-      <DatePicker v-model="departureDate" :minDate="departureDateMin" :maxDate="dateMax" :showIcon="true" dateFormat="dd/mm/yy" class="w-full"/>
+      <DatePicker
+          v-model="departureDate" :min-date="departureDateMin" :max-date="dateMax" :show-icon="true"
+          date-format="dd/mm/yy" class="w-full"/>
     </div>
 
     <div>
       <label class="block text-gray-700 mb-2" for="returnDate">Date de retour</label>
-      <DatePicker v-model="returnDate" :minDate="returnDateMin" :maxDate="dateMax"  :showIcon="true" dateFormat="dd/mm/yy" class="w-full"/>
+      <DatePicker
+          v-model="returnDate" :min-date="returnDateMin" :max-date="dateMax" :show-icon="true"
+          date-format="dd/mm/yy" class="w-full"/>
     </div>
 
     <Button type="submit" label="Rechercher !" class="w-full"/>
@@ -27,10 +31,10 @@
 </template>
 
 <script setup>
-const { departureStation, destinationStation, departureDate, returnDate, research } = useSearchForm()
+const {departureStation, destinationStation, departureDate, returnDate, research} = useSearchForm()
 
 const departureDateMin = ref(new Date())
-const returnDateMin = computed (() => departureDate.value ?? departureDateMin.value)
+const returnDateMin = computed(() => departureDate.value ?? departureDateMin.value)
 // 30 day from now because SNCF API only allows 30 days in the future
 const dateMax = ref(new Date(new Date().setDate(new Date().getDate() + 30)));
-</script>
+</script> 
