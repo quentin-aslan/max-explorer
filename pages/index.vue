@@ -1,7 +1,10 @@
 <template>
   <div class="relative min-h-screen">
     <!-- Image d'arrière-plan -->
-    <div :class="`absolute inset-0 bg-cover bg-center bg-no-repeat bg-[url('${bgUrl}')]`" />
+    <div
+      class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+      :style="{ backgroundImage: `url('${bgUrl}')` }"
+    />
 
     <!-- Filtre gris par-dessus l'image d'arrière-plan -->
     <div class="absolute inset-0 bg-gray-100 opacity-80" />
