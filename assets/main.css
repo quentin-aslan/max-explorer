@@ -1,6 +1,11 @@
 @import "primeicons/primeicons.css";
+
+@import "fonts/generalSans/general-sans.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root{ color-scheme: only light}
+:root{
+    color-scheme: only light
+}
