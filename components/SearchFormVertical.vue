@@ -38,14 +38,14 @@
     </div>
 
     <div class="flex flex-row h-14">
-      <Calendar
+      <DatePicker
         v-model="departureDate"
         :min-date="departureDateMin"
         :max-date="dateMax"
         date-format="dd/mm/yy"
         class="w-full"
         placeholder="Départ"
-        :dt="departureCalendar"
+        :pt="departureCalendar"
       />
       <Calendar
         v-model="returnDate"
@@ -54,7 +54,7 @@
         date-format="dd/mm/yy"
         class="w-full"
         placeholder="Retour"
-        :dt="returnCalendar"
+        :pt="returnCalendar"
       />
     </div>
     <button
@@ -75,22 +75,17 @@ const returnDateMin = computed(() => departureDate.value ?? departureDateMin.val
 const dateMax = ref(new Date(new Date().setDate(new Date().getDate() + 30)))
 
 const departureCalendar = ref({
-  colorScheme: {
-    light: {
-      inputtext: {
-        borderRadius: '0 0 0 0', // bottom-left, top-left corners
-        backgroundColor: 'black',
-      },
+  pcInputText: {
+    root: {
+      class: '!rounded-l-lg',
     },
   },
 })
 
 const returnCalendar = ref({
-  colorScheme: {
-    light: {
-      pcInputText: {
-        //borderRadius: '0 10px 10px 0', // bottom-right, top-right corners
-      },
+  pcInputText: {
+    root: {
+      class: '!rounded-r-lg',
     },
   },
 })
