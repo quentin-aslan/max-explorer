@@ -1,40 +1,43 @@
 <template>
   <div class="flex flex-col gap-4 h-screen overflow-scroll">
-    <Card v-for="city in cities" :key="city.id" class="w-full cursor-pointer hover:-translate-x-0.5" @click="() => onCityClick(city)">
+    <Card
+      v-for="city in cities"
+      :key="city.id"
+      class="w-full cursor-pointer hover:-translate-x-0.5"
+      @click="() => onCityClick(city)"
+    >
       <template #title>
         <div class="flex flex-col gap-1">
           <span>{{ city.name }}</span>
-          <span class="text-sm"> <strong>{{ getDepartureTrainsFromCity(city).length + getReturnTrainsFromCity(city).length}}</strong> Trains disponibles (A/R)</span>
+          <span class="text-sm"> <strong>{{ getDepartureTrainsFromCity(city).length + getReturnTrainsFromCity(city).length }}</strong> Trains disponibles (A/R)</span>
         </div>
       </template>
       <template #content>
         <div v-if="citySelected === city">
           <TrainTable :trains="getDepartureTrainsFromCity(city)" />
           <TrainTable :trains="getReturnTrainsFromCity(city)" />
-
         </div>
       </template>
     </Card>
   </div>
 </template>
 
-
 <script lang="ts" setup>
-import type {City} from "~/types";
+import type { City } from '~/types'
 
 const props = defineProps<{
-  cities: City[];
-}>();
+  cities: City[]
+}>()
 
-const citySelected = defineModel();
+const citySelected = defineModel()
 
-const { getDepartureTrainsFromCity, getReturnTrainsFromCity } = useTrains();
+const { getDepartureTrainsFromCity, getReturnTrainsFromCity } = useTrains()
 
 const onCityClick = (city: City) => {
   if (citySelected.value === city) {
-    citySelected.value = null;
-    return;
+    citySelected.value = null
+    return
   }
   citySelected.value = city
-};
+}
 </script>
