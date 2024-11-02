@@ -1,6 +1,5 @@
-import Aura from '@primevue/themes/aura';
-import {definePreset} from "@primevue/themes";
-
+import Aura from '@primevue/themes/aura'
+import { definePreset } from '@primevue/themes'
 
 const MyPreset = definePreset(Aura, {
   semantic: {
@@ -15,7 +14,7 @@ const MyPreset = definePreset(Aura, {
       700: '{blue.700}',
       800: '{blue.800}',
       900: '{blue.900}',
-      950: '{blue.950}'
+      950: '{blue.950}',
     },
     colorScheme: {
       light: {
@@ -23,26 +22,29 @@ const MyPreset = definePreset(Aura, {
           color: '{blue.900}',
           inverseColor: '#ffffff',
           hoverColor: '{blue.700}',
-          activeColor: '{blue.800}'
+          activeColor: '{blue.800}',
         },
         highlight: {
           background: '{zinc.950}',
           focusBackground: '{zinc.700}',
           color: '#ffffff',
-          focusColor: '#ffffff'
-        }
-      }
-    }
-  }
-});
-
+          focusColor: '#ffffff',
+        },
+      },
+    },
+  },
+})
 
 export default defineNuxtConfig({
-  compatibilityDate: '2024-04-03',
+  modules: [
+    '@primevue/nuxt-module',
+    '@nuxtjs/tailwindcss',
+    '@prisma/nuxt',
+    '@nuxt/image',
+    '@nuxt/eslint',
+  ],
   devtools: { enabled: false },
-  build: {
-    transpile: ['@googlemaps/js-api-loader'],
-  },
+  css: ['~/assets/main.css'],
   runtimeConfig: {
     DATABASE_URL: process.env.DATABASE_URL,
     openWeatherMapApiKey: process.env.OPEN_WEATHER_MAP_API_KEY,
@@ -50,34 +52,30 @@ export default defineNuxtConfig({
       GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
     },
   },
+  alias: {
+    '.prisma/client/index-browser': './node_modules/.prisma/client/index-browser.js',
+  },
+  build: {
+    transpile: ['@googlemaps/js-api-loader'],
+  },
   routeRules: {
     '/results': { ssr: false },
   },
-  alias: {
-    ".prisma/client/index-browser": "./node_modules/.prisma/client/index-browser.js"
+  compatibilityDate: '2024-04-03',
+  eslint: {
+    config: {
+      stylistic: true,
+    },
   },
-  css: ['~/assets/main.css'],
-  modules: [
-    '@primevue/nuxt-module',
-    '@nuxtjs/tailwindcss',
-    '@prisma/nuxt',
-    '@nuxt/image',
-    '@nuxt/eslint'
-  ],
   primevue: {
     options: {
       theme: {
         preset: MyPreset,
-        options: { darkModeSelector: ".fake-dark-selector" }
-      }
-    }
+        options: { darkModeSelector: '.fake-dark-selector' },
+      },
+    },
   },
   prisma: {
     installStudio: false,
-  },
-  eslint: {
-    config: {
-      stylistic: true
-    },
   },
 })

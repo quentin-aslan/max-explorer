@@ -16,3 +16,30 @@ model City {
   latitude  Float
   longitude Float
 }
+
+model Train {
+  id                          Int      @id @default(autoincrement())
+  date                        DateTime
+  trainNo                     String
+  entity                      String?
+  axe                         String?
+  originIata                  String
+  destinationIata             String
+  origin                      String
+  destination                 String
+  departureDateTime           DateTime
+  arrivalDateTime             DateTime
+  isEligibleForMaxSubscription Boolean
+  insertedAt                   DateTime @default(now())
+
+  // Indexes pour optimiser les requêtes
+  @@index([origin])
+  @@index([destination])
+  @@index([departureDateTime])
+  @@index([arrivalDateTime])
+  @@index([originIata])
+  @@index([destinationIata])
+  @@index([isEligibleForMaxSubscription])
+}
+
+// https://data.sncf.com/api/explore/v2.1/catalog/datasets/tgvmax/exports/csv?lang=fr&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B&refine=od_happy_card%3AOUI

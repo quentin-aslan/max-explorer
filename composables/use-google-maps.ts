@@ -2,7 +2,7 @@ import { Loader } from '@googlemaps/js-api-loader'
 import { ref } from 'vue'
 import { useHtmlMarker } from '~/composables/use-html-marker'
 import type { HTMLMapMarker } from '~/composables/use-html-marker'
-import type { City } from "~/types";
+import type { City } from '~/types'
 
 export const useGoogleMaps = () => {
   const mapElement = ref<HTMLDivElement | null>(null)

@@ -1,14 +1,14 @@
 <template>
   <div
-      ref="mapElement"
-      style="height: calc(100vh); width:100%;"
+    ref="mapElement"
+    style="height: calc(100vh); width:100%;"
   />
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useGoogleMaps } from '~/composables/use-google-maps'
-import type {City} from "~/types";
+import type { City } from '~/types'
 
 type Props = {
   cities: City[]
@@ -25,14 +25,14 @@ const {
   map,
   clearMarkers,
   highlightCityMarker,
-  clearHighlightedCityMarker
+  clearHighlightedCityMarker,
 } = useGoogleMaps()
 
 onMounted(async () => {
   if (mapElement.value) {
     await loadMap(mapElement.value, {
       lat: 46.603354,
-      lng: 1.888334
+      lng: 1.888334,
     }, 6.2)
     addCitiesOnMap()
   }
@@ -58,11 +58,11 @@ const addCitiesOnMap = () => {
 }
 
 const onCitySelectedChanges = (newCitySelected: City, oldCitySelected: City) => {
-  if(oldCitySelected) {
+  if (oldCitySelected) {
     clearHighlightedCityMarker(oldCitySelected)
   }
 
-  if(newCitySelected) {
+  if (newCitySelected) {
     highlightCityMarker(newCitySelected)
   }
 }
