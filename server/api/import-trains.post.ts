@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client'
 import axios from 'axios'
 import { defineEventHandler, createError } from 'h3'
 import { parse } from '@fast-csv/parse'
-import type { AdaptedTrainData } from '~/server/train-type'
 
 const prisma = new PrismaClient()
 

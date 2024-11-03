@@ -1,4 +1,4 @@
-import type { RoundTripDestination, AdaptedTrainData, DestinationJourneys } from '~/server/train-type'
+import type { RoundTripDestination, AdaptedTrainData, DestinationJourneys } from '~/types/common.ts'
 import prisma from '~/lib/prisma'
 
 const MIN_CONNECTION_TIME_SAME_STATION_MINUTES = 15
