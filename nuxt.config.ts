@@ -73,6 +73,23 @@ export default defineNuxtConfig({
         preset: MyPreset,
         options: { darkModeSelector: '.fake-dark-selector' },
       },
+      locale: {
+        firstDayOfWeek: 1,
+        dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+        dayNamesShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+        dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+        monthNames: [
+          'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
+          'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+        ],
+        monthNamesShort: [
+          'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jui', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc',
+        ],
+        today: 'Aujourd\'hui',
+        clear: 'Effacer',
+        dateFormat: 'dd/mm/yy',
+        weekHeader: 'Sem', // Pour l'en-tête de la semaine
+      },
     },
   },
   prisma: {

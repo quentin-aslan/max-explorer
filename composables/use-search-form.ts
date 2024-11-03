@@ -1,8 +1,8 @@
 import { ref } from 'vue'
 
-const departureStation = ref('Toulouse')
+const departureStation = ref('')
 const destinationStation = ref('')
-const departureDate = ref<Date | null>(new Date())
+const departureDate = ref<Date | null>(null)
 const returnDate = ref<Date | null>(null)
 
 export const useSearchForm = () => {
