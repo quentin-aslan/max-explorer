@@ -8,7 +8,7 @@
       />
       <SearchDetailsMobile class="lg:hidden" />
     </header>
-    <section v-if="!isFetchTrainsLoading">
+    <section v-if="!isFetchDestinationLoading">
       <!-- Section pour les résultats -->
       <h2
         v-if="noResults"
@@ -26,8 +26,8 @@
           class="lg:w-[50%] p-4"
         >
           <CityList
-            v-model="citySelected"
-            :cities="cities"
+            v-model="destinationSelected"
+            :destinations="destinations"
           />
         </div>
 
@@ -38,9 +38,9 @@
         >
           <Map
             ref="mapDesktop"
-            v-model="citySelected"
+            v-model="destinationSelected"
             class="w-full h-full"
-            :cities="cities"
+            :destinations="destinations"
           />
         </div>
 
@@ -60,28 +60,39 @@
 import { ref } from 'vue'
 import { useTrains } from '~/composables/use-trains'
 import type { City } from '~/types'
+import { useDestinations } from '~/composables/use-destinations'
+import type { Destination } from '~/types/common'
+
+type QueryProps = {
+  departureStation?: string
+  destinationStation?: string
+  departureDate?: string
+  returnDate?: string
+}
 
 const route = useRoute()
 const { startLoading, stopLoading } = useLoader()
-const { departureTrains, cities, isFetchTrainsLoading, fetchTrains } = useTrains()
+
+const { destinations, fetchDestinations, isFetchDestinationLoading } = useDestinations()
+
 const toast = useToast()
 
 const { initFormValue } = useSearchForm()
 
 const getResults = async () => {
   startLoading()
-  let { departureStation, departureDate, returnDate } = route.query
+  const { departureStation, destinationStation, departureDate, returnDate }: QueryProps = route.query
   if (!departureStation || !departureDate || !returnDate) {
     navigateTo('/')
     return
   }
 
-  departureDate = new Date(departureDate)
-  returnDate = new Date(returnDate)
+  const departureDateFormatted = new Date(departureDate)
+  const returnDateFormatted = new Date(returnDate)
 
-  await fetchTrains(departureDate, returnDate, departureStation)
-  // TODO: Utiliser un store ?
-  initFormValue(departureStation, undefined, departureDate, returnDate)
+  await fetchDestinations(departureStation, destinationStation, departureDateFormatted, returnDateFormatted)
+  initFormValue(departureStation, destinationStation, departureDateFormatted, returnDateFormatted)
+
   stopLoading()
 }
 
@@ -89,11 +100,15 @@ const { isMobile } = useIsMobile()
 const isCityListVisibleOnMobile = ref(true)
 const isCityListVisible = computed(() => !isMobile.value || (isMobile.value && isCityListVisibleOnMobile.value))
 const isMapVisible = computed(() => !isMobile.value || (isMobile.value && !isCityListVisibleOnMobile.value))
-const noResults = computed(() => !cities.value || cities.value.length === 0)
+const noResults = computed(() => !destinations.value || destinations.value.length === 0)
 
-watch(departureTrains, () => citySelected.value = null)
+watch(destinations, () => destinationSelected.value = null)
 
-const citySelected = ref<City>(null)
+const destinationSelected = ref<Destination>(null)
+
+watch(destinationSelected, (destination) => {
+  if (destination) console.log(destination.departureJourneys[0].map(t => ({ o: t.origin, d: t.destination })))
+})
 
 const onResearch = () => {
   setTimeout(() => {

@@ -168,9 +168,7 @@ const findRoundTrips = async (
   let i = 0
   for (const departureDestination of departureDestinations) {
     i++
-    console.log(`departureDestination ${i} : `, departureDestination.destinationName)
     const returnDestination = await findRoute(departureDestination.destinationName, origin, returnDate, minConnectionTimeSameStationMinutes, minConnectionTimeSameCityMinutes, maxConnectionTimeMinutes)
-    console.log(`returnDestination : `, returnDestination)
     if (returnDestination) {
       roundTripsDestinations.push({ destinationName: departureDestination.destinationName, departureJourneys: departureDestination.journeys, returnJourneys: (returnDestination as DestinationJourneys).journeys })
     }

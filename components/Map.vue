@@ -10,10 +10,11 @@
 import { onMounted } from 'vue'
 import { useGoogleMaps } from '~/composables/use-google-maps'
 import type { City } from '~/types'
+import type { Destination } from '~/types/common'
 
 type Props = {
-  cities: City[]
-  departureCity?: City
+  destinations: Destination[]
+  departureCity?: Destination
 }
 
 const props = defineProps<Props>()
@@ -42,7 +43,7 @@ onMounted(async () => {
 const addCitiesOnMap = () => {
   if (map.value) {
     clearMarkers()
-    for (const city of props.cities) {
+    for (const city of props.destinations) {
       const marker = addCityMarker(city)
 
       marker?.addListener('click', () => {

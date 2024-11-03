@@ -56,8 +56,8 @@ export const useDestinations = () => {
       if (data) {
         return {
           ...destination,
-          latitude: data.latitude,
-          longitude: data.longitude,
+          latitude: data.value.latitude,
+          longitude: data.value.longitude,
         }
       }
     }

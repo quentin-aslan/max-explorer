@@ -1,30 +1,32 @@
 <template>
   <div class="flex flex-col gap-2 h-screen overflow-scroll">
+    DESTINATIONS AU TOTAL : {{ destinations.length }}
     <div
-      v-for="city in cities"
-      :key="city.id"
+      v-for="destination in destinations"
+      :key="destination.id"
       class="w-full cursor-pointer hover:-translate-x-0.5"
-      @click="() => onCityClick(city)"
+      @click="() => onDestinationClick(destination)"
     >
-      {{ city.name }}
+      Premier Train au depart de
+      {{ destination.destinationName }} - Aller : {{ destination.departureJourneys.length }} | Retour : {{ destination.returnJourneys.length }}
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { City } from '~/types'
+import type { Destination } from '~/types/common'
 
 const props = defineProps<{
-  cities: City[]
+  destinations: Destination[]
 }>()
 
-const citySelected = defineModel()
+const destinationSelected = defineModel()
 
-const onCityClick = (city: City) => {
-  if (citySelected.value === city) {
-    citySelected.value = null
+const onDestinationClick = (destination: Destination) => {
+  if (destinationSelected.value === destination) {
+    destinationSelected.value = null
     return
   }
-  citySelected.value = city
+  destinationSelected.value = destination
 }
 </script>
