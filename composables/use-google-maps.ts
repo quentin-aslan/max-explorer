@@ -2,7 +2,7 @@ import { Loader } from '@googlemaps/js-api-loader'
 import { ref } from 'vue'
 import { useHtmlMarker } from '~/composables/use-html-marker'
 import type { HTMLMapMarker } from '~/composables/use-html-marker'
-import type { City } from "~/types";
+import type { City } from '~/types'
 
 export const useGoogleMaps = () => {
   const mapElement = ref<HTMLDivElement | null>(null)
@@ -51,7 +51,7 @@ export const useGoogleMaps = () => {
 
   const _getCityMarkerContent = (city: City) => {
     return `
-    <div class="z-10 bg-rose-600 rounded-full">
+    <div class="z-10 bg-max-action rounded-full">
       <div class="w-4 h-4 border-2 border-white rounded-full shadow-[0_3px_6px_rgba(25,32,36,0.16),0_-1px_4px_rgba(25,32,36,0.04)]"></div>
     </div>
     `
