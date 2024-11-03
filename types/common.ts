@@ -1,17 +1,3 @@
-export interface ApiResponseTrains {
-  date: string
-  train_no: string
-  entity: string
-  axe: string
-  origine_iata: string
-  destination_iata: string
-  origine: string
-  destination: string
-  heure_depart: string
-  heure_arrivee: string
-  od_happy_card: 'OUI' | 'NON'
-}
-
 export interface AdaptedTrainData {
   date: string
   trainNo: string
@@ -37,4 +23,17 @@ export type Journey = AdaptedTrainData[][]
 export interface DestinationJourneys {
   destinationName: string
   journeys: Journey
+}
+
+export interface GetDestinationCoordinatesResponse {
+  name: string
+  latitude: number
+  longitude: number
+}
+
+export interface Destination extends RoundTripDestination {
+  id: string
+  distanceWithOrigin: number
+  latitude: number
+  longitude: number
 }
