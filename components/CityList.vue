@@ -1,24 +1,13 @@
 <template>
-  <div class="flex flex-col gap-4 h-screen overflow-scroll">
-    <Card
+  <div class="flex flex-col gap-2 h-screen overflow-scroll">
+    <div
       v-for="city in cities"
       :key="city.id"
       class="w-full cursor-pointer hover:-translate-x-0.5"
       @click="() => onCityClick(city)"
     >
-      <template #title>
-        <div class="flex flex-col gap-1">
-          <span>{{ city.name }}</span>
-          <span class="text-sm"> <strong>{{ getDepartureTrainsFromCity(city).length + getReturnTrainsFromCity(city).length }}</strong> Trains disponibles (A/R)</span>
-        </div>
-      </template>
-      <template #content>
-        <div v-if="citySelected === city">
-          <TrainTable :trains="getDepartureTrainsFromCity(city)" />
-          <TrainTable :trains="getReturnTrainsFromCity(city)" />
-        </div>
-      </template>
-    </Card>
+      {{ city.name }}
+    </div>
   </div>
 </template>
 
@@ -30,8 +19,6 @@ const props = defineProps<{
 }>()
 
 const citySelected = defineModel()
-
-const { getDepartureTrainsFromCity, getReturnTrainsFromCity } = useTrains()
 
 const onCityClick = (city: City) => {
   if (citySelected.value === city) {

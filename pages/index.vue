@@ -22,7 +22,7 @@
           </h3>
 
           <!-- Formulaire de recherche en version mobile -->
-          <SearchFormVertical v-if="isMobile" />
+          <HomeSearch v-if="isMobile" />
 
           <!-- Paragraphe descriptif -->
           <p class="text-xl text-max-pri">
@@ -36,7 +36,7 @@
         v-if="!isMobile"
         class="order-2 lg:order-1 lg:w-2/5 lg:flex justify-center lg:justify-start"
       >
-        <SearchFormVertical />
+        <HomeSearch />
       </div>
     </div>
   </div>

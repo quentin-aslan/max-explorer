@@ -2,7 +2,7 @@
   <div class="z-10 flex flex-col max-h-screen overflow-hidden">
     <!-- Formulaire de recherche -->
     <header>
-      <SearchFormHorizontal
+      <SearchWithResults
         class="hidden lg:flex"
         @research="onResearch"
       />
@@ -23,7 +23,7 @@
         <!-- Liste des villes accessibles -->
         <div
           v-if="isCityListVisible"
-          class="lg:w-[40%] p-4"
+          class="lg:w-[50%] p-4"
         >
           <CityList
             v-model="citySelected"
@@ -34,7 +34,7 @@
         <!--  Desktop Map View (fixée à droite) -->
         <div
           v-if="isMapVisible"
-          class="w-full lg:w-[60%] fixed right-0"
+          class="w-full lg:w-[50%] fixed right-0 m-2"
         >
           <Map
             ref="mapDesktop"
@@ -81,7 +81,7 @@ const getResults = async () => {
 
   await fetchTrains(departureDate, returnDate, departureStation)
   // TODO: Utiliser un store ?
-  initFormValue(departureDate.value, undefined, departureDate, returnDate)
+  initFormValue(departureStation, undefined, departureDate, returnDate)
   stopLoading()
 }
 
