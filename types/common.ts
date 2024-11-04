@@ -37,3 +37,10 @@ export interface Destination extends RoundTripDestination {
   latitude: number
   longitude: number
 }
+
+export interface TrainStation {
+  name: string
+  traffic: number
+  latitude: number
+  longitude: number
+}

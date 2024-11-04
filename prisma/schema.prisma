@@ -17,6 +17,14 @@ model City {
   longitude Float
 }
 
+model TrainStation {
+  id        Int    @id @default(autoincrement())
+  name      String
+  traffic   Int
+  latitude  Float
+  longitude Float
+}
+
 model Train {
   id                          Int      @id @default(autoincrement())
   date                        DateTime
