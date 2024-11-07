@@ -14,6 +14,9 @@ export interface AdaptedTrainData {
 
 export interface RoundTripDestination {
   destinationName: string
+  traffic: number
+  latitude: number
+  longitude: number
   departureJourneys: Journey
   returnJourneys: Journey
 }
@@ -34,6 +37,13 @@ export interface GetDestinationCoordinatesResponse {
 export interface Destination extends RoundTripDestination {
   id: string
   distanceWithOrigin: number
+  latitude: number
+  longitude: number
+}
+
+export interface TrainStation {
+  name: string
+  traffic: number
   latitude: number
   longitude: number
 }

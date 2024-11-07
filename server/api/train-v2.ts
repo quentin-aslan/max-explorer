@@ -1,5 +1,6 @@
 import type { RoundTripDestination, AdaptedTrainData, DestinationJourneys } from '~/types/common.ts'
 import prisma from '~/lib/prisma'
+import { normalizeName } from '~/server/utils'
 
 const MIN_CONNECTION_TIME_SAME_STATION_MINUTES = 15
 const MIN_CONNECTION_TIME_SAME_CITY_MINUTES = 60
@@ -36,9 +37,7 @@ const isConnectionValid = (
   if (connectionTime < 0) return false
   if (isSameStation && connectionTime < minConnectionTimeSameStation) return false
   if (!isSameStation && connectionTime < minConnectionTimeSameCity) return false
-  if (connectionTime > maxConnectionTime) return false
-  console.log(`Connection time : ${connectionTrain.origin} to ${connectionTrain.destination} : ${connectionTime / 1000 / 60} minutes`)
-  return true
+  return connectionTime <= maxConnectionTime
 }
 
 const findRoute = async (
@@ -174,7 +173,29 @@ const findRoundTrips = async (
     }
   }
 
-  console.log(`roundTripsDestinations : `, roundTripsDestinations.length)
+  // Get the coordinates and the traffic of the destinations
+  for (const roundTripDestination of roundTripsDestinations) {
+    const normName = normalizeName(roundTripDestination.destinationName)?.split(' ')[0]
+    const trainStation = await prisma.trainStation.findFirst({
+      where: {
+        name: {
+          contains: normName,
+        },
+      },
+      orderBy: {
+        traffic: 'desc',
+      },
+    })
+
+    if (trainStation) {
+      roundTripDestination.traffic = trainStation.traffic
+      roundTripDestination.latitude = trainStation.latitude
+      roundTripDestination.longitude = trainStation.longitude
+    }
+    else {
+      console.log(`No train station found for ${normName}`)
+    }
+  }
   return roundTripsDestinations
 }
 
