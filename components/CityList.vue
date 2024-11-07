@@ -23,10 +23,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { Destination } from '~/types/common'
+import type { RoundTripDestination } from '~/types/common'
 
 const props = defineProps<{
-  destinations: Destination[]
+  destinations: RoundTripDestination[]
 }>()
 
 const destinationSelected = defineModel()

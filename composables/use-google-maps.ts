@@ -2,12 +2,12 @@ import { Loader } from '@googlemaps/js-api-loader'
 import { ref } from 'vue'
 import { useHtmlMarker } from '~/composables/use-html-marker'
 import type { HTMLMapMarker } from '~/composables/use-html-marker'
-import type { City } from '~/types'
+import type { RoundTripDestination } from '~/types/common'
 
 export const useGoogleMaps = () => {
   const mapElement = ref<HTMLDivElement | null>(null)
   const map = ref<google.maps.Map | null>(null)
-  const markers = ref<{ marker: HTMLMapMarker, city: City }[]>([])
+  const markers = ref<{ marker: HTMLMapMarker, city: RoundTripDestination }[]>([])
 
   const loadMap = async (element: HTMLDivElement, center: google.maps.LatLngLiteral, zoom: number) => {
     const loader = new Loader({
@@ -49,7 +49,7 @@ export const useGoogleMaps = () => {
     })
   }
 
-  const _getCityMarkerContent = (city: City) => {
+  const _getCityMarkerContent = (city: RoundTripDestination) => {
     return `
     <div class="z-10 bg-max-action rounded-full">
       <div class="w-4 h-4 border-2 border-white rounded-full shadow-[0_3px_6px_rgba(25,32,36,0.16),0_-1px_4px_rgba(25,32,36,0.04)]"></div>
@@ -57,7 +57,7 @@ export const useGoogleMaps = () => {
     `
   }
 
-  const _getHighlightedCityMarkerContent = (city: City) => {
+  const _getHighlightedCityMarkerContent = (city: RoundTripDestination) => {
     return `
 
     <div class="bg-blue-900 text-white p-1 font-bold border-2 border-white rounded-lg shadow-md cursor-pointer">
@@ -66,7 +66,7 @@ export const useGoogleMaps = () => {
     `
   }
 
-  const addCityMarker = (city: City) => {
+  const addCityMarker = (city: RoundTripDestination) => {
     if (!map.value) return
 
     const { createHTMLMapMarker } = useHtmlMarker()
@@ -82,14 +82,14 @@ export const useGoogleMaps = () => {
     return marker
   }
 
-  const highlightCityMarker = (city: City) => {
+  const highlightCityMarker = (city: RoundTripDestination) => {
     const marker = markers.value.find(({ city: cityItem }) => cityItem.id === city.id)
     if (!marker) return
 
     marker.marker.updateDivHtml(_getHighlightedCityMarkerContent(marker.city), { zIndex: 10 })
   }
 
-  const clearHighlightedCityMarker = (city: City) => {
+  const clearHighlightedCityMarker = (city: RoundTripDestination) => {
     const marker = markers.value.find(({ city: cityItem }) => cityItem.id === city.id)
     if (!marker) return
 

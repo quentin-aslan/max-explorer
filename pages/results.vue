@@ -42,7 +42,7 @@
       </h2>
       <section
         v-else
-        class="flex flex-col lg:flex-row gap-2"
+        class="flex flex-col lg:flex-row gap-2 bg-max-bg"
       >
         <!-- Liste des villes accessibles -->
         <div
@@ -102,15 +102,16 @@ const getResults = async () => {
   startLoading()
   const { departureStation, destinationStation, departureDate, returnDate }: QueryProps = route.query
   if (!departureStation || !departureDate || !returnDate) {
+    stopLoading()
     navigateTo('/')
     return
   }
 
-  const departureDateFormatted = new Date(departureDate)
-  const returnDateFormatted = new Date(returnDate)
+  const departureDateConverted = new Date(departureDate)
+  const returnDateConverted = new Date(returnDate)
 
-  await fetchDestinations(departureStation, destinationStation, departureDateFormatted, returnDateFormatted)
-  initFormValue(departureStation, destinationStation, departureDateFormatted, returnDateFormatted)
+  await fetchDestinations(departureStation, destinationStation, departureDateConverted, returnDateConverted)
+  initFormValue(departureStation, destinationStation, departureDateConverted, returnDateConverted)
 
   stopLoading()
 }

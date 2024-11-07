@@ -34,13 +34,6 @@ export interface GetDestinationCoordinatesResponse {
   longitude: number
 }
 
-export interface Destination extends RoundTripDestination {
-  id: string
-  distanceWithOrigin: number
-  latitude: number
-  longitude: number
-}
-
 export interface TrainStation {
   name: string
   traffic: number

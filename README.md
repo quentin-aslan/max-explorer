@@ -1,9 +1,11 @@
 # Max Explorer
 
+# Pre-requisites
 > .env with `google map api key` required.
 1. Create the .env with the google map api key.
 2. `npm install`
-3. `npm run dev`
+3. `npx prisma migrate dev`
+4. `npm run dev`
 
 ## Update the DataBase
 1. First update the schema with your changes (prisma/schema.prisma)
