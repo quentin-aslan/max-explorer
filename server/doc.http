@@ -5,7 +5,7 @@ POST http://localhost:3000/api/import-trains
 POST http://localhost:3000/api/import-destination
 
 ### GET Results From Origine with Departure Date and Return Date
-GET http://localhost:3000/api/train-v2?origin=Paris&departureDate=2024-11-04&returnDate=2024-11-05
+GET http://localhost:3000/api/train-v2?origin=Paris&departureDate=2024-11-07&returnDate=2024-11-08
 
 ### GET With Destination
 GET http://localhost:3000/api/train-v2?origin=Toulouse&destination=Nimes&departureDate=2024-11-04&returnDate=2024-11-05

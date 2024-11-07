@@ -5,6 +5,7 @@ import axios from 'axios'
 import { createError, defineEventHandler } from 'h3'
 import { parse } from '@fast-csv/parse'
 import type { TrainStation } from '~/types/common'
+import { normalizeName } from '~/server/utils'
 
 /**
  * Import the destinations coordinates and population from the SNCF API into the database
@@ -194,13 +195,4 @@ const downloadFrequentationGareCSV = async (): Promise<AxiosResponse<any>> => {
   const URL_WITH_OPTIONS
       = `https://data.sncf.com/api/explore/v2.1/catalog/datasets/frequentation-gares/exports/csv?lang=fr&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B&select=nom_gare%2C%20total_voyageurs_non_voyageurs_2023`
   return await axios.get(URL_WITH_OPTIONS, { responseType: 'stream' })
-}
-
-// COMMON FUNCTION
-const normalizeName = (name) => {
-  return name.toLowerCase()
-    .replace(/-/g, ' ')
-    .replace(/[^\w\s]/gi, '')
-    .replace(/\s+/g, ' ')
-    .trim()
 }
