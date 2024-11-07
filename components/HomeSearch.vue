@@ -12,17 +12,10 @@
       placeholder="Depuis la ville de . . ."
     />
 
-    <div>
-      <label
-        class="block text-gray-700 mb-2"
-        for="destinationStation"
-      >Ville d'arrivée (optionnel)</label>
-      <InputText
-        v-model="destinationStation"
-        placeholder="Gare ou ville"
-        class="w-full"
-      />
-    </div>
+    <StationInput
+      v-model="destinationStation"
+      placeholder="Arrivée (optionnel)"
+    />
 
     <MaxCalendar
       v-model:departure-date="departureDate"

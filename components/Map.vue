@@ -1,8 +1,8 @@
 <template>
   <div
     ref="mapElement"
-    class="border border-max-sec rounded-3xl"
-    style="height: calc(100vh); width:100%;"
+    class="lg:border lg:border-max-sec lg:rounded-3xl"
+    style="height: calc(100vh); width:100%"
   />
 </template>
 

@@ -3,7 +3,7 @@ import prisma from '~/lib/prisma'
 
 const MIN_CONNECTION_TIME_SAME_STATION_MINUTES = 15
 const MIN_CONNECTION_TIME_SAME_CITY_MINUTES = 60
-const MAX_CONNECTION_TIME_MINUTES = 120
+const MAX_CONNECTION_TIME_MINUTES = 20
 
 const getOrAddDestinationJourneys = (destinationsTable: DestinationJourneys[], destinationName: string): DestinationJourneys => {
   let destination = destinationsTable.find(dest => dest.destinationName === destinationName)

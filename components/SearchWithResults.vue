@@ -1,14 +1,19 @@
 <template>
   <form
-    class="flex flex-col lg:items-center gap-4 w-full rounded-lg p-6"
+    class="flex flex-col lg:items-center gap-4 w-full rounded-lg p-6 bg-max-bg"
     @submit.prevent="() => { research(); expandForm = false; emit('research') }"
   >
     <!-- Ville de départ -->
 
     <div class="flex space-x-5">
-      <h1 class="text-xl text-max-pri font-sans-bold flex-none content-center">
-        Max Explorer
-      </h1>
+      <div
+        class="flex-none content-center cursor-pointer"
+        @click="navigateTo('/')"
+      >
+        <h1 class="text-xl text-max-pri font-sans-bold">
+          Max Explorer
+        </h1>
+      </div>
 
       <StationInput
         v-model="departureStation"

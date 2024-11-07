@@ -1,18 +1,42 @@
 <template>
-  <div class="z-10 flex flex-col max-h-screen overflow-hidden">
+  <div class="z-10 flex flex-col">
     <!-- Formulaire de recherche -->
-    <header>
+    <header
+      v-if="!isMobile"
+      ref="desktopHeader"
+
+      class="fixed hidden lg:flex w-full"
+    >
       <SearchWithResults
-        class="hidden lg:flex"
+        class="flex"
         @research="onResearch"
       />
-      <SearchDetailsMobile class="lg:hidden" />
     </header>
-    <section v-if="!isFetchDestinationLoading">
+    <header
+      v-if="isMobile"
+      ref="mobileHeader"
+      class="fixed lg:hidden w-full bg-max-bg"
+    >
+      <SearchDetailsMobile />
+      <div
+        class="flex flex-col justify-center bg-max-action text-white text-lg text-center font-bold z-50"
+        @click="isCityListVisibleOnMobile = !isCityListVisibleOnMobile"
+      >
+        <span v-if="isCityListVisible">Afficher la carte <i class="pi pi-map" /> </span>
+        <span v-else>Afficher la liste <i class="pi pi-map-marker" /> </span>
+      </div>
+    </header>
+    <section
+      v-if="!isFetchDestinationLoading"
+      :style="{
+        'max-height': contentMainMinHeight,
+        'margin-top': contentMainMarginTop,
+      }"
+    >
       <!-- Section pour les résultats -->
       <h2
         v-if="noResults"
-        class="text-3xl text-blue-900"
+        class="text-3xl text-max-action text-center"
       >
         Aucun Résultat :/
       </h2>
@@ -34,22 +58,17 @@
         <!--  Desktop Map View (fixée à droite) -->
         <div
           v-if="isMapVisible"
-          class="w-full lg:w-[50%] fixed right-0 m-2"
+          class="w-full lg:w-[50%] fixed right-0"
         >
           <Map
             ref="mapDesktop"
             v-model="destinationSelected"
             class="w-full h-full"
             :destinations="destinations"
+            :style="{
+              'max-height': contentMainMinHeight,
+            }"
           />
-        </div>
-
-        <div
-          class="lg:hidden fixed bottom-0 flex flex-col justify-center w-full bg-blue-900 text-white h-[8%] text-lg text-center font-bold"
-          @click="isCityListVisibleOnMobile = !isCityListVisibleOnMobile"
-        >
-          <span v-if="isCityListVisible">Afficher la carte <i class="pi pi-map" /> </span>
-          <span v-else>Afficher la liste des destination <i class="pi pi-map-marker" /> </span>
         </div>
       </section>
     </section>
@@ -58,10 +77,10 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useTrains } from '~/composables/use-trains'
-import type { City } from '~/types'
+import { HTML } from 'stylehacks/types/dictionary/tags'
 import { useDestinations } from '~/composables/use-destinations'
 import type { Destination } from '~/types/common'
+import { useIsMobile } from '~/composables/use-is-mobile'
 
 type QueryProps = {
   departureStation?: string
@@ -101,6 +120,20 @@ const isCityListVisibleOnMobile = ref(true)
 const isCityListVisible = computed(() => !isMobile.value || (isMobile.value && isCityListVisibleOnMobile.value))
 const isMapVisible = computed(() => !isMobile.value || (isMobile.value && !isCityListVisibleOnMobile.value))
 const noResults = computed(() => !destinations.value || destinations.value.length === 0)
+
+const mobileHeader = ref<HTMLElement | null>()
+const desktopHeader = ref<HTMLElement | null>()
+
+const contentMainMarginTop = computed(() => {
+  return (isMobile.value)
+    ? `${mobileHeader.value?.offsetHeight}px`
+    : `${desktopHeader.value?.offsetHeight}px`
+})
+const contentMainMinHeight = computed(() => {
+  return (isMobile.value)
+    ? `calc(100vh - ${mobileHeader.value?.offsetHeight}px)`
+    : `calc(100vh - ${desktopHeader.value?.offsetHeight}px)`
+})
 
 watch(destinations, () => destinationSelected.value = null)
 
