@@ -4,7 +4,6 @@
     <header
       v-if="!isMobile"
       ref="desktopHeader"
-
       class="fixed hidden lg:flex w-full"
     >
       <SearchWithResults
@@ -40,36 +39,35 @@
       >
         Aucun Résultat :/
       </h2>
-      <section
-        v-else
-        class="flex flex-col lg:flex-row gap-2"
-      >
-        <!-- Liste des villes accessibles -->
-        <div
-          v-if="isCityListVisible && !isTripMode"
-          class="lg:w-[50%] p-4"
-        >
-          <CityList
-            v-model="destinationSelected"
-            :destinations="destinations"
-            @select-destination="setDestinationStation"
-          />
-        </div>
+      <section v-else>
+        <div class="flex flex-col lg:flex-row gap-2">
+          <!-- Liste des villes accessibles -->
+          <div
+            v-if="isCityListVisible && !isTripMode"
+            class="lg:w-[50%] p-4"
+          >
+            <CityList
+              v-model="destinationSelected"
+              :destinations="destinations"
+              @select-destination="setDestinationStation"
+            />
+          </div>
 
-        <!--  Desktop Map View (fixée à droite) -->
-        <div
-          v-if="isMapVisible && !isTripMode"
-          class="w-full lg:w-[50%] fixed right-0"
-        >
-          <Map
-            ref="mapDesktop"
-            v-model="destinationSelected"
-            class="w-full h-full"
-            :destinations="destinations"
-            :style="{
-              'max-height': contentMainMinHeight,
-            }"
-          />
+          <!--  Desktop Map View (fixée à droite) -->
+          <div
+            v-if="isMapVisible && !isTripMode"
+            class="w-full lg:w-[50%] fixed right-0"
+          >
+            <Map
+              ref="mapDesktop"
+              v-model="destinationSelected"
+              class="w-full h-full"
+              :destinations="destinations"
+              :style="{
+                'max-height': contentMainMinHeight,
+              }"
+            />
+          </div>
         </div>
 
         <!--  Ville départ et d'arrivée communiqué -->
