@@ -1,6 +1,6 @@
 <template class="lg:hidden">
   <h1
-    class="text-xl text-max-pri font-sans-bold text-center pt-5"
+    class="text-xl text-max-pri font-sans-bold text-center pt-5 cursor-pointer"
     @click="navigateTo('/')"
   >
     Max Explorer

@@ -8,6 +8,10 @@ const returnDate = ref<Date | null>(null)
 export const useSearchForm = () => {
   const toast = useToast()
 
+  const setDestinationStation = (city: string) => {
+    destinationStation.value = city
+  }
+
   const research = async () => {
     if (!departureStation.value) {
       toast.add({
@@ -63,5 +67,6 @@ export const useSearchForm = () => {
     returnDate,
     research,
     initFormValue,
+    setDestinationStation: (city: string) => destinationStation.value = city,
   }
 }

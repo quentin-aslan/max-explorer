@@ -31,5 +31,17 @@ export default {
     },
   },
   plugins: [
+    function ({ addBase, theme }) {
+      addBase({
+        ':root': {
+          '--max-pri': theme('colors.max-pri'),
+          '--max-sec': theme('colors.max-sec'),
+          '--max-action': theme('colors.max-action'),
+          '--max-bg': theme('colors.max-bg'),
+          '--max-special': theme('colors.max-special'),
+          '--white': theme('colors.white'),
+        },
+      })
+    },
   ],
 }
