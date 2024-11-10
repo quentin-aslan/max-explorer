@@ -5,6 +5,7 @@
       <i class="pi pi-clock mr-2" /> <!-- Clock Icon -->
       <span>Durée total du trajet : <span class="font-sans-semibold border-b-4 border-b-max-action">{{ msToTime(totalDuration) }}</span></span>
     </div>
+
     <div
       class="space-y-4"
     >

@@ -15,17 +15,15 @@
       class="absolute bg-max-sec"
       style="width: 2px; height: 2.8rem; bottom: 2rem; left: -0.04rem;"
     />
-
     <!-- Train Details -->
     <div>
       <div class="text-xl text-max-pri font-sans-semibold">
-        <span class="border-b-2 border-b-max-action">{{ formattedTime(train.departureDateTime) }}</span> <span class="text-base font-sans"> - {{ formattedDateWithoutTime(train.departureDateTime) }}</span>
+        <span>{{ formattedTime(train.departureDateTime) }}</span>
+        <span class="text-base font-sans"> ({{ train.trainNo }})</span>
       </div>
       <div class="text-sm font-sans-semibold  text-max-pri">
         {{ train.origin }}
       </div>
-      <div class="text-sm text-max-pri font-sans-medium" />
-      {{ train.trainNo }}
       <!-- End Station -->
       <div
         v-if="isLast"
@@ -41,7 +39,13 @@
               {{ train.destination }}
             </div>
             <div class="text-xl text-max-pri font-sans-medium">
-              {{ formattedTime(train.arrivalDateTime) }} <span class="text-base font-sans">- {{ formattedDateWithoutTime(train.departureDateTime) }}</span>
+              {{ formattedTime(train.arrivalDateTime) }} <span
+                v-if="!isSameDay(new Date(train.departureDateTime), new Date(train.arrivalDateTime))"
+                class="text-base font-sans"
+              >
+                - {{ formattedDateWithoutTime(train.arrivalDateTime) }} |
+                <span class="border-b-max-action border-b-4">TRAIN DE NUIT</span>
+              </span>
             </div>
           </div>
         </div>
@@ -62,4 +66,8 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+
+const isSameDay = (date1: Date, date2: Date) => {
+  return date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear()
+}
 </script>

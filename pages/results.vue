@@ -14,10 +14,11 @@
     <header
       v-if="isMobile"
       ref="mobileHeader"
-      class="fixed lg:hidden w-full bg-max-bg"
+      class="fixed z-20 lg:hidden w-full bg-max-bg"
     >
       <SearchDetailsMobile />
       <div
+        v-if="!isTripMode"
         class="flex flex-col justify-center bg-max-action text-white text-lg text-center font-bold z-50 cursor-pointer"
         @click="isCityListVisibleOnMobile = !isCityListVisibleOnMobile"
       >
@@ -115,7 +116,7 @@ const { destinations, fetchDestinations, isFetchDestinationLoading } = useDestin
 const toast = useToast()
 
 const getResults = async () => {
-  startLoading()
+  startLoading('Recherche des destinations... Cela peut prendre jusqu\'a une minute ...')
   const { departureStation, destinationStation, departureDate, returnDate }: QueryProps = route.query
   if (!departureStation || !departureDate) {
     stopLoading()
@@ -126,8 +127,8 @@ const getResults = async () => {
   const departureDateConverted = new Date(departureDate)
   const returnDateConverted = (returnDate) ? new Date(returnDate) : undefined
 
-  await fetchDestinations(departureStation, destinationStation, departureDateConverted, returnDateConverted)
   initFormValue(departureStation, destinationStation, departureDateConverted, returnDateConverted)
+  await fetchDestinations(departureStation, destinationStation, departureDateConverted, returnDateConverted)
 
   stopLoading()
 }
