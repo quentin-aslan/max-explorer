@@ -14,16 +14,14 @@
     <TabPanels class="z-10 w-full">
       <TabPanel value="departure">
         <div class="flex flex-col gap-4">
-          <div class="flex flex-row gap-4">
-            <Select
-              v-model="sortChoice"
-              :options="sortChoicesOptions"
-              option-label="label"
-              option-value="choice"
-              placeholder="Select a City"
-              class="w-full md:w-56"
-            />
-          </div>
+          <Select
+            v-model="sortChoice"
+            :options="sortChoicesOptions"
+            option-label="label"
+            option-value="choice"
+            placeholder="Select a City"
+            class="w-full md:w-56"
+          />
           <TrainCard
             v-for="(journey, index) in departureJourneysSorted"
             :key="index"
@@ -36,6 +34,14 @@
         value="return"
       >
         <div class="flex flex-col gap-4">
+          <Select
+            v-model="sortChoice"
+            :options="sortChoicesOptions"
+            option-label="label"
+            option-value="choice"
+            placeholder="Select a City"
+            class="w-full md:w-56"
+          />
           <TrainCard
             v-for="(journey, index) in returnJourneysSorted"
             :key="index"
@@ -129,8 +135,8 @@ const sortJourneysByDuration = (journeys: Journey[], order: 'asc' | 'desc' = 'as
 
 const sortJourneysByDepartureTime = (journeys: Journey[], order: 'asc' | 'desc' = 'asc') => {
   return [...journeys].sort((a, b) => {
-    const departureTimeA = new Date(a.departureTime).getTime()
-    const departureTimeB = new Date(b.departureTime).getTime()
+    const departureTimeA = new Date(a[0].departureDateTime).getTime()
+    const departureTimeB = new Date(b[0].departureDateTime).getTime()
     return order === 'asc' ? departureTimeA - departureTimeB : departureTimeB - departureTimeA
   })
 }

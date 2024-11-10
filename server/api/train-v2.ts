@@ -196,9 +196,6 @@ const findRoundTrips = async (
           contains: normName,
         },
       },
-      orderBy: {
-        traffic: 'desc',
-      },
     })
 
     if (trainStation) {
