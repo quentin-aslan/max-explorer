@@ -4,7 +4,6 @@
     <header
       v-if="!isMobile"
       ref="desktopHeader"
-
       class="fixed hidden lg:flex w-full"
     >
       <SearchWithResults
@@ -19,7 +18,7 @@
     >
       <SearchDetailsMobile />
       <div
-        class="flex flex-col justify-center bg-max-action text-white text-lg text-center font-bold z-50"
+        class="flex flex-col justify-center bg-max-action text-white text-lg text-center font-bold z-50 cursor-pointer"
         @click="isCityListVisibleOnMobile = !isCityListVisibleOnMobile"
       >
         <span v-if="isCityListVisible">Afficher la carte <i class="pi pi-map" /> </span>
@@ -40,35 +39,43 @@
       >
         Aucun Résultat :/
       </h2>
-      <section
-        v-else
-        class="flex flex-col lg:flex-row gap-2"
-      >
-        <!-- Liste des villes accessibles -->
-        <div
-          v-if="isCityListVisible"
-          class="lg:w-[50%] p-4"
-        >
-          <CityList
-            v-model="destinationSelected"
-            :destinations="destinations"
-          />
+      <section v-else>
+        <div class="flex flex-col lg:flex-row gap-2">
+          <!-- Liste des villes accessibles -->
+          <div
+            v-if="isCityListVisible && !isTripMode"
+            class="lg:w-[50%] p-4"
+          >
+            <CityList
+              v-model="destinationSelected"
+              :destinations="destinations"
+              @select-destination="setDestinationStation"
+            />
+          </div>
+
+          <!--  Desktop Map View (fixée à droite) -->
+          <div
+            v-if="isMapVisible && !isTripMode"
+            class="w-full lg:w-[50%] fixed right-0"
+          >
+            <Map
+              ref="mapDesktop"
+              v-model="destinationSelected"
+              class="w-full h-full"
+              :destinations="destinations"
+              :style="{
+                'max-height': contentMainMinHeight,
+              }"
+            />
+          </div>
         </div>
 
-        <!--  Desktop Map View (fixée à droite) -->
+        <!--  Ville départ et d'arrivée communiqué -->
         <div
-          v-if="isMapVisible"
-          class="w-full lg:w-[50%] fixed right-0"
+          v-if="isTripMode"
+          class="p-4"
         >
-          <Map
-            ref="mapDesktop"
-            v-model="destinationSelected"
-            class="w-full h-full"
-            :destinations="destinations"
-            :style="{
-              'max-height': contentMainMinHeight,
-            }"
-          />
+          <TrainList />
         </div>
       </section>
     </section>
@@ -77,10 +84,12 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { HTML } from 'stylehacks/types/dictionary/tags'
 import { useDestinations } from '~/composables/use-destinations'
-import type { Destination } from '~/types/common'
 import { useIsMobile } from '~/composables/use-is-mobile'
+import { useSearchForm } from '~/composables/use-search-form'
+import type { Destination } from '~/types/common'
+
+const { setDestinationStation, initFormValue, research, destinationStation } = useSearchForm() // Import destinationStation and research
 
 type QueryProps = {
   departureStation?: string
@@ -95,8 +104,6 @@ const { startLoading, stopLoading } = useLoader()
 const { destinations, fetchDestinations, isFetchDestinationLoading } = useDestinations()
 
 const toast = useToast()
-
-const { initFormValue } = useSearchForm()
 
 const getResults = async () => {
   startLoading()
@@ -119,25 +126,28 @@ const { isMobile } = useIsMobile()
 const isCityListVisibleOnMobile = ref(true)
 const isCityListVisible = computed(() => !isMobile.value || (isMobile.value && isCityListVisibleOnMobile.value))
 const isMapVisible = computed(() => !isMobile.value || (isMobile.value && !isCityListVisibleOnMobile.value))
+const isTripMode = computed(() => route.query.destinationStation)
 const noResults = computed(() => !destinations.value || destinations.value.length === 0)
-
-const mobileHeader = ref<HTMLElement | null>()
-const desktopHeader = ref<HTMLElement | null>()
-
-const contentMainMarginTop = computed(() => {
-  return (isMobile.value)
-    ? `${mobileHeader.value?.offsetHeight}px`
-    : `${desktopHeader.value?.offsetHeight}px`
-})
-const contentMainMinHeight = computed(() => {
-  return (isMobile.value)
-    ? `calc(100vh - ${mobileHeader.value?.offsetHeight}px)`
-    : `calc(100vh - ${desktopHeader.value?.offsetHeight}px)`
-})
-
-watch(destinations, () => destinationSelected.value = null)
+const { mobileHeader, desktopHeader, contentMainMarginTop, contentMainMinHeight } = useHeaderHeights(isMobile)
 
 const destinationSelected = ref<Destination>(null)
+
+// Watch destinationStation, and trigger research when it changes
+watch(destinationStation, (newDestination) => {
+  if (newDestination) {
+    research() // Automatically trigger search when a destination is selected
+  }
+})
+
+watch(
+  () => route.query,
+  async () => {
+    await getResults() // Re-fetch results whenever route query parameters change
+  },
+  { immediate: true }, // Run immediately to fetch results on initial load as well
+)
+
+watch(destinations, () => destinationSelected.value = null)
 
 watch(destinationSelected, (destination) => {
   if (destination) console.log(destination.departureJourneys[0].map(t => ({ o: t.origin, d: t.destination })))

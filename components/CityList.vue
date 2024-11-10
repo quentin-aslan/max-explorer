@@ -25,17 +25,10 @@
 <script lang="ts" setup>
 import type { Destination } from '~/types/common'
 
-const props = defineProps<{
-  destinations: Destination[]
-}>()
-
-const destinationSelected = defineModel()
+const props = defineProps<{ destinations: Destination[] }>()
+const emit = defineEmits(['selectDestination'])
 
 const onDestinationClick = (destination: Destination) => {
-  if (destinationSelected.value === destination) {
-    destinationSelected.value = null
-    return
-  }
-  destinationSelected.value = destination
+  emit('selectDestination', destination.destinationName)
 }
 </script>
