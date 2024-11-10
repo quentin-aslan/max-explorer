@@ -29,6 +29,10 @@ export default defineEventHandler(async (event) => {
       const traffic = trainStationsTraffic.find(t => t.name === trainStationFromAPI.name)
         ?.traffic ?? 0
 
+      if (traffic === 0) {
+        console.log(`No traffic found for ${trainStationFromAPI.name}`)
+      }
+
       trainStations.push({ ...trainStationFromAPI, traffic })
     }
 
@@ -74,15 +78,13 @@ interface TrainStationFromAPI {
 }
 
 interface ListeDesGaresCSVRow {
-  libelle: string
-  commune: string
-  c_geo: string
+  nom: string
+  position_geographique: string
 }
 
 const newHeadersListeDesGares = [
-  'libelle',
-  'commune',
-  'c_geo',
+  'nom',
+  'position_geographique',
 ]
 
 const getTrainStationsFromSNCF = async (): Promise<TrainStationFromAPI[]> => {
@@ -117,17 +119,22 @@ const getTrainStationsFromSNCF = async (): Promise<TrainStationFromAPI[]> => {
 
 const downloadListeDesGaresCSV = async (): Promise<AxiosResponse<any>> => {
   const URL_WITH_OPTIONS
-     = `https://data.sncf.com/api/explore/v2.1/catalog/datasets/liste-des-gares/exports/csv?lang=fr&timezone=Europe/Paris&limiter=%3B&use_labels=true&select=libelle%2C%20commune%2C%20c_geo`
+     = `https://ressources.data.sncf.com/api/explore/v2.1/catalog/datasets/gares-de-voyageurs/exports/csv?lang=fr&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B&select=nom%2C%20position_geographique`
   return await axios.get(URL_WITH_OPTIONS, { responseType: 'stream' })
 }
 
 const rowToTrainStationAdapter = (row: ListeDesGaresCSVRow): TrainStationFromAPI => {
   try {
-    const latitude = row.c_geo.split(',')[0]?.trim() ?? 0
-    const longitude = row.c_geo.split(',')[1]?.trim() ?? 0
+    const latitude = row.position_geographique.split(',')[0]?.trim() ?? 0
+    const longitude = row.position_geographique.split(',')[1]?.trim() ?? 0
+
+    if (latitude === 0 || longitude === 0) {
+      console.error(`Lat or lng null for: ${row.nom}`)
+      return
+    }
 
     return {
-      name: normalizeName(row.libelle),
+      name: normalizeName(row.nom),
       longitude: parseFloat(longitude),
       latitude: parseFloat(latitude),
     }
@@ -146,9 +153,8 @@ interface TrainStationTraffic {
 }
 
 interface FrequentationGareCSVRow {
-  libelle: string
-  commune: string
-  c_geo: string
+  name: string
+  traffic: string
 }
 
 const newHeadersFrequentationGare = [
