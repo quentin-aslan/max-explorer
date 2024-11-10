@@ -39,35 +39,35 @@
       >
         Aucun Résultat :/
       </h2>
-      <section v-else>
-        <div class="flex flex-col lg:flex-row gap-2">
-          <!-- Liste des villes accessibles -->
-          <div
-            v-if="isCityListVisible && !isTripMode"
-            class="lg:w-[50%] p-4"
-          >
-            <CityList
-              v-model="destinationSelected"
-              :destinations="destinations"
-              @select-destination="setDestinationStation"
-            />
-          </div>
+      <section
+        v-else
+        class="flex flex-col lg:flex-row gap-2 bg-max-bg"
+      >
+        <!-- Liste des villes accessibles -->
+        <div
+          v-if="isCityListVisible && !isTripMode"
+          class="lg:w-[50%] p-4"
+        >
+          <CityList
+            v-model="destinationSelected"
+            :destinations="destinations"
+          />
+        </div>
 
-          <!--  Desktop Map View (fixée à droite) -->
-          <div
-            v-if="isMapVisible && !isTripMode"
-            class="w-full lg:w-[50%] fixed right-0"
-          >
-            <Map
-              ref="mapDesktop"
-              v-model="destinationSelected"
-              class="w-full h-full"
-              :destinations="destinations"
-              :style="{
-                'max-height': contentMainMinHeight,
-              }"
-            />
-          </div>
+        <!--  Desktop Map View (fixée à droite) -->
+        <div
+          v-if="isMapVisible && !isTripMode"
+          class="w-full lg:w-[50%] fixed right-0"
+        >
+          <Map
+            ref="mapDesktop"
+            v-model="destinationSelected"
+            class="w-full h-full"
+            :destinations="destinations"
+            :style="{
+              'max-height': contentMainMinHeight,
+            }"
+          />
         </div>
 
         <!--  Ville départ et d'arrivée communiqué -->
@@ -89,7 +89,7 @@ import { useIsMobile } from '~/composables/use-is-mobile'
 import { useSearchForm } from '~/composables/use-search-form'
 import type { Destination } from '~/types/common'
 
-const { setDestinationStation, initFormValue, research, destinationStation } = useSearchForm() // Import destinationStation and research
+const { initFormValue, research, destinationStation } = useSearchForm() // Import destinationStation and research
 
 type QueryProps = {
   departureStation?: string
@@ -108,16 +108,17 @@ const toast = useToast()
 const getResults = async () => {
   startLoading()
   const { departureStation, destinationStation, departureDate, returnDate }: QueryProps = route.query
-  if (!departureStation || !departureDate || !returnDate) {
+  if (!departureStation || !departureDate) {
+    stopLoading()
     navigateTo('/')
     return
   }
 
-  const departureDateFormatted = new Date(departureDate)
-  const returnDateFormatted = new Date(returnDate)
+  const departureDateConverted = new Date(departureDate)
+  const returnDateConverted = (returnDate) ? new Date(returnDate) : undefined
 
-  await fetchDestinations(departureStation, destinationStation, departureDateFormatted, returnDateFormatted)
-  initFormValue(departureStation, destinationStation, departureDateFormatted, returnDateFormatted)
+  await fetchDestinations(departureStation, destinationStation, departureDateConverted, returnDateConverted)
+  initFormValue(departureStation, destinationStation, departureDateConverted, returnDateConverted)
 
   stopLoading()
 }

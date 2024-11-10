@@ -8,10 +8,6 @@ const returnDate = ref<Date | null>(null)
 export const useSearchForm = () => {
   const toast = useToast()
 
-  const setDestinationStation = (city: string) => {
-    destinationStation.value = city
-  }
-
   const research = async () => {
     if (!departureStation.value) {
       toast.add({
@@ -33,15 +29,6 @@ export const useSearchForm = () => {
       return
     }
 
-    if (!returnDate.value) {
-      toast.add({
-        severity: 'error',
-        summary: 'Date de retour manquante !',
-        life: 5000,
-      })
-
-      return
-    }
     navigateTo({
       path: '/results',
       query: {
@@ -67,6 +54,5 @@ export const useSearchForm = () => {
     returnDate,
     research,
     initFormValue,
-    setDestinationStation: (city: string) => destinationStation.value = city,
   }
 }

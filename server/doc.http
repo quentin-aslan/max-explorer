@@ -12,3 +12,9 @@ GET http://localhost:3000/api/train-v2?origin=Toulouse&destination=Nimes&departu
 
 ### Get Destination Coordinates
 GET http://localhost:3000/api/get-destination-coordinates?destinationName=Uzes
+
+### Import Train Data From SNCF API to Database (SERVER)
+POST https://max-explorer.quentinaslan.fr/api/import-trains
+
+### Import Train Data From SNCF API to Database (SERVER)
+POST https://max-explorer.quentinaslan.fr/api/import-destination

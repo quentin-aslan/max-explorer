@@ -23,12 +23,19 @@
 </template>
 
 <script lang="ts" setup>
-import type { Destination } from '~/types/common'
+import type { RoundTripDestination } from '~/types/common'
 
-const props = defineProps<{ destinations: Destination[] }>()
-const emit = defineEmits(['selectDestination'])
+const props = defineProps<{
+  destinations: RoundTripDestination[]
+}>()
+
+const destinationSelected = defineModel()
 
 const onDestinationClick = (destination: Destination) => {
-  emit('selectDestination', destination.destinationName)
+  if (destinationSelected.value === destination) {
+    destinationSelected.value = null
+    return
+  }
+  destinationSelected.value = destination
 }
 </script>

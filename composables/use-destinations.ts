@@ -1,7 +1,8 @@
 import { ref } from 'vue'
-import type { RoundTripDestination, Destination, GetDestinationCoordinatesResponse } from '~/types/common'
+import type { RoundTripDestination } from '~/types/common'
+import { toISOStringWithOffset } from '~/utils'
 
-const destinations = ref<Destination[]>([])
+const destinations = ref<RoundTripDestination[]>([])
 const isFetchDestinationLoading = ref(false)
 
 export const useDestinations = () => {
@@ -11,14 +12,13 @@ export const useDestinations = () => {
     departureStation: string,
     destinationStation: string | undefined = undefined,
     departureDate: string,
-    returnDate: string,
+    returnDate: string | undefined,
   ) => {
     try {
       isFetchDestinationLoading.value = true
       destinations.value = []
-
-      const formattedDepartureDate = departureDate ? departureDate.toISOString().slice(0, 10) : ''
-      const formattedReturnDate = returnDate ? returnDate.toISOString().slice(0, 10) : ''
+      const formattedDepartureDate = departureDate ? toISOStringWithOffset(departureDate).slice(0, 10) : undefined
+      const formattedReturnDate = returnDate ? toISOStringWithOffset(returnDate).slice(0, 10) : undefined
 
       const { data } = await useFetch('/api/train-v2', {
         query: {
@@ -29,45 +29,18 @@ export const useDestinations = () => {
         },
       })
 
-      const destinationsResponses = data.value as RoundTripDestination[]
-      for (const destination of destinationsResponses) {
-        if (destination.destinationName && destination.departureJourneys.length > 0 && destination.returnJourneys.length > 0) {
-          const destinationWithCoordinates = await buildDestinationWithCoordinates(destination)
-          destinations.value.push(destinationWithCoordinates)
-        }
-      }
-    }
-    catch (e) {
-      console.error(e)
-    }
-    finally {
-      isFetchDestinationLoading.value = false
-    }
-  }
-
-  const buildDestinationWithCoordinates = async (destination: Destination): Promise<Destination> => {
-    try {
-      const { data } = await useFetch<GetDestinationCoordinatesResponse>('/api/get-destination-coordinates', {
-        query: {
-          destinationName: destination.destinationName,
-        },
-      })
-
-      if (data) {
-        return {
-          ...destination,
-          latitude: data.value.latitude,
-          longitude: data.value.longitude,
-        }
-      }
+      destinations.value = data.value as RoundTripDestination[]
     }
     catch (e) {
       console.error(e)
       toast.add({
         severity: 'error',
-        summary: 'Erreur lors de la récupération des détails de la destination ' + destinationName,
+        summary: 'An error ocurred while fetching destinations',
         life: 5000,
       })
+    }
+    finally {
+      isFetchDestinationLoading.value = false
     }
   }
 

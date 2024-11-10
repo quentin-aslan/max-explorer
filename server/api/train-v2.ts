@@ -4,7 +4,7 @@ import { normalizeName } from '~/server/utils'
 
 const MIN_CONNECTION_TIME_SAME_STATION_MINUTES = 15
 const MIN_CONNECTION_TIME_SAME_CITY_MINUTES = 60
-const MAX_CONNECTION_TIME_MINUTES = 20
+const MAX_CONNECTION_TIME_MINUTES = 120
 
 const getOrAddDestinationJourneys = (destinationsTable: DestinationJourneys[], destinationName: string): DestinationJourneys => {
   let destination = destinationsTable.find(dest => dest.destinationName === destinationName)
@@ -137,7 +137,7 @@ const findRoundTrips = async (
   origin: string,
   destination: string | null = null,
   departureDate: Date,
-  returnDate: Date,
+  returnDate: Date | undefined,
   minConnectionTimeSameStationMinutes: number = MIN_CONNECTION_TIME_SAME_STATION_MINUTES,
   minConnectionTimeSameCityMinutes: number = MIN_CONNECTION_TIME_SAME_CITY_MINUTES,
   maxConnectionTimeMinutes: number = MAX_CONNECTION_TIME_MINUTES,
@@ -151,14 +151,20 @@ const findRoundTrips = async (
   // If the destination is specified, only look for a round trip to this destination
   if (destination) {
     if (!departureDestinations) return null
-    const returnDestination = await findRoute(destination, origin, returnDate, minConnectionTimeSameStationMinutes, minConnectionTimeSameCityMinutes, maxConnectionTimeMinutes)
-    if (!returnDestination) return null
 
-    roundTripsDestinations.push({
+    const destinationObj: RoundTripDestination = {
       destinationName: destination,
       departureJourneys: (departureDestinations as DestinationJourneys).journeys,
-      returnJourneys: (returnDestination as DestinationJourneys).journeys },
-    )
+      returnJourneys: [],
+    }
+
+    if (returnDate) {
+      const returnDestination = await findRoute(destination, origin, returnDate, minConnectionTimeSameStationMinutes, minConnectionTimeSameCityMinutes, maxConnectionTimeMinutes)
+      if (!returnDestination) return null
+      destinationObj.returnJourneys = (returnDestination as DestinationJourneys).journeys
+    }
+
+    roundTripsDestinations.push(destinationObj)
 
     return roundTripsDestinations
   }
@@ -202,7 +208,7 @@ const findRoundTrips = async (
 export default defineEventHandler(async (event) => {
   const { origin, destination, departureDate, returnDate }: Props = getQuery(event)
 
-  if (!origin || !departureDate || !returnDate) {
+  if (!origin || !departureDate) {
     throw createError({
       statusCode: 400,
       statusMessage: 'Origin, departure date and return date are required',
@@ -210,9 +216,9 @@ export default defineEventHandler(async (event) => {
   }
 
   const departureDateFormatted = new Date(departureDate)
-  const returnDateFormatted = new Date(returnDate)
+  const returnDateFormatted = (returnDate) ? new Date(returnDate) : undefined
 
-  if (departureDateFormatted >= returnDateFormatted) {
+  if (returnDateFormatted && (departureDateFormatted > returnDateFormatted)) {
     throw createError({
       statusCode: 400,
       statusMessage: 'Departure date must be before return date',
