@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col gap-4 bg-max-bg border border-max-sec rounded-lg p-4 shadow-sm">
     <!-- Header: Travel Duration -->
-    <div class="flex flex-row items-center text-max-pri font-sans">
+    <div class="flex flex-row items-center">
       <i class="pi pi-clock mr-2" /> <!-- Clock Icon -->
-      <span>{{ msToTime(totalDuration) }}</span>
+      <span>Durée total du trajet : <span class="font-sans-semibold border-b-4 border-b-max-action">{{ msToTime(totalDuration) }}</span></span>
     </div>
     <div
       class="space-y-4"
@@ -29,7 +29,7 @@
           <!-- Connection Info -->
           <div class="p-2 ml-12 mt-2 w-fit bg-max-action rounded-md relative">
             <p class="text-max-pri font-sans-medium text-xs">
-              Changement à {{ journey[index+1].origin }}<br>
+              Changement à <span class="font-sans-semibold">{{ journey[index+1].origin }}</span><br>
               {{ formattedTime(train.arrivalDateTime) }} - {{ formattedTime(journey[index+1].departureDateTime) }} ({{ msToTime(calculateConnectionTime(journey, index+1)) }})
             </p>
           </div>
@@ -51,28 +51,9 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const isDirectJourney = props.journey?.length === 1
+const { calculateJourneyTotalDuration, calculateConnectionTime } = useDestinations()
 
-const calculateConnectionTime = (journey: Journey, index: number) => {
-  if (index === 0) return 0
-
-  return new Date(journey[index].departureDateTime) - new Date(journey[index - 1].departureDateTime)
-}
-
-// Calculate the total duration of the journey
-const calculateJourneyTotalDuration = (journey: Journey) => {
-  let totalDuration = 0 // ms
-
-  for (let i = 0; i < journey.length; i++) {
-    const connectionTime = calculateConnectionTime(journey, i)
-    const journeyDuration = new Date(journey[i].arrivalDateTime) - new Date(journey[i].departureDateTime)
-    totalDuration += journeyDuration + connectionTime
-  }
-
-  return totalDuration
-}
-
-const totalDuration = calculateJourneyTotalDuration(props.journey)
+const totalDuration = computed(() => calculateJourneyTotalDuration(props.journey))
 
 // const props = defineProps({
 //   isDirectTrip: { type: Boolean, required: true },

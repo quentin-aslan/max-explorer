@@ -19,15 +19,13 @@
     <!-- Train Details -->
     <div>
       <div class="text-xl text-max-pri font-sans-semibold">
-        {{ train.trainNo }}
+        <span class="border-b-2 border-b-max-action">{{ formattedTime(train.departureDateTime) }}</span> <span class="text-base font-sans"> - {{ formattedDateWithoutTime(train.departureDateTime) }}</span>
       </div>
-      <div class="text-sm text-max-pri">
+      <div class="text-sm font-sans-semibold  text-max-pri">
         {{ train.origin }}
       </div>
-      <div class="text-sm text-max-pri font-sans-medium">
-        {{ formattedDate(train.departureDateTime) }}
-      </div>
-
+      <div class="text-sm text-max-pri font-sans-medium" />
+      {{ train.trainNo }}
       <!-- End Station -->
       <div
         v-if="isLast"
@@ -39,11 +37,11 @@
             style="position: absolute; top: 1rem; left: -2.24rem;"
           /> <!-- Dot for end station -->
           <div>
-            <div class="text-sm text-max-pri">
+            <div class="text-sm font-sans-semibold text-max-pri">
               {{ train.destination }}
             </div>
-            <div class="text-sm text-max-pri font-sans-medium">
-              {{ formattedDate(train.arrivalDateTime) }}
+            <div class="text-xl text-max-pri font-sans-medium">
+              {{ formattedTime(train.arrivalDateTime) }} <span class="text-base font-sans">- {{ formattedDateWithoutTime(train.departureDateTime) }}</span>
             </div>
           </div>
         </div>
@@ -56,7 +54,7 @@
 import { defineProps } from 'vue'
 import trainIcon from 'assets/icons/train.svg?raw'
 import type { AdaptedTrainData } from '~/types/common'
-import { formattedDate } from '~/utils'
+import { formattedDate, formattedDateWithoutTime, formattedTime } from '~/utils'
 
 type Props = {
   train: AdaptedTrainData

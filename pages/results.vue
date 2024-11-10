@@ -33,12 +33,14 @@
       }"
     >
       <!-- Section pour les résultats -->
-      <h2
+      <div
         v-if="noResults"
-        class="text-3xl text-max-action text-center"
+        class="flex flex-row text-3xl text-max-action text-center justify-center"
       >
-        Aucun Résultat :/
-      </h2>
+        <Message severity="warn">
+          <span class="text-3xl">Aucun Résultat :/</span>
+        </Message>
+      </div>
       <section
         v-else
         class="bg-max-bg"
@@ -139,7 +141,7 @@ const noResults = computed(() => !destinations.value || destinations.value.lengt
 const destinationSelected = ref<RoundTripDestination | null>(null)
 const { mobileHeader, desktopHeader, contentMainMarginTop, contentMainMinHeight } = useHeaderHeights(isMobile)
 
-watch(destinations, () => destinationSelected.value = (isTripMode.value) ? destinations.value[0] : null)
+watch(destinations, () => destinationSelected.value = (isTripMode.value) ? destinations.value?.[0] : null)
 
 watch(destinationSelected, (destination) => {
   if (destination) {

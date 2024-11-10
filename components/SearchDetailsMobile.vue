@@ -14,15 +14,17 @@
         <i class="pi pi-map-marker font-bold text-xl" /> <span class="">{{ departureStation }}</span>
       </div>
       <div class="flex flex-row items-center gap-2 text-lg">
-        <span>{{ departureDate?.toISOString().slice(0, 10) }}</span>
+        <span>{{ toISOStringWithOffset(departureDate).slice(0, 10) }}</span>
         <i class="pi pi-arrow-circle-right font-extrabold" />
-        <span>{{ returnDate?.toISOString().slice(0, 10) }}</span>
+        <span>{{ toISOStringWithOffset(returnDate).slice(0, 10) }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { toISOStringWithOffset } from '~/utils'
+
 const { departureStation, destinationStation, departureDate, returnDate } = useSearchForm()
 const emit = defineEmits(['search-details-click'])
 </script>
