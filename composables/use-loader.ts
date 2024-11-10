@@ -1,7 +1,11 @@
 const isLoaderVisible = ref(false)
+const messageDisplayed = ref<string | null>()
 
 export const useLoader = () => {
-  const startLoading = () => {
+  const startLoading = (msg?: string) => {
+    if (msg) messageDisplayed.value = msg
+    else messageDisplayed.value = null
+
     isLoaderVisible.value = true
   }
 
@@ -13,5 +17,6 @@ export const useLoader = () => {
     startLoading,
     stopLoading,
     isLoaderVisible,
+    messageDisplayed,
   }
 }

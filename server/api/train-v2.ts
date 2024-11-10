@@ -170,13 +170,21 @@ const findRoundTrips = async (
   }
 
   // If the destination is not specified, look for a round trip to all destinations
-  let i = 0
   for (const departureDestination of departureDestinations) {
-    i++
-    const returnDestination = await findRoute(departureDestination.destinationName, origin, returnDate, minConnectionTimeSameStationMinutes, minConnectionTimeSameCityMinutes, maxConnectionTimeMinutes)
-    if (returnDestination) {
-      roundTripsDestinations.push({ destinationName: departureDestination.destinationName, departureJourneys: departureDestination.journeys, returnJourneys: (returnDestination as DestinationJourneys).journeys })
+    const destinationObj: RoundTripDestination = {
+      destinationName: departureDestination.destinationName,
+      departureJourneys: departureDestination.journeys,
+      returnJourneys: [],
     }
+
+    if (returnDate) {
+      const returnDestination = await findRoute(departureDestination.destinationName, origin, returnDate, minConnectionTimeSameStationMinutes, minConnectionTimeSameCityMinutes, maxConnectionTimeMinutes)
+      if (returnDestination) {
+        destinationObj.returnJourneys = (returnDestination as DestinationJourneys).journeys
+      }
+    }
+
+    roundTripsDestinations.push(destinationObj)
   }
 
   // Get the coordinates and the traffic of the destinations

@@ -14,10 +14,11 @@
     <header
       v-if="isMobile"
       ref="mobileHeader"
-      class="fixed lg:hidden w-full bg-max-bg"
+      class="fixed z-20 lg:hidden w-full bg-max-bg"
     >
       <SearchDetailsMobile />
       <div
+        v-if="!isTripMode"
         class="flex flex-col justify-center bg-max-action text-white text-lg text-center font-bold z-50 cursor-pointer"
         @click="isCityListVisibleOnMobile = !isCityListVisibleOnMobile"
       >
@@ -33,12 +34,14 @@
       }"
     >
       <!-- Section pour les résultats -->
-      <h2
+      <div
         v-if="noResults"
-        class="text-3xl text-max-action text-center"
+        class="flex flex-row text-3xl text-max-action text-center justify-center"
       >
-        Aucun Résultat :/
-      </h2>
+        <Message severity="warn">
+          <span class="text-3xl">Aucun Résultat :/</span>
+        </Message>
+      </div>
       <section
         v-else
         class="bg-max-bg"
@@ -113,7 +116,7 @@ const { destinations, fetchDestinations, isFetchDestinationLoading } = useDestin
 const toast = useToast()
 
 const getResults = async () => {
-  startLoading()
+  startLoading('Recherche des destinations... Cela peut prendre jusqu\'a une minute ...')
   const { departureStation, destinationStation, departureDate, returnDate }: QueryProps = route.query
   if (!departureStation || !departureDate) {
     stopLoading()
@@ -124,8 +127,8 @@ const getResults = async () => {
   const departureDateConverted = new Date(departureDate)
   const returnDateConverted = (returnDate) ? new Date(returnDate) : undefined
 
-  await fetchDestinations(departureStation, destinationStation, departureDateConverted, returnDateConverted)
   initFormValue(departureStation, destinationStation, departureDateConverted, returnDateConverted)
+  await fetchDestinations(departureStation, destinationStation, departureDateConverted, returnDateConverted)
 
   stopLoading()
 }
@@ -139,7 +142,7 @@ const noResults = computed(() => !destinations.value || destinations.value.lengt
 const destinationSelected = ref<RoundTripDestination | null>(null)
 const { mobileHeader, desktopHeader, contentMainMarginTop, contentMainMinHeight } = useHeaderHeights(isMobile)
 
-watch(destinations, () => destinationSelected.value = (isTripMode.value) ? destinations.value[0] : null)
+watch(destinations, () => destinationSelected.value = (isTripMode.value) ? destinations.value?.[0] : null)
 
 watch(destinationSelected, (destination) => {
   if (destination) {

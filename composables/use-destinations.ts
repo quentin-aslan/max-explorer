@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { RoundTripDestination } from '~/types/common'
+import type { Journey, RoundTripDestination } from '~/types/common'
 import { toISOStringWithOffset } from '~/utils'
 
 const destinations = ref<RoundTripDestination[]>([])
@@ -44,9 +44,30 @@ export const useDestinations = () => {
     }
   }
 
+  const calculateConnectionTime = (journey: Journey, index: number) => {
+    if (index === 0) return 0
+
+    return new Date(journey[index].departureDateTime) - new Date(journey[index - 1].arrivalDateTime)
+  }
+
+  // Calculate the total duration of the journey
+  const calculateJourneyTotalDuration = (journey: Journey) => {
+    let totalDuration = 0 // ms
+
+    for (let i = 0; i < journey.length; i++) {
+      const connectionTime = calculateConnectionTime(journey, i)
+      const journeyDuration = new Date(journey[i].arrivalDateTime) - new Date(journey[i].departureDateTime)
+      totalDuration += journeyDuration + connectionTime
+    }
+
+    return totalDuration
+  }
+
   return {
     fetchDestinations,
     isFetchDestinationLoading,
     destinations,
+    calculateJourneyTotalDuration,
+    calculateConnectionTime,
   }
 }
