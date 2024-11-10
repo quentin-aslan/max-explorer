@@ -19,13 +19,13 @@
     <!-- Train Details -->
     <div>
       <div class="text-xl text-max-pri font-sans-semibold">
-        {{ train.trainNumber }}
+        {{ train.trainNo }}
       </div>
       <div class="text-sm text-max-pri">
-        {{ train.startStation }}
+        {{ train.origin }}
       </div>
       <div class="text-sm text-max-pri font-sans-medium">
-        {{ train.startTime }}
+        {{ formattedDate(train.departureDateTime) }}
       </div>
 
       <!-- End Station -->
@@ -40,10 +40,10 @@
           /> <!-- Dot for end station -->
           <div>
             <div class="text-sm text-max-pri">
-              {{ train.endStation }}
+              {{ train.destination }}
             </div>
             <div class="text-sm text-max-pri font-sans-medium">
-              {{ train.endTime }}
+              {{ formattedDate(train.arrivalDateTime) }}
             </div>
           </div>
         </div>
@@ -55,16 +55,13 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
 import trainIcon from 'assets/icons/train.svg?raw'
+import type { AdaptedTrainData } from '~/types/common'
+import { formattedDate } from '~/utils'
 
-const props = defineProps({
-  train: {
-    type: Object,
-    required: true,
-  },
-  isLast: { type: Boolean, default: true },
-})
+type Props = {
+  train: AdaptedTrainData
+  isLast?: boolean
+}
+
+const props = defineProps<Props>()
 </script>
-
-<style scoped>
-/* Additional component-specific styles if needed */
-</style>

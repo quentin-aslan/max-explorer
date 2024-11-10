@@ -9,12 +9,11 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useGoogleMaps } from '~/composables/use-google-maps'
-import type { City } from '~/types'
-import type { Destination } from '~/types/common'
+import type { RoundTripDestination } from '~/types/common'
 
 type Props = {
-  destinations: Destination[]
-  departureCity?: Destination
+  destinations: RoundTripDestination[]
+  departureCity?: unknown
 }
 
 const props = defineProps<Props>()
@@ -59,7 +58,7 @@ const addCitiesOnMap = () => {
   }
 }
 
-const onCitySelectedChanges = (newCitySelected: City, oldCitySelected: City) => {
+const onCitySelectedChanges = (newCitySelected: RoundTripDestination, oldCitySelected: RoundTripDestination) => {
   if (oldCitySelected) {
     clearHighlightedCityMarker(oldCitySelected)
   }

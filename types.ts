@@ -13,14 +13,6 @@ export interface Train {
   od_happy_card: string
 }
 
-export interface City {
-  id: string
-  name: string
-  distanceWithOrigin: number
-  latitude: number
-  longitude: number
-}
-
 export type MapsFrame = {
   minLatitude: number
   minLongitude: number

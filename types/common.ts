@@ -17,26 +17,19 @@ export interface RoundTripDestination {
   traffic: number
   latitude: number
   longitude: number
-  departureJourneys: Journey
-  returnJourneys: Journey
+  departureJourneys: Journey[]
+  returnJourneys: Journey[]
 }
 
-export type Journey = AdaptedTrainData[][]
+export type Journey = AdaptedTrainData[]
 
 export interface DestinationJourneys {
   destinationName: string
-  journeys: Journey
+  journeys: Journey[]
 }
 
 export interface GetDestinationCoordinatesResponse {
   name: string
-  latitude: number
-  longitude: number
-}
-
-export interface Destination extends RoundTripDestination {
-  id: string
-  distanceWithOrigin: number
   latitude: number
   longitude: number
 }

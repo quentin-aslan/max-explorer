@@ -4,7 +4,7 @@
     <header
       v-if="!isMobile"
       ref="desktopHeader"
-      class="fixed hidden lg:flex w-full"
+      class="fixed z-20 hidden lg:flex w-full"
     >
       <SearchWithResults
         class="flex"
@@ -41,41 +41,48 @@
       </h2>
       <section
         v-else
-        class="flex flex-col lg:flex-row gap-2 bg-max-bg"
+        class="bg-max-bg"
       >
-        <!-- Liste des villes accessibles -->
-        <div
-          v-if="isCityListVisible && !isTripMode"
-          class="lg:w-[50%] p-4"
-        >
-          <CityList
-            v-model="destinationSelected"
-            :destinations="destinations"
-          />
-        </div>
+        <div class="flex flex-col lg:flex-row gap-2 ">
+          <!-- Liste des villes accessibles -->
+          <div
+            v-if="isCityListVisible && !isTripMode"
+            class="lg:w-[50%] p-4"
+          >
+            <CityList
+              v-model="destinationSelected"
+              :destinations="destinations"
+            />
+          </div>
 
-        <!--  Desktop Map View (fixée à droite) -->
-        <div
-          v-if="isMapVisible && !isTripMode"
-          class="w-full lg:w-[50%] fixed right-0"
-        >
-          <Map
-            ref="mapDesktop"
-            v-model="destinationSelected"
-            class="w-full h-full"
-            :destinations="destinations"
-            :style="{
-              'max-height': contentMainMinHeight,
-            }"
-          />
+          <!--  Desktop Map View (fixée à droite) -->
+          <div
+            v-if="isMapVisible && !isTripMode"
+            class="w-full lg:w-[50%] fixed right-0"
+          >
+            <Map
+              ref="mapDesktop"
+              v-model="destinationSelected"
+              class="w-full h-full"
+              :destinations="destinations"
+              :style="{
+                'max-height': contentMainMinHeight,
+              }"
+            />
+          </div>
         </div>
 
         <!--  Ville départ et d'arrivée communiqué -->
         <div
-          v-if="isTripMode"
-          class="p-4"
+          v-if="isTripMode && destinationSelected"
+          class="p-4 flex flex-row justify-center"
         >
-          <TrainList />
+          <div class="w-full lg:w-2/3">
+            <TrainList
+              :departure-journeys="destinationSelected.departureJourneys"
+              :return-journeys="destinationSelected.returnJourneys"
+            />
+          </div>
         </div>
       </section>
     </section>
@@ -87,7 +94,7 @@ import { ref } from 'vue'
 import { useDestinations } from '~/composables/use-destinations'
 import { useIsMobile } from '~/composables/use-is-mobile'
 import { useSearchForm } from '~/composables/use-search-form'
-import type { Destination } from '~/types/common'
+import type { RoundTripDestination } from '~/types/common'
 
 const { initFormValue, research, destinationStation } = useSearchForm() // Import destinationStation and research
 
@@ -129,29 +136,16 @@ const isCityListVisible = computed(() => !isMobile.value || (isMobile.value && i
 const isMapVisible = computed(() => !isMobile.value || (isMobile.value && !isCityListVisibleOnMobile.value))
 const isTripMode = computed(() => route.query.destinationStation)
 const noResults = computed(() => !destinations.value || destinations.value.length === 0)
+const destinationSelected = ref<RoundTripDestination | null>(null)
 const { mobileHeader, desktopHeader, contentMainMarginTop, contentMainMinHeight } = useHeaderHeights(isMobile)
 
-const destinationSelected = ref<Destination>(null)
-
-// Watch destinationStation, and trigger research when it changes
-watch(destinationStation, (newDestination) => {
-  if (newDestination) {
-    research() // Automatically trigger search when a destination is selected
-  }
-})
-
-watch(
-  () => route.query,
-  async () => {
-    await getResults() // Re-fetch results whenever route query parameters change
-  },
-  { immediate: true }, // Run immediately to fetch results on initial load as well
-)
-
-watch(destinations, () => destinationSelected.value = null)
+watch(destinations, () => destinationSelected.value = (isTripMode.value) ? destinations.value[0] : null)
 
 watch(destinationSelected, (destination) => {
-  if (destination) console.log(destination.departureJourneys[0].map(t => ({ o: t.origin, d: t.destination })))
+  if (destination) {
+    destinationStation.value = destination.destinationName
+    research() // Automatically trigger search when a destination is selected
+  }
 })
 
 const onResearch = () => {

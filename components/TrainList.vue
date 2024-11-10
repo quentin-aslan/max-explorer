@@ -1,40 +1,37 @@
 <template>
-  <Tabs value="go">
+  <Tabs value="departure">
     <TabList>
-      <Tab value="go">
-        Aller
+      <Tab value="departure">
+        Aller ({{ departureJourneys.length }})
       </Tab>
-      <Tab value="return">
-        Retour
+      <Tab
+        v-if="isReturnTabDisplayed"
+        value="return"
+      >
+        Retour ({{ returnJourneys.length }})
       </Tab>
     </TabList>
-    <TabPanels>
-      <TabPanel value="go">
-        <TrainCard
-          :is-direct-trip="true"
-          total-duration="2h20"
-          :train-segments="[{ trainNumber: 'TGV 5001', startStation: 'Paris Gare de Lyon', startTime: '09:00', endStation: 'Marseille St-Charles', endTime: '11:20' }]"
-        />
-
-        <div class="m-2" />
-
-        <TrainCard
-          :is-direct-trip="false"
-          total-duration="4h30"
-          :train-segments="[
-            { trainNumber: 'TGV 6513', startStation: 'Paris Gare de Lyon', startTime: '10:45', endStation: 'Lyon-Part-Dieu', endTime: '12:17' },
-            { trainNumber: 'TGV 8910', startStation: 'Lyon-Part-Dieu', startTime: '13:00', endStation: 'Marseille St-Charles', endTime: '15:15' },
-          ]"
-          connection-station="Lyon-Part-Dieu"
-          connection-time="12:17"
-          connection-end-time="13:00"
-          connection-duration="43m"
-        />
+    <TabPanels class="z-10 w-full">
+      <TabPanel value="departure">
+        <div class="flex flex-col gap-4">
+          <TrainCard
+            v-for="(journey, index) in departureJourneys"
+            :key="index"
+            :journey="journey"
+          />
+        </div>
       </TabPanel>
-      <TabPanel value="return">
-        <p class="m-0">
-          La liste de tout les trains retour ici
-        </p>
+      <TabPanel
+        v-if="isReturnTabDisplayed"
+        value="return"
+      >
+        <div class="flex flex-col gap-4">
+          <TrainCard
+            v-for="(journey, index) in returnJourneys"
+            :key="index"
+            :journey="journey"
+          />
+        </div>
       </TabPanel>
     </TabPanels>
   </Tabs>
@@ -46,6 +43,16 @@ import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
+import type { Journey } from '~/types/common'
+
+type Props = {
+  departureJourneys: Journey[]
+  returnJourneys: Journey[]
+}
+
+const props = defineProps<Props>()
+
+const isReturnTabDisplayed = computed(() => props.returnJourneys.length > 0)
 </script>
 
 <style scoped>
@@ -71,6 +78,5 @@ import TabPanel from 'primevue/tabpanel'
   @apply bg-max-bg;
   @apply p-0;
   @apply pt-4;
-  @apply max-w-screen-sm;
 }
 </style>
