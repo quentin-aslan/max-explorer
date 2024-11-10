@@ -1,43 +1,41 @@
 <template>
-  <div class="flex flex-col gap-4 h-screen overflow-scroll">
-    <Card
-      v-for="city in cities"
-      :key="city.id"
-      class="w-full cursor-pointer hover:-translate-x-0.5"
-      @click="() => onCityClick(city)"
+  <div
+    class="flex flex-col gap-2 overflow-scroll"
+  >
+    {{ destinations.length }} destinations trouvées.
+    <div
+      v-for="destination in destinations"
+      :key="destination.id"
+      class="w-full cursor-pointer border rounded-xl bg-white border-max-sec pb-4 pt-4 pl-3 pr-3 flex flex-row justify-between"
+      @click="() => onDestinationClick(destination)"
     >
-      <template #title>
-        <div class="flex flex-col gap-1">
-          <span>{{ city.name }}</span>
-          <span class="text-sm"> <strong>{{ getDepartureTrainsFromCity(city).length + getReturnTrainsFromCity(city).length }}</strong> Trains disponibles (A/R)</span>
-        </div>
-      </template>
-      <template #content>
-        <div v-if="citySelected === city">
-          <TrainTable :trains="getDepartureTrainsFromCity(city)" />
-          <TrainTable :trains="getReturnTrainsFromCity(city)" />
-        </div>
-      </template>
-    </Card>
+      <h2 class="font-sans-semibold text-max-pri">
+        {{ destination.destinationName }}
+      </h2>
+      <h3 class="font-sans-semibold text-max-sec">
+        {{ destination.departureJourneys.length + destination.returnJourneys.length }} trains.
+      </h3>
+      <!--      Premier Train au depart de
+      {{ destination.destinationName }} - Aller : {{ destination.departureJourneys.length }} | Retour : {{ destination.returnJourneys.length }}
+   -->
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { City } from '~/types'
+import type { RoundTripDestination } from '~/types/common'
 
 const props = defineProps<{
-  cities: City[]
+  destinations: RoundTripDestination[]
 }>()
 
-const citySelected = defineModel()
+const destinationSelected = defineModel()
 
-const { getDepartureTrainsFromCity, getReturnTrainsFromCity } = useTrains()
-
-const onCityClick = (city: City) => {
-  if (citySelected.value === city) {
-    citySelected.value = null
+const onDestinationClick = (destination: Destination) => {
+  if (destinationSelected.value === destination) {
+    destinationSelected.value = null
     return
   }
-  citySelected.value = city
+  destinationSelected.value = destination
 }
 </script>

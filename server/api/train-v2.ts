@@ -1,9 +1,10 @@
-import type { RoundTripDestination, AdaptedTrainData, DestinationJourneys } from '~/server/train-type'
+import type { RoundTripDestination, AdaptedTrainData, DestinationJourneys } from '~/types/common.ts'
 import prisma from '~/lib/prisma'
+import { normalizeName } from '~/server/utils'
 
 const MIN_CONNECTION_TIME_SAME_STATION_MINUTES = 15
 const MIN_CONNECTION_TIME_SAME_CITY_MINUTES = 60
-const MAX_CONNECTION_TIME_MINUTES = 800
+const MAX_CONNECTION_TIME_MINUTES = 120
 
 const getOrAddDestinationJourneys = (destinationsTable: DestinationJourneys[], destinationName: string): DestinationJourneys => {
   let destination = destinationsTable.find(dest => dest.destinationName === destinationName)
@@ -36,9 +37,7 @@ const isConnectionValid = (
   if (connectionTime < 0) return false
   if (isSameStation && connectionTime < minConnectionTimeSameStation) return false
   if (!isSameStation && connectionTime < minConnectionTimeSameCity) return false
-  if (connectionTime > maxConnectionTime) return false
-  console.log(`Connection time : ${connectionTrain.origin} to ${connectionTrain.destination} : ${connectionTime / 1000 / 60} minutes`)
-  return true
+  return connectionTime <= maxConnectionTime
 }
 
 const findRoute = async (
@@ -138,7 +137,7 @@ const findRoundTrips = async (
   origin: string,
   destination: string | null = null,
   departureDate: Date,
-  returnDate: Date,
+  returnDate: Date | undefined,
   minConnectionTimeSameStationMinutes: number = MIN_CONNECTION_TIME_SAME_STATION_MINUTES,
   minConnectionTimeSameCityMinutes: number = MIN_CONNECTION_TIME_SAME_CITY_MINUTES,
   maxConnectionTimeMinutes: number = MAX_CONNECTION_TIME_MINUTES,
@@ -152,14 +151,20 @@ const findRoundTrips = async (
   // If the destination is specified, only look for a round trip to this destination
   if (destination) {
     if (!departureDestinations) return null
-    const returnDestination = await findRoute(destination, origin, returnDate, minConnectionTimeSameStationMinutes, minConnectionTimeSameCityMinutes, maxConnectionTimeMinutes)
-    if (!returnDestination) return null
 
-    roundTripsDestinations.push({
+    const destinationObj: RoundTripDestination = {
       destinationName: destination,
       departureJourneys: (departureDestinations as DestinationJourneys).journeys,
-      returnJourneys: (returnDestination as DestinationJourneys).journeys },
-    )
+      returnJourneys: [],
+    }
+
+    if (returnDate) {
+      const returnDestination = await findRoute(destination, origin, returnDate, minConnectionTimeSameStationMinutes, minConnectionTimeSameCityMinutes, maxConnectionTimeMinutes)
+      if (!returnDestination) return null
+      destinationObj.returnJourneys = (returnDestination as DestinationJourneys).journeys
+    }
+
+    roundTripsDestinations.push(destinationObj)
 
     return roundTripsDestinations
   }
@@ -168,22 +173,42 @@ const findRoundTrips = async (
   let i = 0
   for (const departureDestination of departureDestinations) {
     i++
-    console.log(`departureDestination ${i} : `, departureDestination.destinationName)
     const returnDestination = await findRoute(departureDestination.destinationName, origin, returnDate, minConnectionTimeSameStationMinutes, minConnectionTimeSameCityMinutes, maxConnectionTimeMinutes)
-    console.log(`returnDestination : `, returnDestination)
     if (returnDestination) {
       roundTripsDestinations.push({ destinationName: departureDestination.destinationName, departureJourneys: departureDestination.journeys, returnJourneys: (returnDestination as DestinationJourneys).journeys })
     }
   }
 
-  console.log(`roundTripsDestinations : `, roundTripsDestinations.length)
+  // Get the coordinates and the traffic of the destinations
+  for (const roundTripDestination of roundTripsDestinations) {
+    const normName = normalizeName(roundTripDestination.destinationName)?.split(' ')[0]
+    const trainStation = await prisma.trainStation.findFirst({
+      where: {
+        name: {
+          contains: normName,
+        },
+      },
+      orderBy: {
+        traffic: 'desc',
+      },
+    })
+
+    if (trainStation) {
+      roundTripDestination.traffic = trainStation.traffic
+      roundTripDestination.latitude = trainStation.latitude
+      roundTripDestination.longitude = trainStation.longitude
+    }
+    else {
+      console.log(`No train station found for ${normName}`)
+    }
+  }
   return roundTripsDestinations
 }
 
 export default defineEventHandler(async (event) => {
   const { origin, destination, departureDate, returnDate }: Props = getQuery(event)
 
-  if (!origin || !departureDate || !returnDate) {
+  if (!origin || !departureDate) {
     throw createError({
       statusCode: 400,
       statusMessage: 'Origin, departure date and return date are required',
@@ -191,9 +216,9 @@ export default defineEventHandler(async (event) => {
   }
 
   const departureDateFormatted = new Date(departureDate)
-  const returnDateFormatted = new Date(returnDate)
+  const returnDateFormatted = (returnDate) ? new Date(returnDate) : undefined
 
-  if (departureDateFormatted >= returnDateFormatted) {
+  if (returnDateFormatted && (departureDateFormatted > returnDateFormatted)) {
     throw createError({
       statusCode: 400,
       statusMessage: 'Departure date must be before return date',

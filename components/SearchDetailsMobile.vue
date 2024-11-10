@@ -1,9 +1,15 @@
-<template>
-  <div class="flex flex-row gap-2 items-center p-2 bg-blue-900 text-white">
-    <Button @click="navigateTo('/')">
-      <i class="pi pi-angle-left text-4xl font-bold" />
-    </Button>
-    <div class="flex flex-col gap-1">
+<template class="lg:hidden">
+  <h1
+    class="text-xl text-max-pri font-sans-bold text-center pt-5 cursor-pointer"
+    @click="navigateTo('/')"
+  >
+    Max Explorer
+  </h1>
+  <div class="flex flex-row gap-2 items-center p-2 text-max-pri">
+    <button @click="navigateTo('/')">
+      <i class="pi pi-angle-left text-4xl font-bold text-max-pri" />
+    </button>
+    <div class="flex flex-col gap-1 pl-2">
       <div class="flex flex-row items-center gap-2 text-2xl">
         <i class="pi pi-map-marker font-bold text-xl" /> <span class="">{{ departureStation }}</span>
       </div>

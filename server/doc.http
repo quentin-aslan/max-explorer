@@ -1,4 +1,20 @@
-### GET request to example server
-GET http://localhost:3000/api/train-v2?origin=Paris&departureDate=2024-11-04&returnDate=2024-11-05
+### Import Train Data From SNCF API to Database
+POST http://localhost:3000/api/import-trains
 
-###
+### Import Train Station Data From SNCF API to Database
+POST http://localhost:3000/api/import-destination
+
+### GET Results From Origine with Departure Date and Return Date
+GET http://localhost:3000/api/train-v2?origin=Paris&departureDate=2024-11-07&returnDate=2024-11-08
+
+### GET With Destination
+GET http://localhost:3000/api/train-v2?origin=Toulouse&destination=Nimes&departureDate=2024-11-04&returnDate=2024-11-05
+
+### Get Destination Coordinates
+GET http://localhost:3000/api/get-destination-coordinates?destinationName=Uzes
+
+### Import Train Data From SNCF API to Database (SERVER)
+POST https://max-explorer.quentinaslan.fr/api/import-trains
+
+### Import Train Data From SNCF API to Database (SERVER)
+POST https://max-explorer.quentinaslan.fr/api/import-destination

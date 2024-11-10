@@ -1,45 +1,82 @@
 <template>
-  <section class="w-full lg:w-2/3 flex flex-col gap-4">
-    <div class="text-sm">
-      Total Count : <span class="font-semibold">{{ trains.length }}</span>
-    </div>
-    <div
-      v-for="train in trains"
-      :key="train.id"
-      :class="[
-        'flex flex-col gap-2 p-4 border rounded duration-150 hover:-translate-x-1 hover:shadow cursor-pointer',
-        { 'bg-gray-100 opacity-40 border-gray-300': train.od_happy_card === 'NON' },
-        { hidden: !isFullDisplayed && train.od_happy_card === 'NON' },
-        { 'bg-gray-white border-2': train.od_happy_card === 'OUI' },
-      ]"
-      @click="onTrainClick(train)"
-    >
-      <div class="flex flex-row justify-between">
-        <h2 class="text-gray-500">
-          <span class="font-bold">{{ train.heure_depart }}</span> - {{ train.origine }} ({{ train.origine_iata }})
-        </h2>
-        <span class="text-sm">
-          Train Number: <span class="font-semibold">{{ train.train_no }}</span>
-        </span>
-      </div>
-      <h2 class="font-bold">
-        <span>{{ train.heure_arrivee }}</span> - {{ train.destination }} ({{ train.destination_iata }})
-      </h2>
-    </div>
-  </section>
+  <Tabs value="departure">
+    <TabList>
+      <Tab value="departure">
+        Aller ({{ departureJourneys.length }})
+      </Tab>
+      <Tab
+        v-if="isReturnTabDisplayed"
+        value="return"
+      >
+        Retour ({{ returnJourneys.length }})
+      </Tab>
+    </TabList>
+    <TabPanels class="z-10 w-full">
+      <TabPanel value="departure">
+        <div class="flex flex-col gap-4">
+          <TrainCard
+            v-for="(journey, index) in departureJourneys"
+            :key="index"
+            :journey="journey"
+          />
+        </div>
+      </TabPanel>
+      <TabPanel
+        v-if="isReturnTabDisplayed"
+        value="return"
+      >
+        <div class="flex flex-col gap-4">
+          <TrainCard
+            v-for="(journey, index) in returnJourneys"
+            :key="index"
+            :journey="journey"
+          />
+        </div>
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
 </template>
 
 <script lang="ts" setup>
-import type { Train } from '~/types'
+import Tabs from 'primevue/tabs'
+import TabList from 'primevue/tablist'
+import Tab from 'primevue/tab'
+import TabPanels from 'primevue/tabpanels'
+import TabPanel from 'primevue/tabpanel'
+import type { Journey } from '~/types/common'
 
-const props = defineProps<{
-  trains: Train[]
-  isFullDisplayed: boolean
-}>()
-
-const emit = defineEmits(['trainClick'])
-
-const onTrainClick = (train: Train) => {
-  emit('trainClick', train)
+type Props = {
+  departureJourneys: Journey[]
+  returnJourneys: Journey[]
 }
+
+const props = defineProps<Props>()
+
+const isReturnTabDisplayed = computed(() => props.returnJourneys.length > 0)
 </script>
+
+<style scoped>
+/* Non-active tab color */
+:deep(.p-tab) {
+  @apply font-sans-semibold;
+  @apply border-max-bg;
+  @apply text-max-sec;
+}
+
+:deep(.p-tab.p-tab-active) { /* Change active color */
+  @apply text-max-pri;
+}
+:deep(.p-tablist-active-bar) { /* Customize the active bar (underline) for the active tab */
+  @apply bg-max-pri;
+}
+
+:deep(.p-tablist-tab-list) { /* Remove the border color where there are no tabs anymore */
+  @apply bg-max-bg;
+  @apply border-max-bg;
+}
+:deep(.p-tabpanels) { /* Remove the white bg of tabpannels */
+  @apply bg-max-bg;
+  @apply p-0;
+  @apply pt-4;
+}
+</style>

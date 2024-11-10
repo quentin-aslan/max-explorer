@@ -1,18 +1,19 @@
 <template>
   <div
     ref="mapElement"
-    style="height: calc(100vh); width:100%;"
+    class="lg:border lg:border-max-sec lg:rounded-3xl"
+    style="height: calc(100vh); width:100%"
   />
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useGoogleMaps } from '~/composables/use-google-maps'
-import type { City } from '~/types'
+import type { RoundTripDestination } from '~/types/common'
 
 type Props = {
-  cities: City[]
-  departureCity: City
+  destinations: RoundTripDestination[]
+  departureCity?: unknown
 }
 
 const props = defineProps<Props>()
@@ -41,7 +42,7 @@ onMounted(async () => {
 const addCitiesOnMap = () => {
   if (map.value) {
     clearMarkers()
-    for (const city of props.cities) {
+    for (const city of props.destinations) {
       const marker = addCityMarker(city)
 
       marker?.addListener('click', () => {
@@ -57,7 +58,7 @@ const addCitiesOnMap = () => {
   }
 }
 
-const onCitySelectedChanges = (newCitySelected: City, oldCitySelected: City) => {
+const onCitySelectedChanges = (newCitySelected: RoundTripDestination, oldCitySelected: RoundTripDestination) => {
   if (oldCitySelected) {
     clearHighlightedCityMarker(oldCitySelected)
   }

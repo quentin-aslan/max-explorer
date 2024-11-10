@@ -10,9 +10,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model City {
+model TrainStation {
   id        Int    @id @default(autoincrement())
   name      String
+  traffic   Int
   latitude  Float
   longitude Float
 }
