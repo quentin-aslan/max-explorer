@@ -13,16 +13,16 @@
     <div
       v-if="isLast"
       class="absolute bg-max-sec"
-      style="width: 2px; height: 2.8rem; bottom: 2rem; left: -0.04rem;"
+      style="width: 2px; height: 2.5rem; bottom: 2rem; left: -0.04rem;"
     />
     <!-- Train Details -->
     <div>
       <div class="text-xl text-max-pri font-sans-semibold">
         <span>{{ formattedTime(train.departureDateTime) }}</span>
-        <span class="text-base font-sans"> ({{ train.trainNo }})</span>
+        <span class="text-base font-sans-italic"> Train n° {{ train.trainNo }}</span>
       </div>
-      <div class="text-sm font-sans-semibold  text-max-pri">
-        {{ train.origin }}
+      <div class="text-sm text-max-pri font-sans-semibold">
+        <span>{{ train.origin }}</span>
       </div>
       <!-- End Station -->
       <div
@@ -35,10 +35,7 @@
             style="position: absolute; top: 1rem; left: -2.24rem;"
           /> <!-- Dot for end station -->
           <div>
-            <div class="text-sm font-sans-semibold text-max-pri">
-              {{ train.destination }}
-            </div>
-            <div class="text-xl text-max-pri font-sans-medium">
+            <div class="text-xl text-max-pri font-sans-semibold">
               {{ formattedTime(train.arrivalDateTime) }} <span
                 v-if="!isSameDay(new Date(train.departureDateTime), new Date(train.arrivalDateTime))"
                 class="text-base font-sans"
@@ -46,6 +43,9 @@
                 - {{ formattedDateWithoutTime(train.arrivalDateTime) }} |
                 <span class="border-b-max-action border-b-4">TRAIN DE NUIT</span>
               </span>
+            </div>
+            <div class="text-sm text-max-pri font-sans-semibold">
+              {{ train.destination }}
             </div>
           </div>
         </div>
@@ -58,7 +58,7 @@
 import { defineProps } from 'vue'
 import trainIcon from 'assets/icons/train.svg?raw'
 import type { AdaptedTrainData } from '~/types/common'
-import { formattedDate, formattedDateWithoutTime, formattedTime } from '~/utils'
+import { formattedDateWithoutTime, formattedTime } from '~/utils'
 
 type Props = {
   train: AdaptedTrainData

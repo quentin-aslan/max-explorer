@@ -25,7 +25,7 @@
           <HomeSearch v-if="isMobile" />
 
           <!-- Paragraphe descriptif -->
-          <p class="text-xl text-max-pri">
+          <p class="text-xl text-max-pri bg-max-bg p-3 rounded-3xl">
             Utilise notre application pour tirer le meilleur parti de ton abonnement <strong>MAX JEUNE</strong>. Découvre toutes les destinations accessibles depuis ta ville de départ en quelques clics !
           </p>
         </div>
