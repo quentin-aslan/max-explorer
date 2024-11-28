@@ -23,7 +23,7 @@
           <div class="relative">
             <div
               class="absolute bg-max-sec"
-              style="width: 2px; height: 5.5rem; top: -2.5rem; left: 0.98rem;"
+              style="width: 2px; height: 5.5rem; top: -1rem; left: 0.96rem;"
             />
           </div>
 
