@@ -63,7 +63,16 @@
             v-if="isMapVisible && !isTripMode"
             class="w-full lg:w-[50%] fixed right-0"
           >
-            <Map
+            <!--            <Map
+              ref="mapDesktop"
+              v-model="destinationSelected"
+              class="w-full h-full"
+              :destinations="destinations"
+              :style="{
+                'max-height': contentMainMinHeight,
+              }"
+            /> -->
+            <MapV2
               ref="mapDesktop"
               v-model="destinationSelected"
               class="w-full h-full"
