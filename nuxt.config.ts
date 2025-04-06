@@ -42,6 +42,7 @@ export default defineNuxtConfig({
     '@prisma/nuxt',
     '@nuxt/image',
     '@nuxt/eslint',
+    'nuxt-cron',
   ],
   devtools: { enabled: false },
   css: ['~/assets/main.css'],
@@ -62,6 +63,10 @@ export default defineNuxtConfig({
     '/results': { ssr: false },
   },
   compatibilityDate: '2024-04-03',
+  cron: {
+    timeZone: 'Europe/Paris',
+    jobsDir: 'cron',
+  },
   eslint: {
     config: {
       stylistic: true,
