@@ -19,5 +19,5 @@
 The trains are from the SNCF API. (https://ressources.data.sncf.com/explore/dataset/tgvmax/information/)
 
 The `import-trains.ts` file is used to import the trains data from the SNCF API to the database.
-The trains data are refreshed every day at 7am with a cron. `server/cron/refresh-trains-data.ts`.
+The trains data are refreshed every day at 7am with a cron. `server/cron/get-SNCF-data.ts`.
 The trains can also be refreshed via an REST API. `/api/import-trains`.
