@@ -24,6 +24,7 @@
     "axios": "^1.7.7",
     "leaflet": "^1.9.4",
     "nuxt": "^3.13.0",
+    "nuxt-cron": "^1.8.0",
     "primeicons": "^7.0.0",
     "primevue": "^4.1.0",
     "vue": "latest",
