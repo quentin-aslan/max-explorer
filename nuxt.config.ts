@@ -49,15 +49,11 @@ export default defineNuxtConfig({
   runtimeConfig: {
     DATABASE_URL: process.env.DATABASE_URL,
     openWeatherMapApiKey: process.env.OPEN_WEATHER_MAP_API_KEY,
-    public: {
-      GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
-    },
   },
   alias: {
     '.prisma/client/index-browser': './node_modules/.prisma/client/index-browser.js',
   },
   build: {
-    transpile: ['@googlemaps/js-api-loader'],
   },
   routeRules: {
     '/results': { ssr: false },
