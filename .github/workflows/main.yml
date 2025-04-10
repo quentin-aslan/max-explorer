@@ -30,7 +30,6 @@ jobs:
             git pull origin main
             rm .env
             touch .env
-            echo GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }} >> .env
             echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
             echo PORT=${{ secrets.PORT }} >> .env
             rm prisma/dev.db

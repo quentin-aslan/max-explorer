@@ -2,7 +2,7 @@ import { parse } from '@fast-csv/parse'
 import type { AxiosResponse } from 'axios'
 import axios from 'axios'
 import { createError } from 'h3'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '~/prisma/generated/client'
 import type { TrainStation } from '~/types/common'
 import { normalizeName } from '~/server/utils'
 
