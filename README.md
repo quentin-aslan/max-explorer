@@ -1,8 +1,8 @@
 # Max Explorer
 
 # Pre-requisites
-> .env with `DATABASE_URL` required.
-1. Create the .env with database_url ex: `DATABASE_URL=file:./dev.db`
+> .env with `GOOGLE_API_KEY` and `DATABASE_URL` required.
+1. Create the .env with the google map api key and the database_url.
 2. `npm install`
 3. `npx prisma migrate dev`
 4. `npm run dev`

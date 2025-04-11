@@ -26,7 +26,7 @@ export const useLeaflet = () => {
 
   // Add city marker with custom content
   const addCityMarker = (city: RoundTripDestination) => {
-    if (!map.value || !city.latitude || !city.longitude) return null
+    if (!map.value) return null
 
     const marker = L.marker([city.latitude, city.longitude], {
       icon: L.divIcon({

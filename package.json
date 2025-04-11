@@ -14,23 +14,23 @@
   },
   "dependencies": {
     "@fast-csv/parse": "^5.0.2",
-    "@nuxt/eslint": "^1.3.0",
-    "@nuxt/image": "^1.10.0",
-    "@nuxtjs/tailwindcss": "^6.13.0",
-    "@primevue/forms": "^4.3.3",
-    "@primevue/nuxt-module": "^4.3.3",
-    "@primevue/themes": "^4.3.3",
-    "@prisma/nuxt": "^0.3.0",
-    "axios": "^1.8.4",
+    "@googlemaps/js-api-loader": "^1.16.8",
+    "@nuxt/eslint": "^0.6.0",
+    "@nuxt/image": "^1.8.1",
+    "@nuxtjs/tailwindcss": "^6.12.1",
+    "@primevue/nuxt-module": "^4.1.0",
+    "@primevue/themes": "^4.1.0",
+    "@prisma/nuxt": "^0.0.35",
+    "axios": "^1.7.7",
     "leaflet": "^1.9.4",
-    "nuxt": "^3.16.2",
+    "nuxt": "^3.13.0",
     "nuxt-cron": "^1.8.0",
     "primeicons": "^7.0.0",
-    "primevue": "^4.3.3",
+    "primevue": "^4.1.0",
     "vue": "latest",
     "vue-router": "latest"
   },
   "devDependencies": {
-    "@prisma/client": "^6.6.0"
+    "@prisma/client": "^5.22.0"
   }
 }

@@ -1,5 +1,5 @@
 // server/utils/import-trains.ts
-import { PrismaClient } from '~/prisma/generated/client'
+import { PrismaClient } from '@prisma/client'
 import axios from 'axios'
 import { parse } from '@fast-csv/parse'
 import type { AdaptedTrainData } from '~/types/common'

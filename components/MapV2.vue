@@ -35,10 +35,6 @@ const addCitiesOnMap = () => {
   for (const city of props.destinations) {
     const marker = addCityMarker(city)
 
-    if (!marker) {
-      return null
-    }
-
     marker.on('click', () => {
       citySelected.value = city
     })
