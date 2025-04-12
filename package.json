@@ -10,7 +10,9 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "migrate:up": "tsx scripts/migrate.ts up",
+    "migrate:down": "tsx scripts/migrate.ts down"
   },
   "dependencies": {
     "@fast-csv/parse": "^5.0.2",
@@ -20,17 +22,21 @@
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@primevue/nuxt-module": "^4.1.0",
     "@primevue/themes": "^4.1.0",
-    "@prisma/nuxt": "^0.0.35",
     "axios": "^1.7.7",
+    "better-sqlite3": "^9.6.0",
     "leaflet": "^1.9.4",
     "nuxt": "^3.13.0",
     "nuxt-cron": "^1.8.0",
     "primeicons": "^7.0.0",
     "primevue": "^4.1.0",
+    "umzug": "^3.8.2",
     "vue": "latest",
     "vue-router": "latest"
   },
   "devDependencies": {
-    "@prisma/client": "^5.22.0"
+    "@types/better-sqlite3": "^7.6.13",
+    "dotenv": "^16.5.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
   }
 }

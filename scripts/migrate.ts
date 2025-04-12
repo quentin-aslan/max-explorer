@@ -1,0 +1,38 @@
+import umzug from './umzug.js'
+
+async function migrate() {
+  try {
+    const migrations = await umzug.up()
+    console.log('Applied migrations:', migrations.map(m => m.name))
+    console.log('Migration successful.')
+    process.exit(0)
+  }
+  catch (e) {
+    console.error('Migration failed:', e)
+    process.exit(1)
+  }
+}
+
+async function rollback() {
+  try {
+    await umzug.down()
+    console.log('Rollback successful.')
+    process.exit(0)
+  }
+  catch (e) {
+    console.error('Rollback failed:', e)
+    process.exit(1)
+  }
+}
+
+const command = process.argv[2]
+
+if (command === 'up') {
+  migrate()
+}
+else if (command === 'down') {
+  rollback()
+}
+else {
+  console.log('Invalid command, use "up" to migrate or "down" to rollback the last migration.')
+}
