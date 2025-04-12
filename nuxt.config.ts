@@ -39,7 +39,6 @@ export default defineNuxtConfig({
   modules: [
     '@primevue/nuxt-module',
     '@nuxtjs/tailwindcss',
-    '@prisma/nuxt',
     '@nuxt/image',
     '@nuxt/eslint',
     'nuxt-cron',
@@ -52,9 +51,6 @@ export default defineNuxtConfig({
     public: {
       GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
     },
-  },
-  alias: {
-    '.prisma/client/index-browser': './node_modules/.prisma/client/index-browser.js',
   },
   build: {
     transpile: ['@googlemaps/js-api-loader'],
@@ -96,8 +92,5 @@ export default defineNuxtConfig({
         weekHeader: 'Sem', // Pour l'en-tête de la semaine
       },
     },
-  },
-  prisma: {
-    installStudio: false,
   },
 })

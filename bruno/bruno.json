@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "max-explorer",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
