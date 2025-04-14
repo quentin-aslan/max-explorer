@@ -289,9 +289,9 @@ describe('find-trips.use-case.ts', () => {
     await trainStationsRepository.insertManyTrainStations(trainStationsMock)
   })
 
-  afterAll(() => {
-    dbContext.close()
-    dbContext.cleanup()
+  afterAll(async () => {
+    await dbContext.cleanup()
+    await dbContext.close()
   })
 
   it('Should return direct trips from Toulouse', async () => {

@@ -3,11 +3,12 @@ import { ImportTrainStationsUseCase } from '~/server/domains/train-stations/impo
 import {
   TrainStationsSncfRepositoryAxios,
 } from '~/server/domains/train-stations/adapters/train-stations-sncf.repository.axios'
-import { TrainStationsRepositorySqlite } from '~/server/domains/train-stations/adapters/train-stations.repository.sqlite'
 import { ImportTrainsUseCase } from '~/server/domains/trains/import-trains.use-case'
 import { TrainsSncfRepositoryAxios } from '~/server/domains/trains/adapters/trains-sncf.repository.axios'
-import { TrainsRepositorySqlite } from '~/server/domains/trains/adapters/trains.repository.sqlite'
-import { sqliteDb } from '~/server/utils/sqlite-db'
+import {
+  TrainStationsRepositoryPostgres,
+} from '~/server/domains/train-stations/adapters/train-stations.repository.postgres'
+import { TrainsRepositoryPostgres } from '~/server/domains/trains/adapters/trains.repository.postgres'
 
 export default defineCronHandler(() => '0 7 * * *', async () => {
   try {
@@ -16,7 +17,7 @@ export default defineCronHandler(() => '0 7 * * *', async () => {
     // Import train stations
     const importTrainStationsUseCase = new ImportTrainStationsUseCase(
       new TrainStationsSncfRepositoryAxios(),
-      new TrainStationsRepositorySqlite(sqliteDb),
+      new TrainStationsRepositoryPostgres(getPgPool()),
     )
     const importDestinationMsg = await importTrainStationsUseCase.execute()
     console.log(importDestinationMsg)
@@ -24,7 +25,7 @@ export default defineCronHandler(() => '0 7 * * *', async () => {
     // Import trains
     const importTrainsUseCase = new ImportTrainsUseCase(
       new TrainsSncfRepositoryAxios(),
-      new TrainsRepositorySqlite(sqliteDb),
+      new TrainsRepositoryPostgres(getPgPool()),
     )
     const importTrainsMsg = await importTrainsUseCase.execute()
     console.log(importTrainsMsg)
@@ -35,4 +36,4 @@ export default defineCronHandler(() => '0 7 * * *', async () => {
   finally {
     console.log('CRON finished.')
   }
-}, { runOnInit: true })
+}, { runOnInit: false })

@@ -27,7 +27,7 @@ export class ImportTrainStationsUseCase {
     }
 
     // Clear the database
-    this.trainStationsRepository.deleteAllEntries()
+    await this.trainStationsRepository.deleteAllEntries()
 
     // Sort the train by traffic
     trainStations = trainStations.sort((a, b) => b.traffic - a.traffic)
@@ -36,7 +36,7 @@ export class ImportTrainStationsUseCase {
     const batchSize = 1000
     for (let i = 0; i < trainStations.length; i += batchSize) {
       const batch = trainStations.slice(i, i + batchSize)
-      this.trainStationsRepository.insertManyTrainStations(batch)
+      await this.trainStationsRepository.insertManyTrainStations(batch)
       console.log(`Inserted ${i + batch.length} trainStations.`)
     }
 

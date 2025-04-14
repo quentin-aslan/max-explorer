@@ -3,14 +3,16 @@ import { ImportTrainStationsUseCase } from '~/server/domains/train-stations/impo
 import {
   TrainStationsSncfRepositoryAxios,
 } from '~/server/domains/train-stations/adapters/train-stations-sncf.repository.axios'
-import { TrainStationsRepositorySqlite } from '~/server/domains/train-stations/adapters/train-stations.repository.sqlite'
-import { sqliteDb } from '~/server/utils/sqlite-db'
+import {
+  TrainStationsRepositoryPostgres,
+} from '~/server/domains/train-stations/adapters/train-stations.repository.postgres'
+import { getPgPool } from '~/server/utils/postgres-db'
 
 export default defineEventHandler(async () => {
   try {
     const importTrainStationsUseCase = new ImportTrainStationsUseCase(
       new TrainStationsSncfRepositoryAxios(),
-      new TrainStationsRepositorySqlite(sqliteDb),
+      new TrainStationsRepositoryPostgres(getPgPool()),
     )
 
     return await importTrainStationsUseCase.execute()

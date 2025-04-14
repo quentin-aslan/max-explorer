@@ -9,11 +9,10 @@ export class ImportTrainsUseCase {
 
   async execute(): Promise<string> {
     const trainsFromSncf = await this.trainsSncfRepository.getTrains()
-    this.trainsRepository.deleteAllEntries()
+    await this.trainsRepository.deleteAllEntries()
 
-    this.trainsRepository.insertManyTrains(trainsFromSncf)
+    await this.trainsRepository.insertManyTrains(trainsFromSncf)
 
-    console.log(`${trainsFromSncf.length} trains imported with success`)
     return `${trainsFromSncf.length} trains imported with success`
   }
 }

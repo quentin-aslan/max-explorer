@@ -6,8 +6,8 @@
   "scripts": {
     "migrate:up": "tsx scripts/migrate.ts up",
     "migrate:down": "tsx scripts/migrate.ts down",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",

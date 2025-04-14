@@ -48,6 +48,8 @@ export class FindTripsUseCase {
     const journeySortByDestinationFromOrigin = await this
       .findJourneys(origin, departureDate, directOnly, destination)
 
+    console.log('Step 1, findJourneys finished. length:', journeySortByDestinationFromOrigin.length)
+
     // console.log(`journeySortByDestinationFromOrigin: ${JSON.stringify(journeySortByDestinationFromOrigin)}`)
 
     // 1.1 If no train is found, return an empty array
@@ -162,7 +164,7 @@ export class FindTripsUseCase {
     destination?: string, // Destination provided by a third party, so we can not trust it, we need to format it.
     destinationFormatted?: string, // This field can be trusted, its provided by the app.
   ): Promise<JourneySortByDestination[]> {
-    // console.log(`findJourneys (origin: ${origin}, departureDate: ${departureDate}, directOnly: ${directOnly}, destination: ${destination}, destinationFormatted: ${destinationFormatted})`)
+    console.log(`FIND_JOURNEYS (origin: ${origin}, departureDate: ${departureDate}, directOnly: ${directOnly}, destination: ${destination}, destinationFormatted: ${destinationFormatted})`)
 
     // 1. Get all the trains from the origin
     const filters: GetTrainsFilters = {
@@ -173,7 +175,7 @@ export class FindTripsUseCase {
     // console.log(`filters: ${JSON.stringify(filters)}`)
 
     const directTrainsFromOrigin = await this.trainsRepository.getTrains(filters)
-    // console.log(`directTrainsFromOrigin: ${JSON.stringify(directTrainsFromOrigin)}`)
+    console.log('FIND_JOURNEYS STEP_1, directTrainsFromOrigin:', directTrainsFromOrigin.length)
 
     const originFormatted = directTrainsFromOrigin[0]?.origin
 
@@ -187,29 +189,7 @@ export class FindTripsUseCase {
 
     // 3. Get the connection trains (Only one connection is managed) // TODO: On pourrais ameliorer en prenant l'heure d'arriver du dernier trains dans la ville et faire en sorte que on cherche les trains seulement apres cette heure (ex: Toulouse -> Montauban -> Paris. On cherche les trains de Montauban vers Paris seulement apres l'heure d'arriver du train de Toulouse vers Montauban)
     if (!directOnly) {
-      for (const directJourney of destinationsJourneys) {
-        const filters: GetTrainsFilters = {
-          origin: directJourney.destinationName,
-          departureDate,
-          destination: destination ?? destinationFormatted, // optional
-          excludeDestination: originFormatted,
-        }
-        console.log(`Search connection, filters: ${JSON.stringify(filters)}`)
-
-        const connectionTrains = await this.trainsRepository.getTrains(filters)
-        // console.log(`connectionTrains: ${JSON.stringify(connectionTrains)}`)
-
-        // Merge direct and connection trains (if the connection is valid)
-        for (const journey of directJourney.journeys) {
-          const departureTrain = journey[journey.length - 1]
-          for (const connectionTrain of connectionTrains) {
-            if (this.isConnectionValid(departureTrain, connectionTrain)) {
-              const destinationObj = this.getOrAddDestinationJourneys(destinationsJourneys, connectionTrain.destination)
-              destinationObj.journeys.push([...journey, connectionTrain])
-            }
-          }
-        }
-      }
+      await this.getConnectionJourneys(destinationsJourneys, departureDate, destination, destinationFormatted, originFormatted)
     }
 
     // 4. Remove duplicates
@@ -225,6 +205,39 @@ export class FindTripsUseCase {
     }
 
     return (destination || destinationFormatted ? destinationsJourneys.filter(journey => journey.destinationName === destinationFormatted) : destinationsJourneys)
+  }
+
+  private async getConnectionJourneys(
+    directJourneys: JourneySortByDestination[],
+    departureDate: DateTime,
+    destination?: string,
+    destinationFormatted?: string,
+    originFormatted?: string,
+  ): Promise<void> {
+    console.log(`GET_CONNECTION_JOURNEYS (directJourneys: ${directJourneys.length}, departureDate: ${departureDate}, destination: ${destination}, destinationFormatted: ${destinationFormatted}, originFormatted: ${originFormatted})`)
+    for (const directJourney of directJourneys) {
+      const filters: GetTrainsFilters = {
+        origin: directJourney.destinationName,
+        departureDate,
+        destination: destination ?? destinationFormatted,
+        excludeDestination: originFormatted,
+      }
+
+      // console.log(`Search connection, filters: ${JSON.stringify(filters)}`)
+
+      const connectionTrains = await this.trainsRepository.getTrains(filters)
+      // console.log(`Connection trains found: ${connectionTrains.length}`)
+
+      for (const journey of directJourney.journeys) {
+        const firstLeg = journey[0]
+        for (const connectionTrain of connectionTrains) {
+          if (this.isConnectionValid(firstLeg, connectionTrain)) {
+            const destinationObj = this.getOrAddDestinationJourneys(directJourneys, connectionTrain.destination)
+            destinationObj.journeys.push([...journey, connectionTrain])
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -259,7 +272,7 @@ export class FindTripsUseCase {
     const connectionTimeMs
         = toMillis(connectionTrain.departureDateTime) - toMillis(departureTrain.arrivalDateTime)
 
-    // console.log(`Checking connection between ${departureTrain.origin} to ${connectionTrain.destination} via ${connectionTrain.origin} (Connection time (minutes): ${connectionTimeMs / 1000 / 60})`)
+    // console.log(`IS_CONNECTION_VALID (departureTrain: ${departureTrain.trainNo}, connectionTrain: ${connectionTrain.trainNo})`)
 
     if (connectionTimeMs < 0) return false
 

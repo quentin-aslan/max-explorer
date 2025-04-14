@@ -1,13 +1,20 @@
 /**
- * Utility class for managing a temporary SQLite test database.
+ * PostgresTestManager - Utility class for managing a temporary PostgreSQL test environment.
  *
- * This class:
- * - Creates a SQLite database file (or in-memory if desired)
- * - Runs all migrations (down → up) using Umzug
- * - Provides methods to close the DB and clean up the file
+ * This class is designed to assist with automated testing by:
+ * - Initializing a PostgreSQL connection pool
+ * - Running all database migrations using Umzug (down → up) to ensure a clean state
+ * - Providing methods to reset or teardown the test database environment
  *
- * Intended for use in automated test environments.
- * Quentin Aslan <quentin.aslan@outlook.com>
+ * Usage:
+ * - Instantiate the class before tests
+ * - Call `start()` to prepare the DB
+ * - Optionally call `cleanup()` between tests
+ * - Call `close()` when tests are done to release the connection
+ *
+ * Note: Intended for local development or CI environments.
+ *
+ * Author: Quentin Aslan <quentin.aslan@outlook.com>
  */
 
 import type { Pool as PoolType, PoolConfig } from 'pg'
@@ -23,6 +30,7 @@ export class PostgresTestManager {
   }
 
   constructor(dbConfig?: PoolConfig) {
+    console.log('PostgresTestManager: Creating a new PostgresTestManager instance')
     this.pool = new Pool(dbConfig ?? this.dbConfig)
   }
 

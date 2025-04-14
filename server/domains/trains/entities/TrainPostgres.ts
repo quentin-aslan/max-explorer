@@ -1,5 +1,5 @@
 // SQLite does not support the Date type, so we use string instead
-export type TrainSqlite = {
+export type TrainPostgres = {
   date: string
   trainNo: string
   entity: string | null
