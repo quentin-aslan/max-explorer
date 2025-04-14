@@ -47,6 +47,7 @@ export default defineNuxtConfig({
   css: ['~/assets/main.css'],
   runtimeConfig: {
     DATABASE_URL: process.env.DATABASE_URL,
+    LAUNCH_CRON_ON_INIT: process.env.LAUNCH_CRON_ON_INIT,
     openWeatherMapApiKey: process.env.OPEN_WEATHER_MAP_API_KEY,
     public: {
       GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,

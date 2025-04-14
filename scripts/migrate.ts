@@ -1,4 +1,6 @@
-import umzug from './umzug.js'
+import getUmzug from './umzug.js'
+
+const umzug = getUmzug(process.env.DATABASE_URL)
 
 async function migrate() {
   try {

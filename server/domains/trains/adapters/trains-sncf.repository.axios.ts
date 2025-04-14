@@ -2,6 +2,7 @@ import axios from 'axios'
 import { parse } from '@fast-csv/parse'
 import type { Train } from '../entities/train'
 import type { TrainsSncfRepository } from '~/server/domains/trains/ports/trains-sncf.repository'
+import { parseISODate } from '~/server/utils/dateUtils'
 
 interface CSVRow {
   date: string
@@ -56,12 +57,16 @@ export class TrainsSncfRepositoryAxios implements TrainsSncfRepository {
 
   private csvRowToTrain(row: CSVRow): Train | null {
     try {
-      const date = new Date(row.date)
-      const departureDateTime = new Date(`${row.date}T${row.departureHour}`)
-      const arrivalDateTime = new Date(`${row.date}T${row.arrivalHour}`)
+      const date = parseISODate(row.date)
+
+      const [departureHour, departureMinute] = row.departureHour.split(':').map(Number)
+      const departureDateTime = date.set({ hour: departureHour, minute: departureMinute })
+
+      const [arrivalHour, arrivalMinute] = row.arrivalHour.split(':').map(Number)
+      let arrivalDateTime = date.set({ hour: arrivalHour, minute: arrivalMinute })
 
       if (arrivalDateTime <= departureDateTime) {
-        arrivalDateTime.setDate(arrivalDateTime.getDate() + 1)
+        arrivalDateTime = arrivalDateTime.plus({ days: 1 })
       }
 
       return {

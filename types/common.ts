@@ -27,16 +27,3 @@ export interface DestinationJourneys {
   destinationName: string
   journeys: Journey[]
 }
-
-export interface GetDestinationCoordinatesResponse {
-  name: string
-  latitude: number
-  longitude: number
-}
-
-export interface TrainStation {
-  name: string
-  traffic: number
-  latitude: number
-  longitude: number
-}

@@ -1,5 +1,7 @@
-export type Train = {
-  date: Date
+import type { DateTime } from 'luxon'
+
+export interface Train {
+  date: DateTime
   trainNo: string
   entity: string | null
   axe: string | null
@@ -7,7 +9,7 @@ export type Train = {
   destinationIata: string
   origin: string
   destination: string
-  departureDateTime: Date
-  arrivalDateTime: Date
+  departureDateTime: DateTime
+  arrivalDateTime: DateTime
   isEligibleForMaxSubscription: boolean
 }

@@ -1,5 +1,8 @@
 import type { Database } from 'better-sqlite3'
-import type { TrainStationsRepository } from '~/server/domains/train-stations/ports/train-stations.repository'
+import type {
+  GetTrainStationsFilters,
+  TrainStationsRepository,
+} from '~/server/domains/train-stations/ports/train-stations.repository'
 import type { TrainStation } from '~/server/domains/train-stations/entities/train-station'
 
 export class TrainStationsRepositorySqlite implements TrainStationsRepository {
@@ -21,5 +24,28 @@ export class TrainStationsRepositorySqlite implements TrainStationsRepository {
     for (const trainStation of trainStations) {
       insert.run(trainStation.name, trainStation.traffic, trainStation.latitude, trainStation.longitude)
     }
+  }
+
+  public getTrainStations(filters: GetTrainStationsFilters): TrainStation[] {
+    let SQL = `SELECT * FROM main.TrainStation`
+    const params = []
+
+    if (filters.name) {
+      SQL += ` WHERE name LIKE ?`
+      params.push(`%${filters.name}%`)
+    }
+
+    if (filters.limit) {
+      SQL += ` LIMIT ?`
+      params.push(filters.limit)
+    }
+
+    const rows = this.sqlite.prepare(SQL).all(...params) as TrainStation[]
+    return rows.map((row: any) => ({
+      name: row.name,
+      traffic: row.traffic,
+      latitude: row.latitude,
+      longitude: row.longitude,
+    }))
   }
 }

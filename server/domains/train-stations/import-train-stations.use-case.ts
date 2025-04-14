@@ -12,7 +12,7 @@ export class ImportTrainStationsUseCase {
     const trainStationFromSncf = await this.trainStationsSncfRepository.fetchTrainStations()
     const trainStationFromSncfWithTraffic = await this.trainStationsSncfRepository.fetchTrainStationsTraffic()
 
-    const trainStations: TrainStation[] = []
+    let trainStations: TrainStation[] = []
 
     // Merge train stations with traffic
     for (const trainStationFromAPI of trainStationFromSncf) {
@@ -28,6 +28,9 @@ export class ImportTrainStationsUseCase {
 
     // Clear the database
     this.trainStationsRepository.deleteAllEntries()
+
+    // Sort the train by traffic
+    trainStations = trainStations.sort((a, b) => b.traffic - a.traffic)
 
     // Then insert the train stations in the database
     const batchSize = 1000
