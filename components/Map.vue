@@ -7,8 +7,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
-import { useLeaflet } from '~/composables/use-leaflet'
+import { onMounted } from 'vue'
+import { useGoogleMaps } from '~/composables/use-google-maps'
 import type { RoundTripDestination } from '~/types/common'
 
 type Props = {
@@ -19,35 +19,45 @@ type Props = {
 const props = defineProps<Props>()
 const citySelected = defineModel()
 
-// Import functions from the composable
 const {
   mapElement,
-  initializeMap,
+  loadMap,
   addCityMarker,
+  map,
   clearMarkers,
   highlightCityMarker,
   clearHighlightedCityMarker,
-} = useLeaflet()
+} = useGoogleMaps()
 
-// Add cities to the map
+onMounted(async () => {
+  if (mapElement.value) {
+    await loadMap(mapElement.value, {
+      lat: 46.603354,
+      lng: 1.888334,
+    }, 6.2)
+    addCitiesOnMap()
+  }
+})
+
 const addCitiesOnMap = () => {
-  clearMarkers()
-  for (const city of props.destinations) {
-    const marker = addCityMarker(city)
+  if (map.value) {
+    clearMarkers()
+    for (const city of props.destinations) {
+      const marker = addCityMarker(city)
 
-    marker.on('click', () => {
-      citySelected.value = city
-    })
+      marker?.addListener('click', () => {
+        citySelected.value = city
+      })
 
-    /* marker.on('mouseover', () => {
-      const oldCitySelected = citySelected.value
-      citySelected.value = city
-      onCitySelectedChanges(city, oldCitySelected)
-    }) */
+      marker?.addListener('mouseover', () => {
+        const oldCitySelected = citySelected.value
+        citySelected.value = city
+        onCitySelectedChanges(city, oldCitySelected)
+      })
+    }
   }
 }
 
-// Handle marker highlight changes
 const onCitySelectedChanges = (newCitySelected: RoundTripDestination, oldCitySelected: RoundTripDestination) => {
   if (oldCitySelected) {
     clearHighlightedCityMarker(oldCitySelected)
@@ -58,18 +68,7 @@ const onCitySelectedChanges = (newCitySelected: RoundTripDestination, oldCitySel
   }
 }
 
-onMounted(() => {
-  if (mapElement.value) {
-    initializeMap(mapElement.value, {
-      lat: 46.603354,
-      lng: 1.888334,
-    }, 6.2)
-    addCitiesOnMap()
-  }
-})
-
-// Watch for changes in destinations or selected cities
-watch(() => props.destinations, addCitiesOnMap)
+watch(props.cities, addCitiesOnMap)
 watch(citySelected, onCitySelectedChanges)
 
 defineExpose({

@@ -1,0 +1,19 @@
+meta {
+  name: find-trips
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{BASE_URL}}/api/find-trips?origin=Paris&departureDate=2025-05-06&directOnly=false
+  body: none
+  auth: inherit
+}
+
+params:query {
+  origin: Paris
+  departureDate: 2025-05-06
+  directOnly: false
+  ~destination: Bordeaux
+  ~returnDate: 2025-05-16
+}

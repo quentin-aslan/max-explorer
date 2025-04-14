@@ -1,0 +1,16 @@
+services:
+  db:
+    container_name: postgres_max-explorer
+    ports:
+      - "5432:5432"
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: max-explorer
+      POSTGRES_USER: max-explorer
+      POSTGRES_DB: max-explorer
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

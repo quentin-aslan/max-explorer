@@ -1,5 +1,5 @@
 // COMMON FUNCTION
-export const normalizeName = (name) => {
+export const normalizeName = (name: string) => {
   return name.toLowerCase()
     .replace(/[àáâãäå]/g, 'a')
     .replace(/ç/g, 'c')

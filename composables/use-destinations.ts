@@ -9,10 +9,10 @@ export const useDestinations = () => {
   const toast = useToast()
 
   const fetchDestinations = async (
-    departureStation: string,
+    departureStation: Date,
     destinationStation: string | undefined = undefined,
-    departureDate: string,
-    returnDate: string | undefined,
+    departureDate: Date,
+    returnDate: Date | undefined,
   ) => {
     try {
       isFetchDestinationLoading.value = true
@@ -20,7 +20,7 @@ export const useDestinations = () => {
       const formattedDepartureDate = departureDate ? toISOStringWithOffset(departureDate).slice(0, 10) : undefined
       const formattedReturnDate = returnDate ? toISOStringWithOffset(returnDate).slice(0, 10) : undefined
 
-      const { data } = await useFetch('/api/train-v2', {
+      const { data } = await useFetch('/api/find-trips', {
         query: {
           origin: departureStation,
           destination: destinationStation,

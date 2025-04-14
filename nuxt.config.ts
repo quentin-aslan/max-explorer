@@ -39,7 +39,6 @@ export default defineNuxtConfig({
   modules: [
     '@primevue/nuxt-module',
     '@nuxtjs/tailwindcss',
-    '@prisma/nuxt',
     '@nuxt/image',
     '@nuxt/eslint',
     'nuxt-cron',
@@ -48,12 +47,14 @@ export default defineNuxtConfig({
   css: ['~/assets/main.css'],
   runtimeConfig: {
     DATABASE_URL: process.env.DATABASE_URL,
+    LAUNCH_CRON_ON_INIT: process.env.LAUNCH_CRON_ON_INIT,
     openWeatherMapApiKey: process.env.OPEN_WEATHER_MAP_API_KEY,
-  },
-  alias: {
-    '.prisma/client/index-browser': './node_modules/.prisma/client/index-browser.js',
+    public: {
+      GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
+    },
   },
   build: {
+    transpile: ['@googlemaps/js-api-loader'],
   },
   routeRules: {
     '/results': { ssr: false },
@@ -92,8 +93,5 @@ export default defineNuxtConfig({
         weekHeader: 'Sem', // Pour l'en-tête de la semaine
       },
     },
-  },
-  prisma: {
-    installStudio: false,
   },
 })

@@ -1,3 +1,5 @@
+// ! TODO: USE LUXON !!!
+
 export const toISOStringWithOffset = (date: Date): string => {
   if (!date) return
   const timezoneOffset = date.getTimezoneOffset() * 60000 // offset in milliseconds

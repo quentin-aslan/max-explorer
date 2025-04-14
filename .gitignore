@@ -23,6 +23,5 @@ logs
 .env.*
 !.env.example
 
-# DB
-prisma/dev.db
-prisma/generated
+umzug.json
+sqlite.db
