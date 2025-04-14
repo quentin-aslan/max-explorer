@@ -27,6 +27,20 @@ jobs:
       - name: Start services (Postgres)
         run: npm run docker:up
 
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "Waiting for PostgreSQL to be ready..."
+          POSTGRES_CONTAINER=$(docker ps --filter "name=postgres" --format "{{.ID}}")
+          for i in {1..20}; do
+            if docker exec "$POSTGRES_CONTAINER" pg_isready -U postgres; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Still waiting for PostgreSQL... ($i)"
+            sleep 3
+          done
+
+
       - name: Run tests
         run: npm run test
   build:
