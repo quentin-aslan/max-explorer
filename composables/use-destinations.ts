@@ -24,7 +24,7 @@ export const useDestinations = () => {
         query: {
           origin: departureStation,
           destination: destinationStation,
-          directOnly: true,
+          directOnly: false,
           departureDate: formattedDepartureDate,
           returnDate: formattedReturnDate,
         },
