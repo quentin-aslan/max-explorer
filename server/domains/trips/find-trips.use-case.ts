@@ -188,6 +188,11 @@ export class FindTripsUseCase {
       allDestinationsJourneys = await this.getConnectionJourneys(directDestinationsJourneys, departureDate, destination, destinationFormatted, originFormatted)
     }
 
+    for (const directJourney of directDestinationsJourneys) {
+      const destinationObj = this.getOrAddDestinationJourneys(allDestinationsJourneys, directJourney.destinationName)
+      destinationObj.journeys.push(...directJourney.journeys)
+    }
+
     // 4. Remove duplicates
     for (const journey of allDestinationsJourneys) {
       journey.journeys = this.removeDuplicates(journey.journeys)
@@ -250,11 +255,6 @@ export class FindTripsUseCase {
         destinationObj.journeys.push(...connectionJourney.journeys)
       }
     })
-
-    for (const directJourney of directJourneys) {
-      const destinationObj = this.getOrAddDestinationJourneys(allDestinationsJourneys, directJourney.destinationName)
-      destinationObj.journeys.push(...directJourney.journeys)
-    }
 
     return allDestinationsJourneys
   }
