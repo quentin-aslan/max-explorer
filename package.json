@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "migrate:up": "tsx scripts/migrate.ts up",
+    "migrate:down": "tsx scripts/migrate.ts down",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
@@ -12,9 +16,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "vitest",
-    "coverage": "vitest run --coverage",
-    "migrate:up": "tsx scripts/migrate.ts up",
-    "migrate:down": "tsx scripts/migrate.ts down"
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@fast-csv/parse": "^5.0.2",
@@ -30,6 +32,7 @@
     "luxon": "^3.6.1",
     "nuxt": "^3.13.0",
     "nuxt-cron": "^1.8.0",
+    "pg": "^8.14.1",
     "primeicons": "^7.0.0",
     "primevue": "^4.1.0",
     "umzug": "^3.8.2",
@@ -38,6 +41,7 @@
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
+    "@types/pg": "^8.11.12",
     "dotenv": "^16.5.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3",

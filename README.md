@@ -2,20 +2,29 @@
 
 ## Prerequisites
 
-> A `.env` file with `DATABASE_URL` is optional. By default, `DATABASE_URL=sqlite.db` will be used.
+> A `.env` file with `DATABASE_URL` is optional.
 
 1. Install dependencies  
    `npm install`
-
-2. Run database migrations  
+2. Run the database (PostgreSQL) with Docker  
+   `npm run docker:up`
+3. Run database migrations  
    `npm run migrate:up`
-
-3. Start the development server  
+4. Start the development server  
    `npm run dev`
-
 ---
 
-## Database Migrations
+## Database (PostgreSQL)
+The database used is PostgreSQL, which is started with docker, using the `docker-compose.yml` file in the root directory.
+
+Start the database :
+`npm run docker:up` (or `docker-compose up`)
+
+Stop the database :
+`npm run docker:down` (or `docker-compose down`)
+
+
+### Database Migrations
 
 1. Add a migration file to the `migrations` folder
    - Format: `XXX-description.up.ts`
@@ -57,5 +66,5 @@ Train data is retrieved from the official SNCF API:
 Some trip search algorithms are complex and are covered by automated tests.
 
 - Tests are located in the `tests` directory
-- A SQLite database is used for testing
-- The database is initialized and migrated by `tests/setupTestDb.ts`, which uses the shared `umzug` logic from the `scripts` folder
+- A Postgres database is used for testing
+- The database is initialized and migrated by `tests/postgres-test-manager.ts`, which uses the shared `umzug` logic from the `scripts` folder

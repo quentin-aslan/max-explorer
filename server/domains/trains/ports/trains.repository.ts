@@ -2,10 +2,10 @@ import type { DateTime } from 'luxon'
 import type { Train } from '~/server/domains/trains/entities/train'
 
 export interface TrainsRepository {
-  insertTrain(train: Train): void
-  deleteAllEntries(): void
-  insertManyTrains(trains: Train[]): void
-  getTrains(filters: GetTrainsFilters): Train[]
+  insertTrain(train: Train): Promise<void> | void
+  deleteAllEntries(): Promise<void> | void
+  insertManyTrains(trains: Train[]): Promise<void> | void
+  getTrains(filters: GetTrainsFilters): Promise<Train[]> | Train[]
 }
 
 export interface GetTrainsFilters {

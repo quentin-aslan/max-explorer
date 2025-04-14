@@ -41,11 +41,11 @@ export class FindTripsUseCase {
   ): Promise<Trip[]> {
     const { origin, departureDate, directOnly, destination, returnDate } = params
 
-    console.log(`findTripsUseCase (${origin}, ${destination}, ${departureDate}, ${returnDate}, directOnly: ${directOnly}) started`)
+    console.log(`findTripsUseCase (origin: ${origin}, destination: ${destination}, departureDate: ${departureDate}, returnDate: ${returnDate}, directOnly: ${directOnly})`)
     const errors: string[] = [] // List all error occurred and log it.
 
     // 1. Find the train from the origin to the destination if specified
-    const journeySortByDestinationFromOrigin = this
+    const journeySortByDestinationFromOrigin = await this
       .findJourneys(origin, departureDate, directOnly, destination)
 
     // console.log(`journeySortByDestinationFromOrigin: ${JSON.stringify(journeySortByDestinationFromOrigin)}`)
@@ -62,7 +62,7 @@ export class FindTripsUseCase {
     // 2. Create the Trips object and merge journeySortByDestinationFromOrigin with the train stations details
     const trips: Trip[] = [] // This object will be returned by the function.
 
-    const trainStationsWithTraffic = this.trainStationsRepository.getTrainStations({})
+    const trainStationsWithTraffic = await this.trainStationsRepository.getTrainStations({})
     for (const journeys of journeySortByDestinationFromOrigin) {
       const normalizedDestinationName = this.normalizeName(journeys.destinationName)
       // 2.1 Find the train stations details
@@ -93,7 +93,7 @@ export class FindTripsUseCase {
       if (destination) {
         // console.log(`Searching for return trip from ${destination} to ${originFormatted}`)
 
-        const returnTrips = this.findJourneys(
+        const returnTrips = await this.findJourneys(
           destination,
           returnDate,
           directOnly,
@@ -120,7 +120,7 @@ export class FindTripsUseCase {
         for (const trip of trips) {
           // console.log(`Searching for return trip from ${trip.destinationName} to ${originFormatted}`)
 
-          const returnTrips = this.findJourneys(
+          const returnTrips = await this.findJourneys(
             trip.destinationName,
             returnDate,
             directOnly,
@@ -155,13 +155,13 @@ export class FindTripsUseCase {
 
     (I hope this comment is clear enough, if not, please ask me to clarify, quentin.aslan@outlook.com)
   */
-  private findJourneys(
+  private async findJourneys(
     origin: string,
     departureDate: DateTime,
     directOnly: boolean,
     destination?: string, // Destination provided by a third party, so we can not trust it, we need to format it.
     destinationFormatted?: string, // This field can be trusted, its provided by the app.
-  ): JourneySortByDestination[] {
+  ): Promise<JourneySortByDestination[]> {
     // console.log(`findJourneys (origin: ${origin}, departureDate: ${departureDate}, directOnly: ${directOnly}, destination: ${destination}, destinationFormatted: ${destinationFormatted})`)
 
     // 1. Get all the trains from the origin
@@ -172,7 +172,7 @@ export class FindTripsUseCase {
     }
     // console.log(`filters: ${JSON.stringify(filters)}`)
 
-    const directTrainsFromOrigin = this.trainsRepository.getTrains(filters)
+    const directTrainsFromOrigin = await this.trainsRepository.getTrains(filters)
     // console.log(`directTrainsFromOrigin: ${JSON.stringify(directTrainsFromOrigin)}`)
 
     const originFormatted = directTrainsFromOrigin[0]?.origin
@@ -185,7 +185,7 @@ export class FindTripsUseCase {
       destinationObj.journeys.push([directTrain])
     }
 
-    // 3. Get the connection trains (Only one connection is managed)
+    // 3. Get the connection trains (Only one connection is managed) // TODO: On pourrais ameliorer en prenant l'heure d'arriver du dernier trains dans la ville et faire en sorte que on cherche les trains seulement apres cette heure (ex: Toulouse -> Montauban -> Paris. On cherche les trains de Montauban vers Paris seulement apres l'heure d'arriver du train de Toulouse vers Montauban)
     if (!directOnly) {
       for (const directJourney of destinationsJourneys) {
         const filters: GetTrainsFilters = {
@@ -196,12 +196,10 @@ export class FindTripsUseCase {
         }
         console.log(`Search connection, filters: ${JSON.stringify(filters)}`)
 
-        const connectionTrains = this.trainsRepository.getTrains(filters)
+        const connectionTrains = await this.trainsRepository.getTrains(filters)
         // console.log(`connectionTrains: ${JSON.stringify(connectionTrains)}`)
 
         // Merge direct and connection trains (if the connection is valid)
-        // TODO:  Vérifier que y'a pas de doublon. C'est a dire que si un train est deja direct vers une destination ca ne sert a rien de rajouter des connections sur les arrets intermediaire
-        // TODO: Ex: Toulouse -> Montauban -> Paris. Le train est direct vers Paris. On ne veut pas que le train de Montauban vers Paris soit rajouté dans les connections
         for (const journey of directJourney.journeys) {
           const departureTrain = journey[journey.length - 1]
           for (const connectionTrain of connectionTrains) {

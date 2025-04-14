@@ -58,19 +58,20 @@ export class TrainsSncfRepositoryAxios implements TrainsSncfRepository {
   private csvRowToTrain(row: CSVRow): Train | null {
     try {
       const date = parseISODate(row.date)
+      const frenchDate = date.setZone('Europe/Paris')
 
       const [departureHour, departureMinute] = row.departureHour.split(':').map(Number)
-      const departureDateTime = date.set({ hour: departureHour, minute: departureMinute })
+      const departureDateTime = frenchDate.set({ hour: departureHour, minute: departureMinute })
 
       const [arrivalHour, arrivalMinute] = row.arrivalHour.split(':').map(Number)
-      let arrivalDateTime = date.set({ hour: arrivalHour, minute: arrivalMinute })
+      let arrivalDateTime = frenchDate.set({ hour: arrivalHour, minute: arrivalMinute })
 
       if (arrivalDateTime <= departureDateTime) {
         arrivalDateTime = arrivalDateTime.plus({ days: 1 })
       }
 
       return {
-        date,
+        date: frenchDate,
         trainNo: row.trainNo,
         entity: row.entity || null,
         axe: row.axe || null,

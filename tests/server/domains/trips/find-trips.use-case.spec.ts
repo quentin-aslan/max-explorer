@@ -1,13 +1,15 @@
 import { describe, expect, it, beforeAll, afterAll } from 'vitest'
-import { TrainsRepositorySqlite } from '~/server/domains/trains/adapters/trains.repository.sqlite'
 import { FindTripsUseCase } from '~/server/domains/trips/find-trips.use-case'
 import type { Train } from '~/server/domains/trains/entities/train'
 import type { Trip } from '~/server/domains/trips/entities/Trip'
 import type { Journey } from '~/server/domains/trips/entities/Journey'
-import { SqliteTestManager } from '~/tests/setupTestDb'
-import { TrainStationsRepositorySqlite } from '~/server/domains/train-stations/adapters/train-stations.repository.sqlite'
 import type { TrainStation } from '~/server/domains/train-stations/entities/train-station'
 import { parseISODate } from '~/server/utils/dateUtils'
+import { PostgresTestManager } from '~/tests/postgres-test-manager'
+import { TrainsRepositoryPostgres } from '~/server/domains/trains/adapters/trains.repository.postgres'
+import {
+  TrainStationsRepositoryPostgres,
+} from '~/server/domains/train-stations/adapters/train-stations.repository.postgres'
 
 // List of mock train journeys:
 // - TOULOUSE → MONTAUBAN → PARIS (April 15, with 2 connections)
@@ -273,18 +275,18 @@ const expectTrip = (
 }
 
 describe('find-trips.use-case.ts', () => {
-  let dbContext: SqliteTestManager
+  let dbContext: PostgresTestManager
 
   beforeAll(async () => {
-    dbContext = new SqliteTestManager()
+    dbContext = new PostgresTestManager()
     await dbContext.start()
 
-    const repository = new TrainsRepositorySqlite(dbContext.db)
-    repository.deleteAllEntries()
-    repository.insertManyTrains(trainsMock)
+    const repository = new TrainsRepositoryPostgres(dbContext.pool)
+    await repository.deleteAllEntries()
+    await repository.insertManyTrains(trainsMock)
 
-    const trainStationsRepository = new TrainStationsRepositorySqlite(dbContext.db)
-    trainStationsRepository.insertManyTrainStations(trainStationsMock)
+    const trainStationsRepository = new TrainStationsRepositoryPostgres(dbContext.pool)
+    await trainStationsRepository.insertManyTrainStations(trainStationsMock)
   })
 
   afterAll(() => {
@@ -293,10 +295,10 @@ describe('find-trips.use-case.ts', () => {
   })
 
   it('Should return direct trips from Toulouse', async () => {
-    const trainsRepositorySqlite = new TrainsRepositorySqlite(dbContext.db)
-    const trainStationsRepositorySqlite = new TrainStationsRepositorySqlite(dbContext.db)
-    const findTripsUseCase = new FindTripsUseCase(trainsRepositorySqlite, trainStationsRepositorySqlite)
-    const trips = findTripsUseCase.execute({
+    const trainsRepository = new TrainsRepositoryPostgres(dbContext.pool)
+    const trainStationsRepository = new TrainStationsRepositoryPostgres(dbContext.pool)
+    const findTripsUseCase = new FindTripsUseCase(trainsRepository, trainStationsRepository)
+    const trips = await findTripsUseCase.execute({
       origin: 'Toulouse',
       departureDate: parseISODate('2025-04-15'),
       directOnly: true,
@@ -316,10 +318,10 @@ describe('find-trips.use-case.ts', () => {
   })
 
   it('Should return direct AND connecting trips from Toulouse', async () => {
-    const trainsRepositorySqlite = new TrainsRepositorySqlite(dbContext.db)
-    const trainStationsRepositorySqlite = new TrainStationsRepositorySqlite(dbContext.db)
-    const findTripsUseCase = new FindTripsUseCase(trainsRepositorySqlite, trainStationsRepositorySqlite)
-    const trips = findTripsUseCase.execute({
+    const trainsRepository = new TrainsRepositoryPostgres(dbContext.pool)
+    const trainStationsRepository = new TrainStationsRepositoryPostgres(dbContext.pool)
+    const findTripsUseCase = new FindTripsUseCase(trainsRepository, trainStationsRepository)
+    const trips = await findTripsUseCase.execute({
       origin: 'Toulouse',
       departureDate: parseISODate('2025-04-15'),
       directOnly: false,
@@ -339,10 +341,11 @@ describe('find-trips.use-case.ts', () => {
   })
 
   it('Should return direct AND connecting trips from Toulouse with a maximum connection time of 2 minutes within the same station.', async () => {
-    const trainsRepositorySqlite = new TrainsRepositorySqlite(dbContext.db)
-    const trainStationsRepositorySqlite = new TrainStationsRepositorySqlite(dbContext.db)
-    const findTripsUseCase = new FindTripsUseCase(trainsRepositorySqlite, trainStationsRepositorySqlite, { minConnectionTimeSameStationMinutes: 2, minConnectionTimeSameCityMinutes: 60, maxConnectionTimeMinutes: 120 })
-    const trips = findTripsUseCase.execute({
+    const trainsRepository = new TrainsRepositoryPostgres(dbContext.pool)
+    const trainStationsRepository = new TrainStationsRepositoryPostgres(dbContext.pool)
+    const connectionProperties = { minConnectionTimeSameStationMinutes: 2, minConnectionTimeSameCityMinutes: 60, maxConnectionTimeMinutes: 120 }
+    const findTripsUseCase = new FindTripsUseCase(trainsRepository, trainStationsRepository, connectionProperties)
+    const trips = await findTripsUseCase.execute({
       origin: 'Toulouse',
       departureDate: parseISODate('2025-04-15'),
       directOnly: false,
@@ -361,11 +364,11 @@ describe('find-trips.use-case.ts', () => {
     expectTrip(trips, 'PARIS (intramuros)', 1, 2)
   })
 
-  it ('Should return direct round trips from Toulouse', () => {
-    const trainsRepositorySqlite = new TrainsRepositorySqlite(dbContext.db)
-    const trainStationsRepositorySqlite = new TrainStationsRepositorySqlite(dbContext.db)
-    const findTripsUseCase = new FindTripsUseCase(trainsRepositorySqlite, trainStationsRepositorySqlite)
-    const trips = findTripsUseCase.execute({
+  it ('Should return direct round trips from Toulouse', async () => {
+    const trainsRepository = new TrainsRepositoryPostgres(dbContext.pool)
+    const trainStationsRepository = new TrainStationsRepositoryPostgres(dbContext.pool)
+    const findTripsUseCase = new FindTripsUseCase(trainsRepository, trainStationsRepository)
+    const trips = await findTripsUseCase.execute({
       origin: 'Toulouse',
       departureDate: parseISODate('2025-04-15'),
       directOnly: true,
@@ -385,11 +388,11 @@ describe('find-trips.use-case.ts', () => {
     )
   })
 
-  it('Should return direct AND connecting round trips from Toulouse', () => {
-    const trainsRepositorySqlite = new TrainsRepositorySqlite(dbContext.db)
-    const trainStationsRepositorySqlite = new TrainStationsRepositorySqlite(dbContext.db)
-    const findTripsUseCase = new FindTripsUseCase(trainsRepositorySqlite, trainStationsRepositorySqlite)
-    const trips = findTripsUseCase.execute({
+  it('Should return direct AND connecting round trips from Toulouse', async () => {
+    const trainsRepository = new TrainsRepositoryPostgres(dbContext.pool)
+    const trainStationsRepository = new TrainStationsRepositoryPostgres(dbContext.pool)
+    const findTripsUseCase = new FindTripsUseCase(trainsRepository, trainStationsRepository)
+    const trips = await findTripsUseCase.execute({
       origin: 'Toulouse',
       departureDate: parseISODate('2025-04-15'),
       directOnly: false,
@@ -416,11 +419,11 @@ describe('find-trips.use-case.ts', () => {
     )
   })
 
-  it ('Should return direct trips from Toulouse To Paris', () => {
-    const trainsRepositorySqlite = new TrainsRepositorySqlite(dbContext.db)
-    const trainStationsRepositorySqlite = new TrainStationsRepositorySqlite(dbContext.db)
-    const findTripsUseCase = new FindTripsUseCase(trainsRepositorySqlite, trainStationsRepositorySqlite)
-    const trips = findTripsUseCase.execute({
+  it ('Should return direct trips from Toulouse To Paris', async () => {
+    const trainsRepository = new TrainsRepositoryPostgres(dbContext.pool)
+    const trainStationsRepository = new TrainStationsRepositoryPostgres(dbContext.pool)
+    const findTripsUseCase = new FindTripsUseCase(trainsRepository, trainStationsRepository)
+    const trips = await findTripsUseCase.execute({
       origin: 'Toulouse',
       destination: 'Paris',
       departureDate: parseISODate('2025-04-15'),
@@ -433,11 +436,11 @@ describe('find-trips.use-case.ts', () => {
     expectTrip(trips, 'PARIS (intramuros)', 1, 0)
   })
 
-  it ('Should return direct AND connecting round trip from Toulouse To Paris', () => {
-    const trainsRepositorySqlite = new TrainsRepositorySqlite(dbContext.db)
-    const trainStationsRepositorySqlite = new TrainStationsRepositorySqlite(dbContext.db)
-    const findTripsUseCase = new FindTripsUseCase(trainsRepositorySqlite, trainStationsRepositorySqlite)
-    const trips = findTripsUseCase.execute({
+  it ('Should return direct AND connecting round trip from Toulouse To Paris', async () => {
+    const trainsRepository = new TrainsRepositoryPostgres(dbContext.pool)
+    const trainStationsRepository = new TrainStationsRepositoryPostgres(dbContext.pool)
+    const findTripsUseCase = new FindTripsUseCase(trainsRepository, trainStationsRepository)
+    const trips = await findTripsUseCase.execute({
       origin: 'Toulouse',
       destination: 'Paris',
       departureDate: parseISODate('2025-04-15'),

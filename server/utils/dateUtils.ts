@@ -6,7 +6,8 @@ import { DateTime } from 'luxon'
 const DEFAULT_ZONE = 'Europe/Paris'
 
 export const parseISODate = (iso: string): DateTime => {
-  return DateTime.fromISO(iso, { zone: DEFAULT_ZONE })
+  const isoFormatted = new Date(iso).toISOString()
+  return DateTime.fromISO(isoFormatted, { zone: DEFAULT_ZONE })
 }
 
 export const fromJSDate = (date: Date): DateTime => {

@@ -1,6 +1,8 @@
 import getUmzug from './umzug.js'
 
-const umzug = getUmzug(process.env.DATABASE_URL)
+const umzug = getUmzug({
+  connectionString: process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/max-explorer',
+})
 
 async function migrate() {
   try {
@@ -30,10 +32,10 @@ async function rollback() {
 const command = process.argv[2]
 
 if (command === 'up') {
-  migrate()
+  await migrate()
 }
 else if (command === 'down') {
-  rollback()
+  await rollback()
 }
 else {
   console.log('Invalid command, use "up" to migrate or "down" to rollback the last migration.')

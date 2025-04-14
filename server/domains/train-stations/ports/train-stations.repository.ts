@@ -1,10 +1,10 @@
 import type { TrainStation } from '~/server/domains/train-stations/entities/train-station'
 
 export interface TrainStationsRepository {
-  deleteAllEntries(): void
-  insertTrainStation(trainStation: TrainStation): void
-  insertManyTrainStations(trainStations: TrainStation[]): void
-  getTrainStations(filters: GetTrainStationsFilters): TrainStation[]
+  deleteAllEntries(): Promise<void> | void
+  insertTrainStation(trainStation: TrainStation): Promise<void> | void
+  insertManyTrainStations(trainStations: TrainStation[]): Promise<void> | void
+  getTrainStations(filters: GetTrainStationsFilters): Promise<TrainStation[]> | TrainStation[]
 }
 
 export interface GetTrainStationsFilters {
