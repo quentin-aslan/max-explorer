@@ -214,8 +214,7 @@ export class FindTripsUseCase {
     destinationFormatted?: string,
     originFormatted?: string,
   ): Promise<void> {
-    console.log(`GET_CONNECTION_JOURNEYS (directJourneys: ${directJourneys.length}, departureDate: ${departureDate}, destination: ${destination}, destinationFormatted: ${destinationFormatted}, originFormatted: ${originFormatted})`)
-    for (const directJourney of directJourneys) {
+    const connectionPromises = directJourneys.map((directJourney) => {
       const filters: GetTrainsFilters = {
         origin: directJourney.destinationName,
         departureDate,
@@ -223,21 +222,25 @@ export class FindTripsUseCase {
         excludeDestination: originFormatted,
       }
 
-      // console.log(`Search connection, filters: ${JSON.stringify(filters)}`)
+      return this.trainsRepository.getTrains(filters)
+    })
 
-      const connectionTrains = await this.trainsRepository.getTrains(filters)
-      // console.log(`Connection trains found: ${connectionTrains.length}`)
+    // Attend toutes les réponses simultanément
+    const connectionResults = await Promise.all(connectionPromises)
 
-      for (const journey of directJourney.journeys) {
+    connectionResults.forEach((connectionTrains, index) => {
+      const directJourney = directJourneys[index]
+
+      directJourney.journeys.forEach((journey) => {
         const firstLeg = journey[0]
-        for (const connectionTrain of connectionTrains) {
+        connectionTrains.forEach((connectionTrain) => {
           if (this.isConnectionValid(firstLeg, connectionTrain)) {
             const destinationObj = this.getOrAddDestinationJourneys(directJourneys, connectionTrain.destination)
             destinationObj.journeys.push([...journey, connectionTrain])
           }
-        }
-      }
-    }
+        })
+      })
+    })
   }
 
   /**
