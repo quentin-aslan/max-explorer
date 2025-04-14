@@ -63,16 +63,7 @@
             v-if="isMapVisible && !isTripMode"
             class="w-full lg:w-[50%] fixed right-0"
           >
-            <!--            <Map
-              ref="mapDesktop"
-              v-model="destinationSelected"
-              class="w-full h-full"
-              :destinations="destinations"
-              :style="{
-                'max-height': contentMainMinHeight,
-              }"
-            /> -->
-            <MapV2
+            <TheMapLeaflet
               ref="mapDesktop"
               v-model="destinationSelected"
               class="w-full h-full"
@@ -107,6 +98,7 @@ import { useDestinations } from '~/composables/use-destinations'
 import { useIsMobile } from '~/composables/use-is-mobile'
 import { useSearchForm } from '~/composables/use-search-form'
 import type { RoundTripDestination } from '~/types/common'
+import TheMapLeaflet from '~/components/TheMapLeaflet.vue'
 
 const { initFormValue, research, destinationStation } = useSearchForm() // Import destinationStation and research
 

@@ -48,8 +48,6 @@ export class FindTripsUseCase {
     const journeySortByDestinationFromOrigin = await this
       .findJourneys(origin, departureDate, directOnly, destination)
 
-    console.log('Step 1, findJourneys finished. length:', journeySortByDestinationFromOrigin.length)
-
     // console.log(`journeySortByDestinationFromOrigin: ${JSON.stringify(journeySortByDestinationFromOrigin)}`)
 
     // 1.1 If no train is found, return an empty array
@@ -165,6 +163,7 @@ export class FindTripsUseCase {
     destinationFormatted?: string, // This field can be trusted, its provided by the app.
   ): Promise<JourneySortByDestination[]> {
     console.log(`FIND_JOURNEYS (origin: ${origin}, departureDate: ${departureDate}, directOnly: ${directOnly}, destination: ${destination}, destinationFormatted: ${destinationFormatted})`)
+    let allDestinationsJourneys: JourneySortByDestination[] = [] // This table will be returned by the function. It's include all the direct trains and the connection trains sorted by destination.
 
     // 1. Get all the trains from the origin
     const filters: GetTrainsFilters = {
@@ -172,28 +171,25 @@ export class FindTripsUseCase {
       departureDate,
       destination: (directOnly ? destination ?? destinationFormatted : undefined), // optional
     }
-    // console.log(`filters: ${JSON.stringify(filters)}`)
-
     const directTrainsFromOrigin = await this.trainsRepository.getTrains(filters)
-    console.log('FIND_JOURNEYS STEP_1, directTrainsFromOrigin:', directTrainsFromOrigin.length)
 
     const originFormatted = directTrainsFromOrigin[0]?.origin
 
-    const destinationsJourneys: JourneySortByDestination[] = []
+    const directDestinationsJourneys: JourneySortByDestination[] = []
 
     // 2. Add the direct trains to the destination table
     for (const directTrain of directTrainsFromOrigin) {
-      const destinationObj = this.getOrAddDestinationJourneys(destinationsJourneys, directTrain.destination)
+      const destinationObj = this.getOrAddDestinationJourneys(directDestinationsJourneys, directTrain.destination)
       destinationObj.journeys.push([directTrain])
     }
 
     // 3. Get the connection trains (Only one connection is managed) // TODO: On pourrais ameliorer en prenant l'heure d'arriver du dernier trains dans la ville et faire en sorte que on cherche les trains seulement apres cette heure (ex: Toulouse -> Montauban -> Paris. On cherche les trains de Montauban vers Paris seulement apres l'heure d'arriver du train de Toulouse vers Montauban)
     if (!directOnly) {
-      await this.getConnectionJourneys(destinationsJourneys, departureDate, destination, destinationFormatted, originFormatted)
+      allDestinationsJourneys = await this.getConnectionJourneys(directDestinationsJourneys, departureDate, destination, destinationFormatted, originFormatted)
     }
 
     // 4. Remove duplicates
-    for (const journey of destinationsJourneys) {
+    for (const journey of allDestinationsJourneys) {
       journey.journeys = this.removeDuplicates(journey.journeys)
     }
 
@@ -204,7 +200,7 @@ export class FindTripsUseCase {
       // console.log(`destination: ${destination} destinationFormatted: ${destinationFormatted}`)
     }
 
-    return (destination || destinationFormatted ? destinationsJourneys.filter(journey => journey.destinationName === destinationFormatted) : destinationsJourneys)
+    return (destination || destinationFormatted ? allDestinationsJourneys.filter(journey => journey.destinationName === destinationFormatted) : allDestinationsJourneys)
   }
 
   private async getConnectionJourneys(
@@ -213,14 +209,18 @@ export class FindTripsUseCase {
     destination?: string,
     destinationFormatted?: string,
     originFormatted?: string,
-  ): Promise<void> {
+  ): Promise<JourneySortByDestination[]> {
     const connectionPromises = directJourneys.map((directJourney) => {
+      const d = destination ?? destinationFormatted
+
       const filters: GetTrainsFilters = {
         origin: directJourney.destinationName,
         departureDate,
-        destination: destination ?? destinationFormatted,
+        destination: d,
         excludeDestination: originFormatted,
       }
+
+      // console.log(`GET_CONNECTION_FETCH from ${directJourney.destinationName} ${(d) ? 'to ' + d : ''} `)
 
       return this.trainsRepository.getTrains(filters)
     })
@@ -228,19 +228,35 @@ export class FindTripsUseCase {
     // Attend toutes les réponses simultanément
     const connectionResults = await Promise.all(connectionPromises)
 
+    const allDestinationsJourneys: JourneySortByDestination[] = []
+
     connectionResults.forEach((connectionTrains, index) => {
       const directJourney = directJourneys[index]
 
+      const connectionJourneys: JourneySortByDestination[] = []
+
       directJourney.journeys.forEach((journey) => {
-        const firstLeg = journey[0]
+        const departureTrain = journey[0]
         connectionTrains.forEach((connectionTrain) => {
-          if (this.isConnectionValid(firstLeg, connectionTrain)) {
-            const destinationObj = this.getOrAddDestinationJourneys(directJourneys, connectionTrain.destination)
+          if (this.isConnectionValid(departureTrain, connectionTrain)) {
+            const destinationObj = this.getOrAddDestinationJourneys(connectionJourneys, connectionTrain.destination)
             destinationObj.journeys.push([...journey, connectionTrain])
           }
         })
       })
+
+      for (const connectionJourney of connectionJourneys) {
+        const destinationObj = this.getOrAddDestinationJourneys(allDestinationsJourneys, connectionJourney.destinationName)
+        destinationObj.journeys.push(...connectionJourney.journeys)
+      }
     })
+
+    for (const directJourney of directJourneys) {
+      const destinationObj = this.getOrAddDestinationJourneys(allDestinationsJourneys, directJourney.destinationName)
+      destinationObj.journeys.push(...directJourney.journeys)
+    }
+
+    return allDestinationsJourneys
   }
 
   /**
@@ -274,8 +290,6 @@ export class FindTripsUseCase {
 
     const connectionTimeMs
         = toMillis(connectionTrain.departureDateTime) - toMillis(departureTrain.arrivalDateTime)
-
-    // console.log(`IS_CONNECTION_VALID (departureTrain: ${departureTrain.trainNo}, connectionTrain: ${connectionTrain.trainNo})`)
 
     if (connectionTimeMs < 0) return false
 
