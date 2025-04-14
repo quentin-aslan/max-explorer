@@ -73,7 +73,7 @@ jobs:
             npm ci
   
             echo "🐳 Starting Docker (including Postgres)"
-            npm run docker:up
+            sudo npm run docker:up
   
             echo "🔄 Running database migrations"
             npm run migrate:up

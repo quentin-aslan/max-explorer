@@ -36,4 +36,4 @@ export default defineCronHandler(() => '0 7 * * *', async () => {
   finally {
     console.log('CRON finished.')
   }
-}, { runOnInit: false })
+}, { runOnInit: true })
