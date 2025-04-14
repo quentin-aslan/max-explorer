@@ -1,7 +1,7 @@
 import getUmzug from './umzug.js'
 
 const umzug = getUmzug({
-  connectionString: process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/max-explorer',
+  connectionString: process.env.DATABASE_URL || 'postgresql://max-explorer:max-explorer@localhost:5432/max-explorer',
 })
 
 async function migrate() {

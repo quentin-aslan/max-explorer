@@ -43,26 +43,43 @@ jobs:
 
       - name: Run tests
         run: npm run test
-  build:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Deploy using ssh
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
-          port: 22
-          script: |
-            cd ~/dev/max-explorer
-            git checkout .
-            git pull origin main
-            rm .env
-            touch .env
-            echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env #Must be absolute path to the database
-            echo PORT=${{ secrets.PORT }} >> .env
-            npm ci
-            npm run migrate:up
-            npm run build
-            sudo systemctl restart max-explorer
+build:
+  runs-on: ubuntu-latest
+  if: github.ref == 'refs/heads/main'
+  steps:
+    - name: 📦 Deploy using SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.PRIVATE_KEY }}
+        port: 22
+        script: |
+          echo "🚀 Starting deployment..."
+          
+          cd ~/dev/max-explorer
+
+          echo "🔄 Resetting local repository"
+          git checkout .
+          git pull origin main
+
+          echo "🔐 Reconfiguring environment"
+          rm -f .env
+          touch .env
+          echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
+          echo PORT=${{ secrets.PORT }} >> .env
+
+          echo "📦 Installing dependencies"
+          npm ci
+
+          echo "🐳 Starting Docker (including Postgres)"
+          npm run docker:up
+
+          echo "🔄 Running database migrations"
+          npm run migrate:up
+
+          echo "⚙️ Building the application"
+          npm run build
+
+          echo "🔄 Restarting application service"
+          sudo systemctl restart max-explorer
