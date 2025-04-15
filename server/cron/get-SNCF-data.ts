@@ -27,8 +27,11 @@ export default defineCronHandler(() => '0 7 * * *', async () => {
       new TrainsSncfRepositoryAxios(),
       new TrainsRepositoryPostgres(getPgPool()),
     )
-    const importTrainsMsg = await importTrainsUseCase.execute()
-    console.log(importTrainsMsg)
+    const lengthTrainsImported = await importTrainsUseCase.execute()
+
+    console.log(`${lengthTrainsImported} trains imported with success`)
+
+    metricsService.setTrainsFetched(lengthTrainsImported)
   }
   catch (e) {
     console.error(e)

@@ -5,15 +5,14 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}/api/find-trips?origin=Paris&departureDate=2025-05-06&directOnly=false
+  url: {{BASE_URL}}/api/find-trips?origin=Toulouse&departureDate=2025-04-30&directOnly=false&returnDate=2025-05-12
   body: none
   auth: inherit
 }
 
 params:query {
-  origin: Paris
-  departureDate: 2025-05-06
+  origin: Toulouse
+  departureDate: 2025-04-30
   directOnly: false
-  ~destination: Bordeaux
-  ~returnDate: 2025-05-16
+  returnDate: 2025-05-12
 }
