@@ -12,7 +12,7 @@ export class TripsRepositoryNuxt implements TripsRepository {
       const { data, error } = await useFetch<TripTypeFromServer[]>(this.API_ENDPOINT, {
         query: this.sanitizeParams(params),
         retry: 3,
-        timeout: 10000,
+        timeout: 20000, // 20sc
         headers: {
           'Content-Type': 'application/json',
         },
