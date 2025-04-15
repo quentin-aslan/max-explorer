@@ -7,12 +7,12 @@ export class ImportTrainsUseCase {
     private readonly trainsRepository: TrainsRepository,
   ) {}
 
-  async execute(): Promise<string> {
+  async execute(): Promise<number> {
     const trainsFromSncf = await this.trainsSncfRepository.getTrains()
     await this.trainsRepository.deleteAllEntries()
 
     await this.trainsRepository.insertManyTrains(trainsFromSncf)
 
-    return `${trainsFromSncf.length} trains imported with success`
+    return trainsFromSncf.length
   }
 }

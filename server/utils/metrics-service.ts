@@ -1,7 +1,9 @@
-import { Histogram, collectDefaultMetrics, Registry } from 'prom-client'
+import { Histogram, collectDefaultMetrics, Registry, Gauge } from 'prom-client'
+import { DateTime } from 'luxon'
 
 class MetricsService {
   private httpHistogram: Histogram<string>
+  private trainsFetchedGauge: Gauge<string>
   private registry: Registry
 
   constructor() {
@@ -24,6 +26,13 @@ class MetricsService {
         'directOnly',
       ],
       buckets: [0.1, 0.3, 0.5, 1, 2, 5],
+      registers: [this.registry],
+    })
+
+    this.trainsFetchedGauge = new Gauge({
+      name: 'trains_fetched_from_sncf',
+      help: 'Nombre de trains récupérés depuis la SNCF',
+      labelNames: ['date'],
       registers: [this.registry],
     })
   }
@@ -55,6 +64,11 @@ class MetricsService {
         returnDate: this.safeLabel(rawLabels.returnDate, 'unspecified'),
         directOnly: this.safeLabel(rawLabels.directOnly, 'false'),
       })
+  }
+
+  setTrainsFetched(count: number) {
+    const today = DateTime.now().toISODate()
+    this.trainsFetchedGauge.set({ date: today }, count)
   }
 
   async getMetrics() {

@@ -10,7 +10,9 @@ export default defineEventHandler(async () => {
       new TrainsRepositoryPostgres(getPgPool()),
     )
 
-    return await importTrainsUseCase.execute()
+    const lengthTrainsImported = await importTrainsUseCase.execute()
+
+    return `${lengthTrainsImported} trains imported with success`
   }
   catch {
     throw createError({
