@@ -13,7 +13,7 @@
         {{ destination.destinationName }}
       </h2>
       <h3 class="font-sans-semibold text-max-sec">
-        {{ destination.departureJourneys.length + destination.returnJourneys.length }} trains.
+        {{ destination.departureJourneys.length + destination.returnJourneys.length }} voyages.
       </h3>
       <!--      Premier Train au depart de
       {{ destination.destinationName }} - Aller : {{ destination.departureJourneys.length }} | Retour : {{ destination.returnJourneys.length }}
@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { TripViewModel } from '~/domains/trips/entities/trip.view-model'
+import type { TripViewModel } from '~/domains/trips/entities/view-models/trip.view-model'
 
 const props = defineProps<{
   destinations: TripViewModel[]

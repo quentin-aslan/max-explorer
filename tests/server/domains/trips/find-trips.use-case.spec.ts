@@ -274,7 +274,7 @@ const expectTrip = (
   expect(trip!.returnJourneys).toHaveLength(expectedReturnJourneysDirect + expectedReturnJourneysConnection)
 }
 
-describe('find-trips.use-case.ts', () => {
+describe('BACKEND - find-trips.use-case.ts', () => {
   let dbContext: PostgresTestManager
 
   beforeAll(async () => {

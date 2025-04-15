@@ -3,22 +3,22 @@
     <!-- Header: Travel Duration -->
     <div class="flex flex-row items-center">
       <i class="pi pi-clock mr-2" /> <!-- Clock Icon -->
-      <span>Durée total du trajet : <span class="font-sans-semibold border-b-4 border-b-max-action">{{ totalDuration }}</span></span>
+      <span>Durée total du trajet : <span class="font-sans-semibold border-b-4 border-b-max-action">{{ prettifyMinToH(journey.journeyTotalDurationMinutes) }}</span></span>
     </div>
 
     <div
       class="space-y-4"
     >
       <div
-        v-for="(train, index) in journey"
+        v-for="(train, index) in journey.trains"
         :key="index"
       >
         <TrainSegment
           :train="train"
-          :is-last="index === journey.length - 1"
+          :is-last="index === journey.trains.length - 1"
         />
 
-        <template v-if="index < journey.length - 1">
+        <template v-if="index < journey.trains.length - 1">
           <!-- Vertical line -->
           <div class="relative">
             <div
@@ -30,8 +30,8 @@
           <!-- Connection Info -->
           <div class="p-2 ml-12 mt-2 w-fit bg-max-action rounded-md relative">
             <p class="text-max-pri font-sans-medium text-xs">
-              Changement à <span class="font-sans-semibold">{{ journey[index+1].origin }}</span><br>
-              {{ train.arrivalDateTime.toFormat('HH:mm') }} - {{ journey[index+1].departureDateTime.toFormat('HH:mm') }} ({{ prettifyMinToH(calculateConnectionTime(journey, index+1) ?? 0) }})
+              Changement à <span class="font-sans-semibold">{{ journey.trains[index+1].origin }}</span><br>
+              {{ train.arrivalDateTime.toFormat('HH:mm') }} - {{ journey.trains[index+1].departureDateTime.toFormat('HH:mm') }} ({{ prettifyMinToH(journey.connectionDurationMinutes) }})
             </p>
           </div>
         </template>
@@ -43,18 +43,14 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
 import TrainSegment from './TrainSegment.vue'
-import type { TrainViewModel } from '~/domains/trips/entities/train.view-model'
 import { prettifyMinToH } from '~/utils'
+import type { JourneyViewModel } from '~/domains/trips/entities/view-models/journey.view-model'
 
 type Props = {
-  journey: TrainViewModel[]
+  journey: JourneyViewModel
 }
 
 const props = defineProps<Props>()
-
-const { calculateJourneyTotalDuration, calculateConnectionTime } = useDestinations()
-
-const totalDuration = computed(() => prettifyMinToH(calculateJourneyTotalDuration(props.journey)))
 
 // const props = defineProps({
 //   isDirectTrip: { type: Boolean, required: true },
@@ -69,7 +65,3 @@ const totalDuration = computed(() => prettifyMinToH(calculateJourneyTotalDuratio
 //   connectionDuration: { type: String, required: false },
 // })
 </script>
-
-<style scoped>
-/* Additional component-specific styles if needed */
-</style>
