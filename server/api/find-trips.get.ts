@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import type { ConnectionProperties } from '~/server/domains/trips/find-trips.use-case'
 import { FindTripsUseCase } from '~/server/domains/trips/find-trips.use-case'
 import { parseISODate } from '~/server/utils/dateUtils'
@@ -12,7 +11,15 @@ export default defineEventHandler(async (event) => {
   try {
     const { origin, departureDate, directOnly, destination, returnDate }: any = getQuery(event)
 
-    const startPerformance = DateTime.now()
+    const endTimer = metricsService.startTimerFindTrips({
+      method: event.method,
+      route: '/api/find-trips',
+      origin,
+      destination,
+      departureDate,
+      returnDate,
+      directOnly,
+    })
 
     if (!origin || !departureDate) {
       throw createError({
@@ -51,9 +58,8 @@ export default defineEventHandler(async (event) => {
       returnDate: returnDateFormatted,
     })
 
-    const endPerformance = DateTime.now()
-    const duration = endPerformance.diff(startPerformance, ['milliseconds']).milliseconds
-    console.log(`Find trips took ${duration} ms`)
+    const duration = endTimer(200)
+    console.log(`Find trips took ${duration.toFixed(3)}s`)
 
     return trips
   }
