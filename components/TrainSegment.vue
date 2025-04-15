@@ -18,7 +18,7 @@
     <!-- Train Details -->
     <div>
       <div class="text-xl text-max-pri font-sans-semibold">
-        <span>{{ formattedTime(train.departureDateTime) }}</span>
+        <span>{{ train.departureDateTime.toFormat('HH:mm') }}</span>
         <span class="text-base font-sans-italic"> Train n° {{ train.trainNo }}</span>
       </div>
       <div class="text-sm text-max-pri font-sans-semibold">
@@ -36,11 +36,12 @@
           /> <!-- Dot for end station -->
           <div>
             <div class="text-xl text-max-pri font-sans-semibold">
-              {{ formattedTime(train.arrivalDateTime) }} <span
-                v-if="!isSameDay(new Date(train.departureDateTime), new Date(train.arrivalDateTime))"
+              {{ train.arrivalDateTime.toFormat('HH:mm') }}
+              <span
+                v-if="isNightTrain"
                 class="text-base font-sans"
               >
-                - {{ formattedDateWithoutTime(train.arrivalDateTime) }} |
+                - {{ train.arrivalDateTime.toFormat('HH:mm') }} |
                 <span class="border-b-max-action border-b-4">TRAIN DE NUIT</span>
               </span>
             </div>
@@ -57,17 +58,14 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
 import trainIcon from 'assets/icons/train.svg?raw'
-import type { AdaptedTrainData } from '~/types/common'
-import { formattedDateWithoutTime, formattedTime } from '~/utils'
+import type { TrainViewModel } from '~/domains/trips/entities/train.view-model'
 
 type Props = {
-  train: AdaptedTrainData
+  train: TrainViewModel
   isLast?: boolean
 }
 
 const props = defineProps<Props>()
 
-const isSameDay = (date1: Date, date2: Date) => {
-  return date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear()
-}
+const isNightTrain = computed(() => props.train.axe === 'IC NUIT') // TODO: Should be in the presenter.
 </script>

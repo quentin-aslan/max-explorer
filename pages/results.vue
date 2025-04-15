@@ -97,8 +97,8 @@ import { ref } from 'vue'
 import { useDestinations } from '~/composables/use-destinations'
 import { useIsMobile } from '~/composables/use-is-mobile'
 import { useSearchForm } from '~/composables/use-search-form'
-import type { RoundTripDestination } from '~/types/common'
 import TheMapLeaflet from '~/components/TheMapLeaflet.vue'
+import type { TripViewModel } from '~/domains/trips/entities/trip.view-model'
 
 const { initFormValue, research, destinationStation } = useSearchForm() // Import destinationStation and research
 
@@ -113,8 +113,6 @@ const route = useRoute()
 const { startLoading, stopLoading } = useLoader()
 
 const { destinations, fetchDestinations, isFetchDestinationLoading } = useDestinations()
-
-const toast = useToast()
 
 const getResults = async () => {
   startLoading('Recherche des destinations... Cela peut prendre jusqu\'a une minute ...')
@@ -140,7 +138,7 @@ const isCityListVisible = computed(() => !isMobile.value || (isMobile.value && i
 const isMapVisible = computed(() => !isMobile.value || (isMobile.value && !isCityListVisibleOnMobile.value))
 const isTripMode = computed(() => route.query.destinationStation)
 const noResults = computed(() => !destinations.value || destinations.value.length === 0)
-const destinationSelected = ref<RoundTripDestination | null>(null)
+const destinationSelected = ref<TripViewModel | null>(null)
 const { mobileHeader, desktopHeader, contentMainMarginTop, contentMainMinHeight } = useHeaderHeights(isMobile)
 
 watch(destinations, () => destinationSelected.value = (isTripMode.value) ? destinations.value?.[0] : null)

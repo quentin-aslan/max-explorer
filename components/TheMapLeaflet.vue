@@ -7,12 +7,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useLeaflet } from '~/composables/use-leaflet'
-import type { RoundTripDestination } from '~/types/common'
+import type { TripViewModel } from '~/domains/trips/entities/trip.view-model'
 
 type Props = {
-  destinations: RoundTripDestination[]
+  destinations: TripViewModel[]
   departureCity?: unknown
 }
 
@@ -50,7 +50,7 @@ const addCitiesOnMap = () => {
 }
 
 // Handle marker highlight changes
-const onCitySelectedChanges = (newCitySelected: RoundTripDestination, oldCitySelected: RoundTripDestination) => {
+const onCitySelectedChanges = (newCitySelected: TripViewModel, oldCitySelected: TripViewModel) => {
   if (oldCitySelected) {
     clearHighlightedCityMarker(oldCitySelected)
   }

@@ -5,7 +5,7 @@
     {{ destinations.length }} destinations trouvées.
     <div
       v-for="destination in sortDestinations"
-      :key="destination.id"
+      :key="destination.destinationName"
       class="w-full cursor-pointer border rounded-xl bg-white border-max-sec pb-4 pt-4 pl-3 pr-3 flex flex-row justify-between"
       @click="() => onDestinationClick(destination)"
     >
@@ -23,21 +23,21 @@
 </template>
 
 <script lang="ts" setup>
-import type { RoundTripDestination } from '~/types/common'
+import type { TripViewModel } from '~/domains/trips/entities/trip.view-model'
 
 const props = defineProps<{
-  destinations: RoundTripDestination[]
+  destinations: TripViewModel[]
 }>()
 
 const destinationSelected = defineModel()
 
 const sortDestinations = computed(() => {
-  return [...props.destinations]?.sort((a: RoundTripDestination, b: RoundTripDestination) => {
-    return b.traffic - a.traffic
+  return [...props.destinations]?.sort((a, b) => {
+    return b.trainStation.traffic - a.trainStation.traffic
   })
 })
 
-const onDestinationClick = (destination: Destination) => {
+const onDestinationClick = (destination: TripViewModel) => {
   if (destinationSelected.value === destination) {
     destinationSelected.value = null
     return
