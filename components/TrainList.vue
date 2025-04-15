@@ -59,11 +59,11 @@ import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
-import type { Journey } from '~/types/common'
+import type { TrainViewModel } from '~/domains/trips/entities/train.view-model'
 
 type Props = {
-  departureJourneys: Journey[]
-  returnJourneys: Journey[]
+  departureJourneys: TrainViewModel[][]
+  returnJourneys: TrainViewModel[][]
 }
 
 const props = defineProps<Props>()
@@ -125,7 +125,7 @@ const returnJourneysSorted = computed(() => {
   }
 })
 
-const sortJourneysByDuration = (journeys: Journey[], order: 'asc' | 'desc' = 'asc') => {
+const sortJourneysByDuration = (journeys: TrainViewModel[][], order: 'asc' | 'desc' = 'asc') => {
   return [...journeys].sort((a, b) => {
     const durationA = calculateJourneyTotalDuration(a)
     const durationB = calculateJourneyTotalDuration(b)
@@ -133,10 +133,10 @@ const sortJourneysByDuration = (journeys: Journey[], order: 'asc' | 'desc' = 'as
   })
 }
 
-const sortJourneysByDepartureTime = (journeys: Journey[], order: 'asc' | 'desc' = 'asc') => {
+const sortJourneysByDepartureTime = (journeys: TrainViewModel[][], order: 'asc' | 'desc' = 'asc') => {
   return [...journeys].sort((a, b) => {
-    const departureTimeA = new Date(a[0].departureDateTime).getTime()
-    const departureTimeB = new Date(b[0].departureDateTime).getTime()
+    const departureTimeA = a[0].departureDateTime.toMillis()
+    const departureTimeB = b[0].departureDateTime.toMillis()
     return order === 'asc' ? departureTimeA - departureTimeB : departureTimeB - departureTimeA
   })
 }

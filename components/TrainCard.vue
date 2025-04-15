@@ -3,7 +3,7 @@
     <!-- Header: Travel Duration -->
     <div class="flex flex-row items-center">
       <i class="pi pi-clock mr-2" /> <!-- Clock Icon -->
-      <span>Durée total du trajet : <span class="font-sans-semibold border-b-4 border-b-max-action">{{ msToTime(totalDuration) }}</span></span>
+      <span>Durée total du trajet : <span class="font-sans-semibold border-b-4 border-b-max-action">{{ totalDuration }}</span></span>
     </div>
 
     <div
@@ -31,7 +31,7 @@
           <div class="p-2 ml-12 mt-2 w-fit bg-max-action rounded-md relative">
             <p class="text-max-pri font-sans-medium text-xs">
               Changement à <span class="font-sans-semibold">{{ journey[index+1].origin }}</span><br>
-              {{ formattedTime(train.arrivalDateTime) }} - {{ formattedTime(journey[index+1].departureDateTime) }} ({{ msToTime(calculateConnectionTime(journey, index+1)) }})
+              {{ train.arrivalDateTime.toFormat('HH:mm') }} - {{ journey[index+1].departureDateTime.toFormat('HH:mm') }} ({{ prettifyMinToH(calculateConnectionTime(journey, index+1) ?? 0) }})
             </p>
           </div>
         </template>
@@ -43,18 +43,18 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
 import TrainSegment from './TrainSegment.vue'
-import type { Journey } from '~/types/common'
-import { formattedTime, msToTime } from '~/utils'
+import type { TrainViewModel } from '~/domains/trips/entities/train.view-model'
+import { prettifyMinToH } from '~/utils'
 
 type Props = {
-  journey: Journey
+  journey: TrainViewModel[]
 }
 
 const props = defineProps<Props>()
 
 const { calculateJourneyTotalDuration, calculateConnectionTime } = useDestinations()
 
-const totalDuration = computed(() => calculateJourneyTotalDuration(props.journey))
+const totalDuration = computed(() => prettifyMinToH(calculateJourneyTotalDuration(props.journey)))
 
 // const props = defineProps({
 //   isDirectTrip: { type: Boolean, required: true },

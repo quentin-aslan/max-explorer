@@ -1,12 +1,12 @@
 import { ref } from 'vue'
 import type { Map, Marker } from 'leaflet'
-import L, { Icon } from 'leaflet'
-import type { RoundTripDestination } from '~/types/common'
+import L from 'leaflet'
+import type { TripViewModel } from '~/domains/trips/entities/trip.view-model'
 
 export const useLeaflet = () => {
   const mapElement = ref<HTMLDivElement | null>(null)
   const map = ref<Map | null>(null)
-  const markers = ref<{ marker: Marker, city: RoundTripDestination }[]>([])
+  const markers = ref<{ marker: Marker, city: TripViewModel }[]>([])
 
   // Initialize the map
   const initializeMap = (element: HTMLDivElement, center: { lat: number, lng: number }, zoom: number) => {
@@ -25,10 +25,10 @@ export const useLeaflet = () => {
   }
 
   // Add city marker with custom content
-  const addCityMarker = (city: RoundTripDestination) => {
-    if (!map.value || (!city.longitude || !city.latitude)) return null
+  const addCityMarker = (city: TripViewModel) => {
+    if (!map.value || (!city.trainStation.longitude || !city.trainStation.latitude)) return null
 
-    const marker = L.marker([city.latitude, city.longitude], {
+    const marker = L.marker([city.trainStation.latitude, city.trainStation.longitude], {
       icon: L.divIcon({
         className: 'custom-city-marker',
         html: _getCityMarkerContent(city.destinationName),
@@ -60,7 +60,7 @@ export const useLeaflet = () => {
   }
 
   // Highlight a city marker
-  const highlightCityMarker = (city: RoundTripDestination) => {
+  const highlightCityMarker = (city: TripViewModel) => {
     const markerData = markers.value.find(({ city: cityItem }) => cityItem.destinationName === city.destinationName)
     if (!markerData) return
 
@@ -73,7 +73,7 @@ export const useLeaflet = () => {
   }
 
   // Clear the highlight from a city marker
-  const clearHighlightedCityMarker = (city: RoundTripDestination) => {
+  const clearHighlightedCityMarker = (city: TripViewModel) => {
     const markerData = markers.value.find(({ city: cityItem }) => cityItem.destinationName === city.destinationName)
     if (!markerData) return
 

@@ -1,67 +1,60 @@
 import { ref } from 'vue'
-import type { Journey, RoundTripDestination } from '~/types/common'
-import { toISOStringWithOffset } from '~/utils'
+import { DateTime } from 'luxon'
+import { FindTripsUseCase } from '~/domains/trips/find-trips.use-case'
+import { TripsRepositoryNuxt } from '~/domains/trips/adapters/trips.repository.nuxt'
+import { TripsPresenterImpl } from '~/domains/trips/adapters/trips.presenter.impl'
+import type { TripViewModel } from '~/domains/trips/entities/trip.view-model'
+import type { TrainViewModel } from '~/domains/trips/entities/train.view-model'
 
-const destinations = ref<RoundTripDestination[]>([])
+const destinations = ref<TripViewModel[]>([])
 const isFetchDestinationLoading = ref(false)
 
 export const useDestinations = () => {
   const toast = useToast()
 
   const fetchDestinations = async (
-    departureStation: Date,
+    departureStation: string,
     destinationStation: string | undefined = undefined,
     departureDate: Date,
     returnDate: Date | undefined,
   ) => {
-    try {
-      isFetchDestinationLoading.value = true
-      destinations.value = []
-      const formattedDepartureDate = departureDate ? toISOStringWithOffset(departureDate).slice(0, 10) : undefined
-      const formattedReturnDate = returnDate ? toISOStringWithOffset(returnDate).slice(0, 10) : undefined
+    isFetchDestinationLoading.value = true
+    destinations.value = []
 
-      const { data } = await useFetch('/api/find-trips', {
-        query: {
-          origin: departureStation,
-          destination: destinationStation,
-          directOnly: false,
-          departureDate: formattedDepartureDate,
-          returnDate: formattedReturnDate,
-        },
-      })
+    const findTripsUseCase = new FindTripsUseCase(
+      new TripsRepositoryNuxt(),
+      new TripsPresenterImpl(vm => destinations.value = vm, toast),
+    )
 
-      destinations.value = data.value as RoundTripDestination[]
-    }
-    catch (e) {
-      console.error(e)
-      toast.add({
-        severity: 'error',
-        summary: 'An error ocurred while fetching destinations',
-        life: 5000,
-      })
-    }
-    finally {
-      isFetchDestinationLoading.value = false
-    }
+    await findTripsUseCase.execute({
+      origin: departureStation,
+      departureDate: DateTime.fromJSDate(departureDate),
+      directOnly: false,
+      returnDate: (returnDate) ? DateTime.fromJSDate(returnDate) : undefined,
+      destination: destinationStation,
+    })
+
+    isFetchDestinationLoading.value = false
   }
 
-  const calculateConnectionTime = (journey: Journey, index: number) => {
+  const calculateConnectionTime = (journey: TrainViewModel[], index: number) => {
+    // TODO: To move in the presenter (JourneyType must be created)
     if (index === 0) return 0
 
-    return new Date(journey[index].departureDateTime) - new Date(journey[index - 1].arrivalDateTime)
+    const departureTime = journey[index].departureDateTime
+    const arrivalTime = journey[index - 1].arrivalDateTime
+    return Math.round(departureTime.diff(arrivalTime, 'minutes').minutes)
   }
-
   // Calculate the total duration of the journey
-  const calculateJourneyTotalDuration = (journey: Journey) => {
-    let totalDuration = 0 // ms
+  const calculateJourneyTotalDuration = (journey: TrainViewModel[]): number => {
+    if (journey.length === 0) return 0
 
-    for (let i = 0; i < journey.length; i++) {
-      const connectionTime = calculateConnectionTime(journey, i)
-      const journeyDuration = new Date(journey[i].arrivalDateTime) - new Date(journey[i].departureDateTime)
-      totalDuration += journeyDuration + connectionTime
-    }
+    const firstDeparture = journey[0].departureDateTime
+    const lastArrival = journey[journey.length - 1].arrivalDateTime
 
-    return totalDuration
+    const totalDuration = lastArrival.diff(firstDeparture, 'minutes').minutes
+
+    return Math.round(totalDuration)
   }
 
   return {
