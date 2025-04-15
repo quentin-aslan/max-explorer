@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
 import { useLeaflet } from '~/composables/use-leaflet'
-import type { TripViewModel } from '~/domains/trips/entities/trip.view-model'
+import type { TripViewModel } from '~/domains/trips/entities/view-models/trip.view-model'
 
 type Props = {
   destinations: TripViewModel[]

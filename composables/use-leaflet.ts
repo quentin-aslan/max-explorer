@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import type { Map, Marker } from 'leaflet'
 import L from 'leaflet'
-import type { TripViewModel } from '~/domains/trips/entities/trip.view-model'
+import type { TripViewModel } from '~/domains/trips/entities/view-models/trip.view-model'
 
 export const useLeaflet = () => {
   const mapElement = ref<HTMLDivElement | null>(null)

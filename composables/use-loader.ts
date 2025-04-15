@@ -5,7 +5,6 @@ export const useLoader = () => {
   const startLoading = (msg?: string) => {
     if (msg) messageDisplayed.value = msg
     else messageDisplayed.value = null
-
     isLoaderVisible.value = true
   }
 

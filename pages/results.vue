@@ -27,7 +27,7 @@
       </div>
     </header>
     <section
-      v-if="!isFetchDestinationLoading"
+      v-if="!isFetchTripsLoading"
       :style="{
         'max-height': contentMainMinHeight,
         'margin-top': contentMainMarginTop,
@@ -54,7 +54,7 @@
           >
             <CityList
               v-model="destinationSelected"
-              :destinations="destinations"
+              :destinations="trips"
             />
           </div>
 
@@ -67,7 +67,7 @@
               ref="mapDesktop"
               v-model="destinationSelected"
               class="w-full h-full"
-              :destinations="destinations"
+              :destinations="trips"
               :style="{
                 'max-height': contentMainMinHeight,
               }"
@@ -94,11 +94,11 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useDestinations } from '~/composables/use-destinations'
+import { useFindTrips } from '~/composables/use-find-trips'
 import { useIsMobile } from '~/composables/use-is-mobile'
 import { useSearchForm } from '~/composables/use-search-form'
 import TheMapLeaflet from '~/components/TheMapLeaflet.vue'
-import type { TripViewModel } from '~/domains/trips/entities/trip.view-model'
+import type { TripViewModel } from '~/domains/trips/entities/view-models/trip.view-model'
 
 const { initFormValue, research, destinationStation } = useSearchForm() // Import destinationStation and research
 
@@ -112,7 +112,7 @@ type QueryProps = {
 const route = useRoute()
 const { startLoading, stopLoading } = useLoader()
 
-const { destinations, fetchDestinations, isFetchDestinationLoading } = useDestinations()
+const { trips, fetchTrips, isFetchTripsLoading } = useFindTrips()
 
 const getResults = async () => {
   startLoading('Recherche des destinations... Cela peut prendre jusqu\'a une minute ...')
@@ -127,7 +127,7 @@ const getResults = async () => {
   const returnDateConverted = (returnDate) ? new Date(returnDate) : undefined
 
   initFormValue(departureStation, destinationStation, departureDateConverted, returnDateConverted)
-  await fetchDestinations(departureStation, destinationStation, departureDateConverted, returnDateConverted)
+  await fetchTrips(departureStation, destinationStation, departureDateConverted, returnDateConverted)
 
   stopLoading()
 }
@@ -137,11 +137,11 @@ const isCityListVisibleOnMobile = ref(true)
 const isCityListVisible = computed(() => !isMobile.value || (isMobile.value && isCityListVisibleOnMobile.value))
 const isMapVisible = computed(() => !isMobile.value || (isMobile.value && !isCityListVisibleOnMobile.value))
 const isTripMode = computed(() => route.query.destinationStation)
-const noResults = computed(() => !destinations.value || destinations.value.length === 0)
+const noResults = computed(() => !trips.value || trips.value.length === 0)
 const destinationSelected = ref<TripViewModel | null>(null)
 const { mobileHeader, desktopHeader, contentMainMarginTop, contentMainMinHeight } = useHeaderHeights(isMobile)
 
-watch(destinations, () => destinationSelected.value = (isTripMode.value) ? destinations.value?.[0] : null)
+watch(trips, () => destinationSelected.value = (isTripMode.value) ? trips.value?.[0] : null)
 
 watch(destinationSelected, (destination) => {
   if (destination) {

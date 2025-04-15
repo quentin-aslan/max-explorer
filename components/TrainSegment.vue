@@ -58,7 +58,7 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
 import trainIcon from 'assets/icons/train.svg?raw'
-import type { TrainViewModel } from '~/domains/trips/entities/train.view-model'
+import type { TrainViewModel } from '~/domains/trips/entities/view-models/train.view-model'
 
 type Props = {
   train: TrainViewModel

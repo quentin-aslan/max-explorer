@@ -59,19 +59,17 @@ import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
-import type { TrainViewModel } from '~/domains/trips/entities/train.view-model'
+import type { JourneyViewModel } from '~/domains/trips/entities/view-models/journey.view-model'
 
 type Props = {
-  departureJourneys: TrainViewModel[][]
-  returnJourneys: TrainViewModel[][]
+  departureJourneys: JourneyViewModel[]
+  returnJourneys: JourneyViewModel[]
 }
 
 const props = defineProps<Props>()
 const isReturnTabDisplayed = computed(() => props.returnJourneys.length > 0)
 
 // SORT
-
-const { calculateJourneyTotalDuration } = useDestinations()
 
 enum SortChoices {
   DURATION_ASC = 'duration_asc',
@@ -125,18 +123,17 @@ const returnJourneysSorted = computed(() => {
   }
 })
 
-const sortJourneysByDuration = (journeys: TrainViewModel[][], order: 'asc' | 'desc' = 'asc') => {
+// TODO: Put all the utils in the presenter ? Or a static class, to make the test easier
+const sortJourneysByDuration = (journeys: JourneyViewModel[], order: 'asc' | 'desc' = 'asc') => {
   return [...journeys].sort((a, b) => {
-    const durationA = calculateJourneyTotalDuration(a)
-    const durationB = calculateJourneyTotalDuration(b)
-    return order === 'asc' ? durationA - durationB : durationB - durationA
+    return order === 'asc' ? a.journeyTotalDurationMinutes - b.journeyTotalDurationMinutes : b.journeyTotalDurationMinutes - a.journeyTotalDurationMinutes
   })
 }
 
-const sortJourneysByDepartureTime = (journeys: TrainViewModel[][], order: 'asc' | 'desc' = 'asc') => {
+const sortJourneysByDepartureTime = (journeys: JourneyViewModel[], order: 'asc' | 'desc' = 'asc') => {
   return [...journeys].sort((a, b) => {
-    const departureTimeA = a[0].departureDateTime.toMillis()
-    const departureTimeB = b[0].departureDateTime.toMillis()
+    const departureTimeA = a.trains[0].departureDateTime.toMillis()
+    const departureTimeB = b.trains[0].departureDateTime.toMillis()
     return order === 'asc' ? departureTimeA - departureTimeB : departureTimeB - departureTimeA
   })
 }

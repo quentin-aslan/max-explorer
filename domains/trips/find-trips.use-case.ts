@@ -14,7 +14,7 @@ export class FindTripsUseCase {
     }
     catch (e: any) {
       console.error(e)
-      this.tripsPresenter.presentError(e)
+      this.tripsPresenter.presentError('An error ocurred while fetching destinations')
     }
   }
 }
