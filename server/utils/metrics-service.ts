@@ -10,7 +10,7 @@ class MetricsService {
     const ADD_DEFAULT_METRICS_TO_REGISTERY = false
     this.registry = new Registry()
 
-    collectDefaultMetrics((ADD_DEFAULT_METRICS_TO_REGISTERY) ? { register: this.registry } : {}) // Collecte les métriques Node.js de base une seule fois
+    collectDefaultMetrics((ADD_DEFAULT_METRICS_TO_REGISTERY) ? { register: this.registry } : {})
 
     this.httpHistogram = new Histogram({
       name: 'http_request_duration_seconds',
