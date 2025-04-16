@@ -115,7 +115,7 @@ const { startLoading, stopLoading } = useLoader()
 const { trips, fetchTrips, isFetchTripsLoading } = useFindTrips()
 
 const getResults = async () => {
-  startLoading('Recherche des destinations... Cela peut prendre jusqu\'a une minute ...')
+  startLoading('Recherche des destinations... Cela peut prendre jusqu\'a 30 secondes ...')
   const { departureStation, destinationStation, departureDate, returnDate }: QueryProps = route.query
   if (!departureStation || !departureDate) {
     stopLoading()

@@ -21,7 +21,7 @@
       v-model:departure-date="departureDate"
       v-model:return-date="returnDate"
     />
-    <MaxButton button-name="Allons-y !" />
+    <MaxButton>Allons-y !</MaxButton>
   </form>
 </template>
 
