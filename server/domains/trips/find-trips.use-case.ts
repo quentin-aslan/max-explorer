@@ -64,9 +64,8 @@ export class FindTripsUseCase {
 
     const trainStationsWithTraffic = await this.trainStationsRepository.getTrainStations({})
     for (const journeys of journeySortByDestinationFromOrigin) {
-      const normalizedDestinationName = this.normalizeName(journeys.destinationName)
       // 2.1 Find the train stations details
-      let trainStation = trainStationsWithTraffic.find(station => station.name.includes(normalizedDestinationName))
+      let trainStation = trainStationsWithTraffic.find(station => station.name === journeys.destinationName)
       if (!trainStation) {
         errors.push(`Train station not found for ${journeys.destinationName}`)
         trainStation = {
@@ -142,6 +141,7 @@ export class FindTripsUseCase {
 
     // 4. Return the result
     const results = (returnDate ? trips.filter(trip => trip.returnJourneys.length > 0) : trips)
+    console.log(`errors: ${JSON.stringify(errors)}`)
     console.log(`findTripsUseCase (${origin}, ${destination}, ${departureDate}, ${returnDate}, directOnly: ${directOnly}) finished with ${results.length} trips found`)
     return results
   }
@@ -300,21 +300,6 @@ export class FindTripsUseCase {
 
     // Ensure the connection time does not exceed the maximum allowed time
     return connectionTimeMs <= maxTimeMs
-  }
-
-  private normalizeName(name: string) {
-    return name.toLowerCase()
-      .replace(/[àáâãäå]/g, 'a')
-      .replace(/ç/g, 'c')
-      .replace(/[èéêë]/g, 'e')
-      .replace(/[ìíîï]/g, 'i')
-      .replace(/[òóôõö]/g, 'o')
-      .replace(/[ùúûü]/g, 'u')
-      .replace(/[ýÿ]/g, 'y')
-      .replace(/-/g, ' ')
-      .replace(/[^\w\s]/gi, '')
-      .replace(/\s+/g, ' ')
-      .trim()?.split(' ')[0]
   }
 
   private removeDuplicates(journeys: Journey[]): Journey[] {

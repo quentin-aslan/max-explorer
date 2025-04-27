@@ -1,4 +1,4 @@
-import type { TrainStation } from '~/domains/trips/entities/train-station'
+import type { TrainStation } from '~/domains/train-stations/entities/train-station'
 import type { Train } from '~/domains/trips/entities/train'
 
 export type Journey = Train[]

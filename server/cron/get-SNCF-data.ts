@@ -14,14 +14,6 @@ export default defineCronHandler(() => '0 7 * * *', async () => {
   try {
     console.log('Running CRON import...')
 
-    // Import train stations
-    const importTrainStationsUseCase = new ImportTrainStationsUseCase(
-      new TrainStationsSncfRepositoryAxios(),
-      new TrainStationsRepositoryPostgres(getPgPool()),
-    )
-    const importDestinationMsg = await importTrainStationsUseCase.execute()
-    console.log(importDestinationMsg)
-
     // Import trains
     const importTrainsUseCase = new ImportTrainsUseCase(
       new TrainsSncfRepositoryAxios(),
@@ -30,6 +22,15 @@ export default defineCronHandler(() => '0 7 * * *', async () => {
     const lengthTrainsImported = await importTrainsUseCase.execute()
 
     console.log(`${lengthTrainsImported} trains imported with success`)
+
+    // Import train stations
+    const importTrainStationsUseCase = new ImportTrainStationsUseCase(
+      new TrainStationsSncfRepositoryAxios(),
+      new TrainStationsRepositoryPostgres(getPgPool()),
+      new TrainsRepositoryPostgres(getPgPool()),
+    )
+    const importDestinationMsg = await importTrainStationsUseCase.execute()
+    console.log(importDestinationMsg)
 
     metricsService.setTrainsFetched(lengthTrainsImported)
   }
