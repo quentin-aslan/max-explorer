@@ -9,8 +9,8 @@ export interface TrainsRepository {
 }
 
 export interface GetTrainsFilters {
-  origin: string
-  departureDate: DateTime
+  origin?: string
+  departureDate?: DateTime
   destination?: string
   returnDate?: DateTime
   excludeDestination?: string

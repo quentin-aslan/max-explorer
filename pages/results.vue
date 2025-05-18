@@ -150,6 +150,14 @@ watch(destinationSelected, (destination) => {
   }
 })
 
+// Watch for changes in the route query to detect back navigation
+watch(() => route.query.destinationStation, (newDestination) => {
+  // If there's no destination in the query, clear the destination input
+  if (!newDestination && destinationStation.value) {
+    destinationStation.value = ''
+  }
+}, { immediate: true })
+
 const onResearch = () => {
   setTimeout(() => {
     getResults()

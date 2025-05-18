@@ -8,6 +8,7 @@ export class ImportTrainsUseCase {
   ) {}
 
   async execute(): Promise<number> {
+    // 1. Insert train from sncf api
     const trainsFromSncf = await this.trainsSncfRepository.getTrains()
     await this.trainsRepository.deleteAllEntries()
 

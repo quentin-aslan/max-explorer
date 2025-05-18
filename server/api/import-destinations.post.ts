@@ -7,12 +7,14 @@ import {
   TrainStationsRepositoryPostgres,
 } from '~/server/domains/train-stations/adapters/train-stations.repository.postgres'
 import { getPgPool } from '~/server/utils/postgres-db'
+import { TrainsRepositoryPostgres } from '~/server/domains/trains/adapters/trains.repository.postgres'
 
 export default defineEventHandler(async () => {
   try {
     const importTrainStationsUseCase = new ImportTrainStationsUseCase(
       new TrainStationsSncfRepositoryAxios(),
       new TrainStationsRepositoryPostgres(getPgPool()),
+      new TrainsRepositoryPostgres(getPgPool()),
     )
 
     return await importTrainStationsUseCase.execute()

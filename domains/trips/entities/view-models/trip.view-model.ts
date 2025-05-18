@@ -1,4 +1,4 @@
-import type { TrainStation } from '~/domains/trips/entities/train-station'
+import type { TrainStation } from '~/domains/train-stations/entities/train-station'
 import type { JourneyViewModel } from '~/domains/trips/entities/view-models/journey.view-model'
 
 export interface TripViewModel {
