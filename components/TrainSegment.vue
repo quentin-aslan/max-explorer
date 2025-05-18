@@ -19,9 +19,9 @@
     <div>
       <div class="text-xl text-max-pri font-sans-semibold">
         <span>{{ train.departureDateTime.toFormat('HH:mm') }}</span>
-        <span class="text-base font-sans-italic"> Train n° {{ train.trainNo }}</span>
+        <span class="text-sm font-sans-italic ml-2"> train n° {{ train.trainNo }}</span>
       </div>
-      <div class="text-sm text-max-pri font-sans-semibold">
+      <div class="text-sm text-max-pri tracking-wider">
         <span>{{ train.origin }}</span>
       </div>
       <!-- End Station -->
@@ -45,7 +45,7 @@
                 <span class="border-b-max-action border-b-4">TRAIN DE NUIT</span>
               </span>
             </div>
-            <div class="text-sm text-max-pri font-sans-semibold">
+            <div class="text-sm text-max-pri tracking-wider">
               {{ train.destination }}
             </div>
           </div>
