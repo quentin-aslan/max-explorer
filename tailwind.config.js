@@ -10,6 +10,9 @@ export default {
       'max-bg': '#F3F3EB',
       'max-special': '#56FFF5',
       'white': '#FFFFFF',
+      'red': {
+        500: '#EF4444',
+      },
     },
     extend: {
       fontFamily: {
