@@ -4,17 +4,9 @@
       :id="domId"
       v-model="inputValue"
       type="text"
-      class="block px-5 pb-3 pt-5 w-full font-sans-semibold text-max-pri bg-white rounded-lg border border-max-sec appearance-none
-             dark:text-white focus:outline-none focus:ring-0 focus:border-max-pri peer"
-      placeholder=""
+      :placeholder="placeholder"
+      class="block w-full px-4 py-3 font-sans-medium text-max-pri bg-white rounded-xl border-2 border-max-sec/30 placeholder:text-sm placeholder:lg:text-base placeholder:text-max-sec/60 placeholder:font-sans-medium focus:outline-none focus:border-max-action focus:ring-0 focus:shadow-lg transition-all duration-200"
     >
-    <label
-      :for="domId"
-      class="absolute start-5 text-max-sec font-sans-semibold text-xl duration-300
-      transform-translate-y-4 scale-50 top-0 z-10 origin-[0] peer-placeholder-shown:scale-100
-      peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-4 peer-focus:scale-75 peer-focus:-translate-y-4"
-    >
-      {{ placeholder }}</label>
   </div>
 </template>
 

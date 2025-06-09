@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row h-14">
+  <div class="flex flex-col sm:flex-row gap-2 sm:gap-0">
     <DatePicker
       v-model="departureDate"
       :min-date="departureDateMin"
@@ -35,7 +35,7 @@ const returnDate = defineModel<Date>('returnDate')
 const departureCalendar = ref({
   pcInputText: {
     root: {
-      class: '!rounded-l-lg',
+      class: '!rounded-xl sm:!rounded-l-xl sm:!rounded-r-none',
     },
   },
 })
@@ -43,7 +43,7 @@ const departureCalendar = ref({
 const returnCalendar = ref({
   pcInputText: {
     root: {
-      class: '!rounded-r-lg',
+      class: '!rounded-xl sm:!rounded-r-xl sm:!rounded-l-none',
     },
   },
 })
@@ -51,9 +51,28 @@ const returnCalendar = ref({
 
 <style scoped>
 :deep() .p-inputtext {
-  @apply border-max-sec;
-  @apply font-sans-semibold;
+  @apply border-max-sec/30 border-2;
+  @apply font-sans-medium;
   @apply text-max-pri;
-  border-radius: 0;
+  @apply py-3 px-4;
+  @apply transition-all duration-200;
+  @apply placeholder:text-max-sec/60;
+}
+
+:deep() .p-inputtext:focus {
+  @apply border-max-action;
+  @apply shadow-lg;
+}
+
+/* Mobile: Boutons d'icône plus grands */
+@media (max-width: 640px) {
+  :deep() .p-datepicker-trigger {
+    @apply w-10 h-10;
+  }
+
+  :deep() .p-inputtext {
+    @apply text-base;
+    min-height: 48px;
+  }
 }
 </style>
