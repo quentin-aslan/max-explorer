@@ -1,21 +1,47 @@
-<template class="lg:hidden">
-  <div class="flex flex-row gap-2 items-center p-2 text-max-pri border-b-4 border-b-max-action">
-    <button @click="navigateTo('/')">
-      <i class="pi pi-angle-left text-4xl font-bold text-max-pri" />
-    </button>
-    <div class="flex flex-col gap-1 pl-2">
-      <div class="flex flex-row items-center gap-2 text-2xl">
-        <i class="pi pi-map-marker font-bold text-xl" /> <span class="">{{ departureStation }}</span>
-        <span v-if="destinationStation"> ....... {{ destinationStation }}</span>
+<template>
+  <div class="bg-white border-b-2 border-max-action shadow-sm">
+    <!-- Header principal -->
+    <div class="flex items-center justify-between p-4">
+      <!-- Bouton retour avec logique corrigée -->
+      <button
+        class="flex items-center justify-center w-10 h-10 bg-max-bg hover:bg-max-action/10 rounded-full transition-colors duration-200 border border-max-sec/20"
+        @click="goBackToList"
+      >
+        <i class="pi pi-arrow-left text-max-pri text-lg" />
+      </button>
+
+      <!-- Informations centrales -->
+      <div class="flex-1 mx-4">
+        <div class="text-center">
+          <h1 class="text-lg font-sans-bold text-max-pri leading-tight">
+            {{ departureStation }}
+            <span v-if="currentDestination"> → {{ currentDestination }}</span>
+          </h1>
+          <div class="flex items-center justify-center space-x-2 mt-1">
+            <span class="text-sm text-max-pri/70 font-sans-medium">
+              {{ formatDate(departureDate) }}
+            </span>
+            <span
+              v-if="returnDate"
+              class="text-max-pri/40"
+            >•</span>
+            <span
+              v-if="returnDate"
+              class="text-sm text-max-pri/70 font-sans-medium"
+            >
+              {{ formatDate(returnDate) }}
+            </span>
+          </div>
+        </div>
       </div>
-      <div class="flex flex-row items-center gap-2 text-lg">
-        <span>{{ toISOStringWithOffset(departureDate)?.slice(0, 10) }}</span>
-        <i
-          v-if="returnDate"
-          class="pi pi-arrow-circle-right font-extrabold"
-        />
-        <span>{{ toISOStringWithOffset(returnDate)?.slice(0, 10) }}</span>
-      </div>
+
+      <!-- Bouton modifier la recherche -->
+      <button
+        class="flex items-center justify-center w-10 h-10 bg-max-bg hover:bg-max-action/10 rounded-full transition-colors duration-200 border border-max-sec/20"
+        @click="navigateTo('/')"
+      >
+        <i class="pi pi-pencil text-max-pri text-sm" />
+      </button>
     </div>
   </div>
 </template>
@@ -23,6 +49,27 @@
 <script lang="ts" setup>
 import { toISOStringWithOffset } from '~/utils'
 
-const { departureStation, destinationStation, departureDate, returnDate } = useSearchForm()
-const emit = defineEmits(['search-details-click'])
+const { departureStation, departureDate, returnDate } = useSearchForm()
+const route = useRoute()
+
+// Destination actuelle affichée (réactive)
+const currentDestination = computed(() => route.query.destinationStation as string)
+
+const formatDate = (date: Date | null) => {
+  if (!date) return ''
+  return toISOStringWithOffset(date)?.slice(5, 10).replace('-', '/')
+}
+
+const goBackToList = () => {
+  // Si on a une destination sélectionnée ET qu'il y a plusieurs destinations possibles
+  if (currentDestination.value) {
+    // Retourner à la liste des destinations
+    const newQuery = { ...route.query }
+    delete newQuery.destinationStation
+    navigateTo({ path: '/results', query: newQuery })
+  }
+  else {
+    navigateTo('/')
+  }
+}
 </script>

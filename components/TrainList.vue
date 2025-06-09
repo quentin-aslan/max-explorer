@@ -1,56 +1,53 @@
 <template>
-  <Tabs value="departure">
-    <TabList>
-      <Tab value="departure">
-        Aller ({{ departureJourneys.length }})
-      </Tab>
-      <Tab
-        v-if="isReturnTabDisplayed"
-        value="return"
-      >
-        Retour ({{ returnJourneys.length }})
-      </Tab>
-    </TabList>
-    <TabPanels class="z-10 w-full">
-      <TabPanel value="departure">
-        <div class="flex flex-col gap-4">
-          <Select
-            v-model="sortChoice"
-            :options="sortChoicesOptions"
-            option-label="label"
-            option-value="choice"
-            placeholder="Select a City"
-            class="w-full md:w-56"
+  <div class="space-y-6">
+    <!-- Tabs simples et élégantes -->
+    <Tabs
+      value="departure"
+      class="w-full"
+    >
+      <TabList class="bg-transparent border-b-2 border-max-sec/20">
+        <Tab
+          value="departure"
+          class="flex items-center space-x-2 px-4 py-3 font-sans-bold text-lg transition-all duration-200"
+        >
+          <span>🚀</span>
+          <span>Aller</span>
+          <span class="bg-max-action text-white px-2 py-1 rounded-full text-xs font-sans-bold ml-2">
+            {{ departureJourneys.length }}
+          </span>
+        </Tab>
+        <Tab
+          v-if="isReturnTabDisplayed"
+          value="return"
+          class="flex items-center space-x-2 px-4 py-3 font-sans-bold text-lg transition-all duration-200"
+        >
+          <span>🔄</span>
+          <span>Retour</span>
+          <span class="bg-max-special text-white px-2 py-1 rounded-full text-xs font-sans-bold ml-2">
+            {{ returnJourneys.length }}
+          </span>
+        </Tab>
+      </TabList>
+
+      <TabPanels class="mt-6">
+        <TabPanel value="departure">
+          <TrainListContent
+            :journeys="departureJourneys"
+            title="Trains aller"
           />
-          <TrainCard
-            v-for="(journey, index) in departureJourneysSorted"
-            :key="index"
-            :journey="journey"
+        </TabPanel>
+        <TabPanel
+          v-if="isReturnTabDisplayed"
+          value="return"
+        >
+          <TrainListContent
+            :journeys="returnJourneys"
+            title="Trains retour"
           />
-        </div>
-      </TabPanel>
-      <TabPanel
-        v-if="isReturnTabDisplayed"
-        value="return"
-      >
-        <div class="flex flex-col gap-4">
-          <Select
-            v-model="sortChoice"
-            :options="sortChoicesOptions"
-            option-label="label"
-            option-value="choice"
-            placeholder="Select a City"
-            class="w-full md:w-56"
-          />
-          <TrainCard
-            v-for="(journey, index) in returnJourneysSorted"
-            :key="index"
-            :journey="journey"
-          />
-        </div>
-      </TabPanel>
-    </TabPanels>
-  </Tabs>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -61,106 +58,28 @@ import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import type { JourneyViewModel } from '~/domains/trips/entities/view-models/journey.view-model'
 
-type Props = {
+interface Props {
   departureJourneys: JourneyViewModel[]
   returnJourneys: JourneyViewModel[]
 }
 
 const props = defineProps<Props>()
 const isReturnTabDisplayed = computed(() => props.returnJourneys.length > 0)
-
-// SORT
-
-enum SortChoices {
-  DURATION_ASC = 'duration_asc',
-  DURATION_DESC = 'duration_desc',
-  DEPARTURE_TIME_ASC = 'departure_time_asc',
-  DEPARTURE_TIME_DESC = 'departure_time_desc',
-}
-
-const sortChoicesOptions = [
-  { label: 'Durée (croissant)', choice: SortChoices.DURATION_ASC },
-  { label: 'Durée (décroissant)', choice: SortChoices.DURATION_DESC },
-  { label: 'Heure de départ (croissant)', choice: SortChoices.DEPARTURE_TIME_ASC },
-  { label: 'Heure de départ (décroissant)', choice: SortChoices.DEPARTURE_TIME_DESC },
-]
-
-const sortChoice = ref<SortChoices>(SortChoices.DURATION_ASC)
-
-const departureJourneysSorted = computed(() => {
-  if (sortChoice.value === SortChoices.DURATION_ASC) {
-    return sortJourneysByDuration(props.departureJourneys, 'asc')
-  }
-  else if (sortChoice.value === SortChoices.DURATION_DESC) {
-    return sortJourneysByDuration(props.departureJourneys, 'desc')
-  }
-  else if (sortChoice.value === SortChoices.DEPARTURE_TIME_ASC) {
-    return sortJourneysByDepartureTime(props.departureJourneys, 'asc')
-  }
-  else if (sortChoice.value === SortChoices.DEPARTURE_TIME_DESC) {
-    return sortJourneysByDepartureTime(props.departureJourneys, 'desc')
-  }
-  else {
-    return sortJourneysByDuration(props.departureJourneys, 'asc')
-  }
-})
-
-const returnJourneysSorted = computed(() => {
-  if (sortChoice.value === SortChoices.DURATION_ASC) {
-    return sortJourneysByDuration(props.returnJourneys, 'asc')
-  }
-  else if (sortChoice.value === SortChoices.DURATION_DESC) {
-    return sortJourneysByDuration(props.returnJourneys, 'desc')
-  }
-  else if (sortChoice.value === SortChoices.DEPARTURE_TIME_ASC) {
-    return sortJourneysByDepartureTime(props.returnJourneys, 'asc')
-  }
-  else if (sortChoice.value === SortChoices.DEPARTURE_TIME_DESC) {
-    return sortJourneysByDepartureTime(props.returnJourneys, 'desc')
-  }
-  else {
-    return sortJourneysByDuration(props.returnJourneys, 'asc')
-  }
-})
-
-// TODO: Put all the utils in the presenter ? Or a static class, to make the test easier
-const sortJourneysByDuration = (journeys: JourneyViewModel[], order: 'asc' | 'desc' = 'asc') => {
-  return [...journeys].sort((a, b) => {
-    return order === 'asc' ? a.journeyTotalDurationMinutes - b.journeyTotalDurationMinutes : b.journeyTotalDurationMinutes - a.journeyTotalDurationMinutes
-  })
-}
-
-const sortJourneysByDepartureTime = (journeys: JourneyViewModel[], order: 'asc' | 'desc' = 'asc') => {
-  return [...journeys].sort((a, b) => {
-    const departureTimeA = a.trains[0].departureDateTime.toMillis()
-    const departureTimeB = b.trains[0].departureDateTime.toMillis()
-    return order === 'asc' ? departureTimeA - departureTimeB : departureTimeB - departureTimeA
-  })
-}
 </script>
 
 <style scoped>
-/* Non-active tab color */
+/* Tabs styling épuré */
 :deep(.p-tab) {
-  @apply font-sans-semibold;
-  @apply border-max-bg;
-  @apply text-max-sec;
+  @apply font-sans-semibold text-max-sec hover:text-max-pri transition-all duration-200;
 }
 
-:deep(.p-tab.p-tab-active) { /* Change active color */
+:deep(.p-tab.p-tab-active) {
   @apply text-max-pri;
 }
-:deep(.p-tablist-active-bar) { /* Customize the active bar (underline) for the active tab */
-  @apply bg-max-pri;
-}
 
-:deep(.p-tablist-tab-list) { /* Remove the border color where there are no tabs anymore */
-  @apply bg-max-bg;
-  @apply border-max-bg;
-}
-:deep(.p-tabpanels) { /* Remove the white bg of tabpannels */
-  @apply bg-max-bg;
-  @apply p-0;
-  @apply pt-4;
+:deep(.p-tablist-active-bar) {
+  @apply bg-max-action;
+  height: 3px;
+  border-radius: 2px;
 }
 </style>

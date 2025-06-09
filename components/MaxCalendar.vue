@@ -1,23 +1,46 @@
 <template>
   <div class="flex flex-col sm:flex-row gap-2 sm:gap-0">
-    <DatePicker
-      v-model="departureDate"
-      :min-date="departureDateMin"
-      :max-date="dateMax"
-      date-format="dd/mm/yy"
-      class="w-full"
-      placeholder="Départ"
-      :pt="departureCalendar"
-    />
-    <DatePicker
-      v-model="returnDate"
-      :min-date="returnDateMin"
-      :max-date="dateMax"
-      date-format="dd/mm/yy"
-      class="w-full"
-      placeholder="Retour"
-      :pt="returnCalendar"
-    />
+    <!-- Départ avec bouton clear -->
+    <div class="relative w-full">
+      <DatePicker
+        v-model="departureDate"
+        :min-date="departureDateMin"
+        :max-date="dateMax"
+        date-format="dd/mm/yy"
+        class="w-full"
+        placeholder="Départ"
+        :pt="departureCalendar"
+      />
+      <button
+        v-if="departureDate"
+        type="button"
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 bg-max-sec/20 hover:bg-max-sec/30 rounded-full flex items-center justify-center transition-colors duration-200 group z-10"
+        @click="clearDepartureDate"
+      >
+        <i class="pi pi-times text-xs text-max-sec group-hover:text-max-pri" />
+      </button>
+    </div>
+
+    <!-- Retour avec bouton clear -->
+    <div class="relative w-full">
+      <DatePicker
+        v-model="returnDate"
+        :min-date="returnDateMin"
+        :max-date="dateMax"
+        date-format="dd/mm/yy"
+        class="w-full"
+        placeholder="Retour (optionnel)"
+        :pt="returnCalendar"
+      />
+      <button
+        v-if="returnDate"
+        type="button"
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 bg-max-sec/20 hover:bg-max-sec/30 rounded-full flex items-center justify-center transition-colors duration-200 group z-10"
+        @click="clearReturnDate"
+      >
+        <i class="pi pi-times text-xs text-max-sec group-hover:text-max-pri" />
+      </button>
+    </div>
   </div>
 </template>
 
@@ -31,6 +54,14 @@ const dateMax = ref(new Date(new Date().setDate(new Date().getDate() + 30)))
 
 const departureDate = defineModel<Date>('departureDate')
 const returnDate = defineModel<Date>('returnDate')
+
+const clearDepartureDate = () => {
+  departureDate.value = undefined
+}
+
+const clearReturnDate = () => {
+  returnDate.value = undefined
+}
 
 const departureCalendar = ref({
   pcInputText: {

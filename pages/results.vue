@@ -19,11 +19,16 @@
       <SearchDetailsMobile />
       <div
         v-if="!isTripMode"
-        class="flex flex-col justify-center bg-max-action text-white text-lg text-center font-bold z-50 cursor-pointer"
+        class="flex flex-col justify-center bg-max-action hover:bg-max-action/90 text-white text-base text-center font-sans-bold py-3 cursor-pointer transition-colors duration-200 shadow-lg"
         @click="isCityListVisibleOnMobile = !isCityListVisibleOnMobile"
       >
-        <span v-if="isCityListVisible">Afficher la carte <i class="pi pi-map" /> </span>
-        <span v-else>Afficher la liste <i class="pi pi-map-marker" /> </span>
+        <div class="flex items-center justify-center space-x-2">
+          <i
+            :class="isCityListVisible ? 'pi pi-map' : 'pi pi-map-marker'"
+            class="text-lg"
+          />
+          <span>{{ isCityListVisible ? 'Voir la carte' : 'Voir la liste' }}</span>
+        </div>
       </div>
     </header>
     <section
@@ -36,11 +41,19 @@
       <!-- Section pour les résultats -->
       <div
         v-if="noResults"
-        class="flex flex-row text-3xl text-max-action text-center justify-center"
+        class="w-full mt-12 mb-12"
       >
-        <Message severity="warn">
-          <span class="text-3xl">Aucun Résultat :/</span>
-        </Message>
+        <div class="bg-white p-8 rounded-2xl shadow-lg text-center max-w-md mx-auto">
+          <div class="text-6xl mb-4">
+            🤔
+          </div>
+          <h2 class="text-xl font-sans-bold text-max-pri mb-2">
+            Aucune destination trouvée
+          </h2>
+          <p class="text-max-pri/70">
+            Essaie de modifier tes critères de recherche
+          </p>
+        </div>
       </div>
       <section
         v-else
