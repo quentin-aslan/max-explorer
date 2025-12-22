@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: max-explorer
       POSTGRES_DB: max-explorer
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/18/data
 
 volumes:
-  pgdata:
+  postgres:
