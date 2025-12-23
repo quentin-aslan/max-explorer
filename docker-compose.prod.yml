@@ -1,5 +1,6 @@
 services:
   app:
+    image: ${APP_IMAGE:-ghcr.io/quentin-aslan/max-explorer:latest}
     build:
       context: .
       target: production
@@ -24,6 +25,7 @@ services:
       start_period: 40s
 
   migration:
+    image: ${MIGRATION_IMAGE:-ghcr.io/quentin-aslan/max-explorer-migration:latest}
     build:
       context: .
       target: migration
