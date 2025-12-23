@@ -1,10 +1,26 @@
 services:
+  app:
+    build:
+      context: .
+      target: deps
+    container_name: max-explorer-app
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://max-explorer:max-explorer@db:5432/max-explorer
+      HOST: 0.0.0.0
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+    depends_on:
+      - db
+
   db:
-    container_name: postgres_max-explorer
+    image: postgres:18
+    container_name: max-explorer-db
     ports:
       - "5432:5432"
-    image: postgres
-    restart: always
     environment:
       POSTGRES_PASSWORD: max-explorer
       POSTGRES_USER: max-explorer

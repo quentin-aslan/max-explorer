@@ -1,0 +1,33 @@
+# Dependencies
+node_modules
+
+# Build artifacts
+.nuxt
+.output
+dist
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Environment
+.env
+.env.*
+
+# Tests & Coverage
+coverage
+*.log
+
+# Documentation
+README.md
+CLAUDE.md
+LICENSE
+
+# CI/CD
+.github

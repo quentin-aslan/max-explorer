@@ -50,37 +50,36 @@ jobs:
     steps:
       - name: 📦 Deploy using SSH
         uses: appleboy/ssh-action@master
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          OPEN_WEATHER_MAP_API_KEY: ${{ secrets.OPEN_WEATHER_MAP_API_KEY }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
+          envs: DATABASE_URL,POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,OPEN_WEATHER_MAP_API_KEY
           script: |
             echo "🚀 Starting deployment..."
-            
+
             cd ~/dev/max-explorer
-  
-            echo "🔄 Resetting local repository"
+
+            echo "🔄 Pulling latest code"
             git checkout .
             git pull origin main
-  
-            echo "🔐 Reconfiguring environment"
-            rm -f .env
-            touch .env
-            echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
-            echo PORT=${{ secrets.PORT }} >> .env
-  
-            echo "📦 Installing dependencies"
-            npm ci
-  
-            echo "🐳 Starting Docker (including Postgres)"
-            sudo npm run docker:up
-  
-            echo "🔄 Running database migrations"
-            npm run migrate:up
-  
-            echo "⚙️ Building the application"
-            npm run build
-  
-            echo "🔄 Restarting application service"
-            sudo systemctl restart max-explorer
+
+            echo "🐳 Building and starting Docker containers"
+            export DATABASE_URL="$DATABASE_URL"
+            export POSTGRES_USER="$POSTGRES_USER"
+            export POSTGRES_PASSWORD="$POSTGRES_PASSWORD"
+            export POSTGRES_DB="$POSTGRES_DB"
+            export OPEN_WEATHER_MAP_API_KEY="$OPEN_WEATHER_MAP_API_KEY"
+            export LAUNCH_CRON_ON_INIT=true
+
+            docker compose -f docker-compose.prod.yml down
+            docker compose -f docker-compose.prod.yml up -d --build
+
+            echo "✅ Deployment complete! (migrations run automatically)"
