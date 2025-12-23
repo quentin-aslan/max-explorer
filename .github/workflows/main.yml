@@ -79,7 +79,7 @@ jobs:
             export OPEN_WEATHER_MAP_API_KEY="$OPEN_WEATHER_MAP_API_KEY"
             export LAUNCH_CRON_ON_INIT=true
 
-            docker compose -f docker-compose.prod.yml down
-            docker compose -f docker-compose.prod.yml up -d --build
+            sudo docker compose -f docker-compose.prod.yml down
+            sudo docker compose -f docker-compose.prod.yml up -d --build
 
             echo "✅ Deployment complete! (migrations run automatically)"
